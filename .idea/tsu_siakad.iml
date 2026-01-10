@@ -124,6 +124,8 @@
       <excludeFolder url="file://$MODULE_DIR$/sources/vendor/voku/portable-ascii" />
       <excludeFolder url="file://$MODULE_DIR$/sources/vendor/webmozart/assert" />
       <excludeFolder url="file://$MODULE_DIR$/sources/vendor/yajra/laravel-datatables-oracle" />
+      <excludeFolder url="file://$MODULE_DIR$/sources/storage/app" />
+      <excludeFolder url="file://$MODULE_DIR$/sources/storage/framework" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
