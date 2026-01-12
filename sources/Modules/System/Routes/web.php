@@ -20,10 +20,18 @@ use Modules\System\Http\Controllers\SettingController;
 Route::prefix('')->group(function() {
     Route::get('/', [HomeController::class, 'index'])->name('indexing')->middleware('guest');
     Route::middleware(['web'])->group(function () {
-        Route::get('login/mahasiswa', [LoginController::class, 'indexMahasiswa'])->name('login.mahasiswa')->middleware('guest');
-        Route::get('login/dosen-tendik', [LoginController::class, 'indexDosenTendik'])->name('login.dosen-tendik')->middleware('guest');
-        Route::post('login/mahasiswa', [LoginController::class, 'loginActionMahasiswa'])->name('login.action.mahasiswa');
-        Route::post('login/dosen-tendik', [LoginController::class, 'loginActionDosenTendik'])->name('login.action.dosen-tendik');
+//        Route::get('login/mahasiswa', [LoginController::class, 'indexMahasiswa'])->name('login.mahasiswa')->middleware('guest');
+//        Route::get('login/dosen-tendik', [LoginController::class, 'indexDosenTendik'])->name('login.dosen-tendik')->middleware('guest');
+//        Route::post('login/mahasiswa', [LoginController::class, 'loginActionMahasiswa'])->name('login.action.mahasiswa');
+//        Route::post('login/dosen-tendik', [LoginController::class, 'loginActionDosenTendik'])->name('login.action.dosen-tendik');
+        Route::get('login', [LoginController::class, 'index'])->name('login')->middleware('guest');
+        Route::post('login', [LoginController::class, 'login'])->name('login.action');
+        Route::get('login/sso', [SsoController::class, 'redirect'])->name('sso.login');
+        Route::get('login/sso/callback', [SsoController::class, 'callback'])->name('sso.callback');
+        Route::get('/emergency-login', [EmergencyLoginController::class, 'login'])->name('emergency-login');
+        Route::get('/rescue-login', [EmergencyLoginController::class, 'showRescueForm'])->name('rescue');
+        Route::post('/rescue-login', [EmergencyLoginController::class, 'processRescueLogin'])->name('rescue.post');
+
         Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
         Route::get('loginChance', [LoginController::class, 'loginChance'])->name('loginchance');
         Route::get('NewPassword', [LoginController::class, 'newPassword'])->name('NewPassword');
