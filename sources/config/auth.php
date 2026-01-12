@@ -41,15 +41,15 @@ return [
             'provider' => 'users',
         ],
 
-        'mahasiswa' => [
-            'driver' => 'session',
-            'provider' => 'mahasiswas',
-        ],
-
-        'dosen_tendik' => [
-            'driver' => 'session',
-            'provider' => 'dosen_tendiks',
-        ],
+//        'mahasiswa' => [
+//            'driver' => 'session',
+//            'provider' => 'mahasiswas',
+//        ],
+//
+//        'dosen_tendik' => [
+//            'driver' => 'session',
+//            'provider' => 'dosen_tendiks',
+//        ],
 
         'api' => [
             'driver' => 'token',
@@ -79,17 +79,18 @@ return [
         'users' => [
             'driver' => 'eloquent',
             'model' => App\User::class,
+            'table' => env('AUTH_TABLE_NAME', 'users'),
         ],
 
-        'mahasiswas' => [
-            'driver' => 'eloquent',
-            'model' => App\Models\UserMahasiswa::class, // <-- Model untuk tabel 'users_mahasiswa'
-        ],
-
-        'dosen_tendiks' => [
-            'driver' => 'eloquent',
-            'model' => App\Models\UserDosenTendik::class, // <-- Model untuk tabel 'users_dosen_tendik'
-        ],
+//        'mahasiswas' => [
+//            'driver' => 'eloquent',
+//            'model' => App\Models\UserMahasiswa::class, // <-- Model untuk tabel 'users_mahasiswa'
+//        ],
+//
+//        'dosen_tendiks' => [
+//            'driver' => 'eloquent',
+//            'model' => App\Models\UserDosenTendik::class, // <-- Model untuk tabel 'users_dosen_tendik'
+//        ],
 
         // 'users' => [
         //     'driver' => 'database',

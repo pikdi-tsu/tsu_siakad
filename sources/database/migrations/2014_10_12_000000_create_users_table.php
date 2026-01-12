@@ -13,14 +13,39 @@ class CreateUsersTable extends Migration
      */
     public function up()
     {
-        Schema::create('users', function (Blueprint $table) {
-            $table->id();
+        $tableName = config('auth.providers.users.table', 'users');
+
+        Schema::create($tableName, static function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            // --- IDENTITAS SSO ---
+            $table->uuid('sso_id')->nullable()->unique()->index();
+            // Username ini fleksibel: isinya NIM (Mhs) atau NIK (Dosen)
+            $table->string('username')->unique()->nullable()->comment('Berisi NIM atau NIK dari Homebase');
+
             $table->string('name');
             $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
+            $table->string('password')->nullable(); // Nullable (SSO)
+            $table->string('avatar_url', 2048)->nullable();
+
+            // Token SSO
+            $table->text('sso_access_token')->nullable();
+            $table->text('sso_refresh_token')->nullable();
+
+            // Status Keaktifan
+            $table->tinyInteger('is_active')->default(1)->comment('1=Aktif, 0=Non-Aktif');
+
             $table->rememberToken();
             $table->timestamps();
+        });
+
+        Schema::create('sessions', static function (Blueprint $table) {
+            $table->string('id')->primary();
+//            $table->foreignId('user_id')->nullable()->index();
+            $table->uuid('user_id')->nullable()->index();
+            $table->string('ip_address', 45)->nullable();
+            $table->text('user_agent')->nullable();
+            $table->longText('payload');
+            $table->integer('last_activity')->index();
         });
     }
 

@@ -15,6 +15,10 @@ return [
 
     'name' => env('APP_NAME', 'Laravel'),
 
+    'module' => [
+        'full_name' => env('MODULE_FULL_NAME', 'tsu_siakad'),
+        'name' => env('MODULE_NAME', 'siakad'),
+    ],
     /*
     |--------------------------------------------------------------------------
     | Application Environment
