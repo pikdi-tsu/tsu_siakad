@@ -81,6 +81,107 @@
                     </ul>
                 </li>
                 @php
+                    $fakultas = checkmenu('Master Data', 'Master Fakultas');
+                    $jurusan = checkmenu('Master Data', 'Master Jurusan');
+                    $jenjang = checkmenu('Master Data', 'Master Jenjang Pendidikan');
+                    $batch = checkmenu('Master Data', 'Master Batch Pendaftaran');
+                    $ukt = checkmenu('Master Data', 'Master Tarif UKT');
+                    $provinsi = checkmenu('Master Data', 'Master Provinsi');
+                    $kabupaten = checkmenu('Master Data', 'Master Kabupaten Kota');
+                    $kecamatan = checkmenu('Master Data', 'Master kecamatan');
+                    $kelurahan = checkmenu('Master Data', 'Master Kelurahan');
+                @endphp
+                @if($fakultas+$jurusan+$jenjang+$batch+$ukt+$provinsi+$kabupaten+$kecamatan+$kelurahan>0)
+                    <li class="nav-item"> {{-- menu-open --}}
+                        <a href="#" class="nav-link"> {{-- active --}}
+                            <i class="nav-icon fas fa-clipboard-list"></i>
+                            <p>Master Data
+                                <i class="right fas fa-angle-left"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            @if ($batch > 0)
+                                <li class="nav-item">
+                                    <a href="{{route('admin.BatchPendaftaran.show')}}" class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        Master Batch Pendaftaran
+                                    </a>
+                                </li>
+                            @endif
+                            @if ($ukt > 0)
+                                <li class="nav-item">
+                                    <a href="{{route('admin.TarifUKT.show')}}" class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        Master Tarif UKT
+                                    </a>
+                                </li>
+                            @endif
+                            @if ($provinsi > 0)
+                                <li class="nav-item">
+                                    <a href="{{route('admin.Provinsi.show')}}" class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        Master Provinsi
+                                    </a>
+                                </li>
+                            @endif
+                            @if ($kabupaten > 0)
+                                <li class="nav-item">
+                                    <a href="{{route('admin.Kabupaten.show')}}" class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        Master Kabupaten/Kota
+                                    </a>
+                                </li>
+                            @endif
+                            @if ($kecamatan > 0)
+                                <li class="nav-item">
+                                    <a href="{{route('admin.Kecamatan.show')}}" class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        Master Kecamatan
+                                    </a>
+                                </li>
+                            @endif
+                            @if ($kelurahan > 0)
+                                <li class="nav-item">
+                                    <a href="{{route('admin.Kelurahan.show')}}" class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        Master Kelurahan
+                                    </a>
+                                </li>
+                            @endif
+                            <li class="nav-item" style="display: none;">
+                                <a href="#" class="nav-link">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    Master Rekomendasi PMB(blm)
+                                </a>
+                            </li>
+                            @if ($fakultas > 0)
+                                <li class="nav-item">
+                                    <a href="{{route('admin.fakultas.show')}}" class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        Master Fakultas
+                                    </a>
+                                </li>
+                            @endif
+                            @if ($jurusan > 0)
+                                <li class="nav-item">
+                                    <a href="{{route('admin.Jurusan.show')}}" class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        Master Jurusan
+                                    </a>
+                                </li>
+                            @endif
+                            @if ($jenjang > 0)
+                                <li class="nav-item">
+                                    <a href="{{route('admin.Jenjang.show')}}" class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        Master Jenjang Pendidikan
+                                    </a>
+                                </li>
+                            @endif
+                        </ul>
+                    </li>
+                @endif
+                @php
                     $changepassword = checkmenu('Tools','Change Password');
                     $listmenu = checkmenu('Tools','List Menu');
                     $groupuser = checkmenu('Tools','Group User');
