@@ -35,64 +35,64 @@
                             <h5 class="m-0">{{ $menu }}</h5>
                         </div>
                         <div class="card-body">
-                            <div class="row justify-content-center">
-                                <div class="col-md-6"> <!-- Ubah lebar form di sini -->
-                                    <form id="form-fakultas" method="POST" action="#">
-                                        @csrf
-                                        <input type="hidden" id="IdUKT" name="IdUKT" value="">
-                                        <!-- Nama Jenis -->
-                                        <div class="form-group mb-3">
-                                            <label for="batch">Batch Pendaftaran</label>
-                                            <select class="form-control select2" id="batch" name="batch" required>
-                                                <option value="" selected disabled>-- Pilih Batch Pendaftaran --</option>
-                                                @foreach ($batch as $i)
-                                                <option value="{{$i->id}}">{{$i->kode_batch}} - {{$i->nama_batch}} - {{$i->tahun_akademik}}</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                        <!-- Nama Jenis -->
-                                        <div class="form-group mb-3">
-                                            <label for="jalur">Jalur Pendaftaran</label>
-                                            <select class="form-control select2" id="jalur" name="jalur" required>
-                                                <option value="" selected disabled>-- Pilih Jalur Pendaftaran --</option>
-                                                @foreach ($jalur as $q)
-                                                <option value="{{$q->id}}">{{$q->KodeJenis}} - {{$q->jenis_pendaftaran}}</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                        <!-- Nama Jenis -->
-                                        <div class="form-group mb-3">
-                                            <label for="prodi">Program Studi</label>
-                                            <select class="form-control select2" id="prodi" name="prodi[]" multiple="multiple" data-placeholder="-- Pilih Program Studi --" style="width: 100%;" required>
-                                                @foreach ($prodi as $p)
-                                                <option value="{{$p->id}}">{{$p->fakultas->singkatan}} - {{$p->jenjang->jenjang}} - {{$p->jurusan}}</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                        <div class="form-group mb-3">
-                                            <label for="biaya_ukt">Tarif UKT</label>
-                                            <div class="input-group">
-                                                <div class="input-group-prepend">
-                                                    <span class="input-group-text">
-                                                        Rp
-                                                    </span>
-                                                </div>
-                                                <input type="number" value="0" min="0" class="form-control" id="biaya_ukt" name="biaya_ukt" required>
-                                            </div>
-                                        </div>
-                                        <!-- Nama Jenis -->
-                                        <div class="form-group mb-3">
-                                            <label for="tahun">Keterangan</label>
-                                            <textarea class="form-control" id="keterangan" name="keterangan" rows="3" placeholder="Keterangan"></textarea>
-                                        </div>
-                                        <!-- Buttons -->
-                                        <div class="form-group">
-                                            <button type="button" id="submit-batch" class="btn btn-success float-right" style="margin-left:10px;"> <i class="fas fa-paper-plane"></i> Submit</button>
-                                            <button id="btn-reset" class="btn btn-warning float-right">Reset</button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
+{{--                            <div class="row justify-content-center">--}}
+{{--                                <div class="col-md-6"> <!-- Ubah lebar form di sini -->--}}
+{{--                                    <form id="form-fakultas" method="POST" action="#">--}}
+{{--                                        @csrf--}}
+{{--                                        <input type="hidden" id="IdUKT" name="IdUKT" value="">--}}
+{{--                                        <!-- Nama Jenis -->--}}
+{{--                                        <div class="form-group mb-3">--}}
+{{--                                            <label for="batch">Batch Pendaftaran</label>--}}
+{{--                                            <select class="form-control select2" id="batch" name="batch" required>--}}
+{{--                                                <option value="" selected disabled>-- Pilih Batch Pendaftaran --</option>--}}
+{{--                                                @foreach ($batch as $i)--}}
+{{--                                                <option value="{{$i->id}}">{{$i->kode_batch}} - {{$i->nama_batch}} - {{$i->tahun_akademik}}</option>--}}
+{{--                                                @endforeach--}}
+{{--                                            </select>--}}
+{{--                                        </div>--}}
+{{--                                        <!-- Nama Jenis -->--}}
+{{--                                        <div class="form-group mb-3">--}}
+{{--                                            <label for="jalur">Jalur Pendaftaran</label>--}}
+{{--                                            <select class="form-control select2" id="jalur" name="jalur" required>--}}
+{{--                                                <option value="" selected disabled>-- Pilih Jalur Pendaftaran --</option>--}}
+{{--                                                @foreach ($jalur as $q)--}}
+{{--                                                <option value="{{$q->id}}">{{$q->KodeJenis}} - {{$q->jenis_pendaftaran}}</option>--}}
+{{--                                                @endforeach--}}
+{{--                                            </select>--}}
+{{--                                        </div>--}}
+{{--                                        <!-- Nama Jenis -->--}}
+{{--                                        <div class="form-group mb-3">--}}
+{{--                                            <label for="prodi">Program Studi</label>--}}
+{{--                                            <select class="form-control select2" id="prodi" name="prodi[]" multiple="multiple" data-placeholder="-- Pilih Program Studi --" style="width: 100%;" required>--}}
+{{--                                                @foreach ($prodi as $p)--}}
+{{--                                                <option value="{{$p->id}}">{{$p->fakultas->singkatan}} - {{$p->jenjang->jenjang}} - {{$p->jurusan}}</option>--}}
+{{--                                                @endforeach--}}
+{{--                                            </select>--}}
+{{--                                        </div>--}}
+{{--                                        <div class="form-group mb-3">--}}
+{{--                                            <label for="biaya_ukt">Tarif UKT</label>--}}
+{{--                                            <div class="input-group">--}}
+{{--                                                <div class="input-group-prepend">--}}
+{{--                                                    <span class="input-group-text">--}}
+{{--                                                        Rp--}}
+{{--                                                    </span>--}}
+{{--                                                </div>--}}
+{{--                                                <input type="number" value="0" min="0" class="form-control" id="biaya_ukt" name="biaya_ukt" required>--}}
+{{--                                            </div>--}}
+{{--                                        </div>--}}
+{{--                                        <!-- Nama Jenis -->--}}
+{{--                                        <div class="form-group mb-3">--}}
+{{--                                            <label for="tahun">Keterangan</label>--}}
+{{--                                            <textarea class="form-control" id="keterangan" name="keterangan" rows="3" placeholder="Keterangan"></textarea>--}}
+{{--                                        </div>--}}
+{{--                                        <!-- Buttons -->--}}
+{{--                                        <div class="form-group">--}}
+{{--                                            <button type="button" id="submit-batch" class="btn btn-success float-right" style="margin-left:10px;"> <i class="fas fa-paper-plane"></i> Submit</button>--}}
+{{--                                            <button id="btn-reset" class="btn btn-warning float-right">Reset</button>--}}
+{{--                                        </div>--}}
+{{--                                    </form>--}}
+{{--                                </div>--}}
+{{--                            </div>--}}
                             <div class="table-responsive" style="margin-top: 20px;">
                                 <table id="example2" class="table table-bordered table-hover" style="width: 100%;">
                                     <thead>

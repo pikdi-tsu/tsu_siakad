@@ -100,14 +100,14 @@
                             </p>
                         </a>
                         <ul class="nav nav-treeview">
-                            @if ($batch > 0)
-                                <li class="nav-item">
-                                    <a href="{{route('admin.BatchPendaftaran.show')}}" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        Master Batch Pendaftaran
-                                    </a>
-                                </li>
-                            @endif
+{{--                            @if ($batch > 0)--}}
+{{--                                <li class="nav-item">--}}
+{{--                                    <a href="{{route('admin.BatchPendaftaran.show')}}" class="nav-link">--}}
+{{--                                        <i class="far fa-circle nav-icon"></i>--}}
+{{--                                        Master Batch Pendaftaran--}}
+{{--                                    </a>--}}
+{{--                                </li>--}}
+{{--                            @endif--}}
                             @if ($ukt > 0)
                                 <li class="nav-item">
                                     <a href="{{route('admin.TarifUKT.show')}}" class="nav-link">
