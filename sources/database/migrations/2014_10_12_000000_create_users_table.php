@@ -32,7 +32,7 @@ class CreateUsersTable extends Migration
             $table->text('sso_refresh_token')->nullable();
 
             // Status Keaktifan
-            $table->tinyInteger('is_active')->default(1)->comment('1=Aktif, 0=Non-Aktif');
+            $table->tinyInteger('isactive')->default(1)->comment('1=Aktif, 0=Non-Aktif');
 
             $table->rememberToken();
             $table->timestamps();
