@@ -20,13 +20,13 @@ class Master_WaktuKuliah extends Model
      */
     protected $table = 'pmb_master_waktukuliah';
     protected $primaryKey = 'id';
-    // protected $fillable = [
-    //     'nik',
-    //     'role_access',
-    //     'password',
-    //     'created_at',
-    //     'created_by',
-    //     'updated_at',
-    //     'updated_by',
-    // ];
+
+    protected $fillable = [
+        'waktu',
+        'isactive',
+    ];
+
+    protected $casts = [
+        'isactive' => 'integer',
+    ];
 }
