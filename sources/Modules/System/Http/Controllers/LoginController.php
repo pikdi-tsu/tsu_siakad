@@ -2,6 +2,8 @@
 
 namespace Modules\System\Http\Controllers;
 
+use App\Models\DataDosenTendik;
+use App\Models\DataMahasiswa;
 use App\Models\GroupUserModel;
 use App\Models\MasterGroupModel;
 use App\Models\ModulModel;
@@ -28,273 +30,102 @@ use Illuminate\Support\Facades\Session, Crypt, DB;
 
 class LoginController extends Controller
 {
-    // public function __construct()
-    // {
-    //     $this->middleware('checklogin');
-    // }
     use ThrottlesLogins;
 
     protected $maxAttempts = 5;
     protected $decayMinutes = 1;
-
-    public $question_1 = array(
-        'What is the first film you watched in theaters',
-        'What is your nickname?',
-        'What is your grandmothers maiden name?',
-        'What is the name of your favorite elementary school teacher?',
-        'Where did you meet your partner?',
-        'Where is your mothers city born?'
-    );
-
-    public $question_2 = array(
-        'What is your favorite food?',
-        'What is the name of your favorite sports team?',
-        'Whats your best hero name?',
-        'What is the name of your favorite singer?',
-        'Where did your parents city meet?',
-        'Where did you first work?'
-    );
 
     public function username()
     {
         return 'email';
     }
 
-    public function indexDosenTendik()
+    public function index()
     {
-        if (Auth::guard('dosen_tendik')->check()) {
-            return redirect('dashboard')->with('alert', ['title' => 'Success!', 'message' => 'Already login', 'status' => 'success']);
-        }
-//        if (Session::has('session')) {
-//            return redirect('dashboard')->with('alert',[
-//                'title' => 'success!',
-//                'message' => 'Already login',
-//                'status' => 'success'
-//            ]);
-//        }
-
-        $this->checkLockoutSession();
-
-//        $chance = 5;
-//        $time = 0;
-//        $time_chance = '00:00';
-//        $this->checkTimeChance();
-//
-//        $login_chance = Session::get('login_chance');
-//        if (Session::has('login_chance')) {
-//            $chance = $login_chance['chance'];
-//            $time = $login_chance['time_start'];
-//        }
-//
-//        if (Session::has('time_chance')) {
-//            $time_chance = date('i:s', Session::get('time_chance'));
-//        }
-
-        $data = array(
-            'title' => 'Login',
-            'menu'  => 'Login ',
-//            'chance' => $chance,
-//            'time' => $time,
-//            'time_chance' => $time_chance
-        );
-
-        return view('system::login/DosenTendik/loginform',$data);
-    }
-
-    public function indexMahasiswa()
-    {
-        if (Auth::guard('mahasiswa')->check()) {
-            return redirect('dashboard')->with('alert', ['title' => 'Success!', 'message' => 'Already login', 'status' => 'success']);
+        if (Auth::check()) {
+            return redirect()->route('dashboard')
+                ->with('alert', ['title' => 'Info', 'message' => 'Anda sudah login.', 'status' => 'info']);
         }
 
-//        if (Session::has('session')) {
-//            return redirect('dashboard')->with('alert',[
-//                'title' => 'success!',
-//                'message' => 'Already login',
-//                'status' => 'success'
-//            ]);
-//        }
+        $data = [
+            'title' => 'Login Administrator (Local)',
+            'app_name' => config('app.name', 'Siakad TSU'),
+        ];
 
-//        $chance = 5;
-//        $time = 0;
-//        $time_chance = '00:00';
-//        $this->checkTimeChance();
-
-        $this->checkLockoutSession();
-
-//        $login_chance = Session::get('login_chance');
-//        if (Session::has('login_chance')) {
-//            $chance = $login_chance['chance'];
-//            $time = $login_chance['time_start'];
-//        }
-//
-//        if (Session::has('time_chance')) {
-//            $time_chance = date('i:s', Session::get('time_chance'));
-//        }
-
-        $data = array(
-            'title' => 'Login',
-            'menu'  => 'Login ',
-//            'chance' => $chance,
-//            'time' => $time,
-//            'time_chance' => $time_chance
-        );
-        return view('system::login/Mahasiswa/loginform',$data);
+        return view('system::login.loginform', $data);
     }
 
-    private function checkLockoutSession()
-    {
-        if (Session::has('lockout_expiration')) {
-            $expiration = Session::get('lockout_expiration');
-            $remaining = $expiration - now()->timestamp;
-
-            if ($remaining > 0) {
-                Session::flash('alert', [
-                    'title' => 'Terlalu Banyak Percobaan',
-                    'message' => "Silakan coba lagi dalam $remaining detik.",
-                    'status' => 'danger'
-                ]);
-            } else {
-                Session::forget('lockout_expiration');
-            }
-        }
-    }
-
-    public function loginActionDosenTendik(Request $post)
-    {
-        // Panggil helper utama dengan parameter khusus Dosen
-        return $this->handleLogin($post, 'dosen_tendik', 'DOSEN_TENDIK');
-    }
-
-    public function loginActionMahasiswa(Request $post)
-    {
-        // Panggil helper utama dengan parameter khusus Mahasiswa
-        return $this->handleLogin($post, 'mahasiswa', 'MAHASISWA');
-    }
-
-    private function handleLogin(Request $post, string $guard, string $roleType)
+    public function login(Request $request)
     {
         // Validasi Input
-        $credentials = $post->validate([
-            'email' => ['required', 'email'],
+        $request->validate([
+            'identity' => ['required'], // Bisa Email atau Username
             'password' => ['required'],
         ]);
 
-        // Cek Throttling (Anti Brute Force)
-        if ($this->hasTooManyLoginAttempts($post)) {
-            $this->fireLockoutEvent($post);
-            $seconds = $this->limiter()->availableIn($this->throttleKey($post));
-            // 1. Simpan waktu "bebas penjara" di Session biasa (biar awet)
-            // Kita simpan timestamp kapan dia boleh login lagi
-            Session::put('lockout_expiration', now()->addSeconds($seconds)->timestamp);
-
-            Session::flash('alert', ['title' => 'Terlalu Banyak Percobaan', 'message' => "Silakan coba lagi dalam $seconds detik.", 'status' => 'danger']);
-            return redirect()->back();
+        // Cek Throttling
+        if ($this->hasTooManyLoginAttempts($request)) {
+            $this->fireLockoutEvent($request);
+            $seconds = $this->limiter()->availableIn($this->throttleKey($request));
+            return back()->with('alert', ['title' => 'Blocked', 'message' => "Terlalu banyak percobaan. Tunggu $seconds detik.", 'status' => 'danger']);
         }
 
-        // Coba Login ke Guard yang Sesuai
-        if (Auth::guard($guard)->attempt($credentials)) {
+        // Tentukan Login Pakai Email atau Username
+        $loginType = filter_var($request->identity, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
 
-            $user = Auth::guard($guard)->user();
+        // Credentials
+        $credentials = [
+            $loginType  => $request->identity,
+            'password'  => $request->password,
+            'isactive' => 1 // Hanya user aktif yang boleh masuk
+        ];
 
-            // Cek Status Aktif
-            if (!$user->isactive) {
-                Auth::guard($guard)->logout();
-                $this->incrementLoginAttempts($post);
-                Session::flash('alert', ['title' => 'Error', 'message' => 'Akun Anda tidak aktif.', 'status' => 'danger']);
-                return redirect()->back();
-            }
+        // Eksekusi Login
+        if (Auth::attempt($credentials)) {
 
-            // Reset Percobaan Login (Jika sukses)
-            $this->clearLoginAttempts($post);
+            $request->session()->regenerate();
+            Session::put('appname', config('app.name'));
 
-            // Ambil Data Profil (Logic Pembeda)
-            $namaGroup = null;
-            $groupUser = collect([]);
+            $user = Auth::user();
+            $roles = $user->getRoleNames()->toArray();
 
-            if (!empty($user->role_access)) {
-                $masterGroup = MasterGroupModel::query()->where('KodeGroupUser', $user->role_access)->first();
-                $groupUser   = GroupUserModel::query()->where('KodeGroupUser', $user->role_access)->get();
-                if ($masterGroup) {
-                    $namaGroup = $masterGroup->NamaGroup;
-                }
-            }
-
-            $namaUser = null;
-            $identifier = ($guard === 'mahasiswa') ? $user->nim : $user->nik;
-
-            if ($guard === 'mahasiswa') {
-                $profil = SiakadMahasiswa::query()->where('nim', $identifier)->first();
-                if (!$profil) {
-                    Auth::guard($guard)->logout();
-                    Session::flash('alert', ['title' => 'Error', 'message' => 'Data profil Siakad tidak ditemukan.', 'status' => 'danger']);
-                    return redirect()->back();
-                }
-                $namaUser = $profil->nama_lengkap;
+            if (in_array('dosen', $roles) || in_array('tendik', $roles) || in_array('super admin', $roles) || in_array('admin', $roles)) {
+                $profil = DataDosenTendik::query()->where('user_id', $user->id)->first();
+                $roleAktif = 'tendik';
             } else {
-                $namaUser = $user->name;
+                $profil = DataMahasiswa::query()->where('user_id', $user->id)->first();
+                $roleAktif = 'mahasiswa';
             }
 
-            // Cek Password Default (Redirect ke Ganti Password)
-            if (Hash::check(defaultpassword(), $user->password)) {
-                Session::put('tmp', [
-                    'tmp_nik'   => $identifier,
-                    'tmp_nama'  => $namaUser,
-                    'tmp_email' => $user->email,
-                    'tmp_role'  => $user->role_access,
-                    'tmp_guard' => $guard,
-                ]);
-                return redirect('NewPassword')->with('alert', ['title' => 'Informasi', 'message' => 'Silakan Input Password Baru!', 'status' => 'info']);
+            if ($profil) {
+                Session::put('active_role', $roleAktif);
+                Session::put('active_profile_id', $profil->id);
+                Session::put('active_identity', $profil->nim ?? $profil->nik);
+            } else {
+                // logout paksa jika akun baru/not found
+                 Auth::logout();
+                 return back()->with('alert', ['title' => 'Gagal', 'message' => 'Profil User tidak ditemukan.', 'status' => 'danger']);
             }
 
-            $post->session()->regenerate();
+            $this->clearLoginAttempts($request);
 
-            // Buat Session Utama & Redirect Dashboard
-            $post->session()->regenerate();
-
-            Session::put('session', [
-                'user_nik'      => $identifier,
-                'user_nama'     => $namaUser,
-                'email'         => $user->email,
-                'role_access'   => $user->role_access,   // <-- Ambil dari DB
-                'privilege_pmb' => $user->privilege_pmb, // <-- Ambil dari DB (PMB)
-            ]);
-
-            Session::put('namagroup', $namaGroup);
-            Session::put('groupuser', $groupUser);
-            Session::put('appname', 'Siakad');
-
-            Session::flash('alert', ['title' => 'Success', 'message' => 'Berhasil Login!', 'status' => 'success']);
-            return redirect()->intended('dashboard');
-
+            return redirect()->route('dashboard')
+                ->with('alert', ['title' => 'Success', 'message' => 'Login Lokal Berhasil!', 'status' => 'success']);
         }
 
-        // Login Gagal
-        $this->incrementLoginAttempts($post);
-        Session::flash('alert', ['title' => 'Gagal', 'message' => 'Email atau Password salah.', 'status' => 'danger']);
-        return redirect()->back();
+        $this->incrementLoginAttempts($request);
+        return back()->with('alert', ['title' => 'Gagal', 'message' => 'Akun tidak ditemukan atau password salah.', 'status' => 'danger']);
     }
 
     public function logout(Request $req)
     {
-        $redirectRoute = '';
-
-        if (Auth::guard('mahasiswa')->check()) {
-            Auth::guard('mahasiswa')->logout();
-            $redirectRoute = 'login.mahasiswa';
-        } elseif (Auth::guard('dosen_tendik')->check()) {
-            Auth::guard('dosen_tendik')->logout();
-            $redirectRoute = 'login.dosen-tendik';
-        } elseif (Auth::guard('web')->check()) {
-            Auth::guard('web')->logout();
-            $redirectRoute = 'indexing';
-        }
+        Auth::logout();
 
         $req->session()->invalidate();
         $req->session()->regenerateToken();
-        Session::flash('alert', ['title' => 'Success', 'message' => 'Anda sudah logout', 'status' => 'success']);
 
-        return redirect(route($redirectRoute));
+        return redirect()->route('login')
+            ->with('alert', ['title' => 'Success', 'message' => 'Anda berhasil logout.', 'status' => 'success']);
     }
 
     public function loginChance()

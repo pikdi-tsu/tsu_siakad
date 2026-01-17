@@ -19,11 +19,12 @@ class CreateUsersTable extends Migration
             $table->uuid('id')->primary();
             // --- IDENTITAS SSO ---
             $table->uuid('sso_id')->nullable()->unique()->index();
-            // Username ini fleksibel: isinya NIM (Mhs) atau NIK (Dosen)
+            // Username NIM (Mhs) atau NIK (Dosen)
             $table->string('username')->unique()->nullable()->comment('Berisi NIM atau NIK dari Homebase');
 
             $table->string('name');
             $table->string('email')->unique();
+            $table->timestamp('email_verified_at')->nullable();
             $table->string('password')->nullable(); // Nullable (SSO)
             $table->string('avatar_url', 2048)->nullable();
 

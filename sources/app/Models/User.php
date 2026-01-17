@@ -97,6 +97,24 @@ class User extends Authenticatable
         if ($this->isDosen()) {
             return $this->dosen;
         }
-        return null; // Kalau admin pusat atau super admin mungkin gak punya profil spesifik
+        return null;
+    }
+
+    public function getProfilePhotoUrlAttribute()
+    {
+        // Cek foto dari SSO (avatar_url)
+        if (!empty($this->attributes['avatar_url'])) {
+            return $this->attributes['avatar_url'];
+        }
+
+        // Cek foto manual upload (profile_photo_path - bawaan template)
+        // (Jaga-jaga fitur upload foto manual)
+        if (!empty($this->attributes['profile_photo_path'])) {
+            return asset('storage/' . $this->attributes['profile_photo_path']);
+        }
+
+        // Default Avatar Huruf (Inisial Nama)
+        $name = trim($this->name);
+        return 'https://ui-avatars.com/api/?name=' . urlencode($name) . '&color=7F9CF5&background=2d394a';
     }
 }

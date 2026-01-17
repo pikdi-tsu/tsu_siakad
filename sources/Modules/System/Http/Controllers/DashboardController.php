@@ -13,7 +13,8 @@ class DashboardController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('checklogin');
+//        $this->middleware('checklogin');
+        $this->middleware('auth');
     }
 
     public function index(){

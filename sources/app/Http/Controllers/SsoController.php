@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\DataDosenTendik;
+use App\Models\DataMahasiswa;
 use App\Models\User;
 use App\Services\UserSyncService;
 use Illuminate\Http\Client\ConnectionException;
@@ -85,6 +87,27 @@ class SsoController extends Controller
                 session(['homebase_access_token' => $accessToken]);
 
                 Auth::login($user);
+
+                // --- TAMBAHAN: SET SESSION PROFIL ---
+                // Cek role user dari Spatie atau UserSync
+                $roles = $user->getRoleNames()->toArray(); // ['dosen', 'admin']
+
+                // Prioritas Dosen
+                if (in_array('dosen', $roles, true) || in_array('tendik', $roles, true)) {
+                    $profil = DataDosenTendik::query()->where('user_id', $user->id)->first();
+                    $roleAktif = 'dosen';
+                } else {
+                    $profil = DataMahasiswa::query()->where('user_id', $user->id)->first();
+                    $roleAktif = 'mahasiswa';
+                }
+
+                if ($profil) {
+                    session([
+                        'active_role' => $roleAktif,
+                        'active_profile_id' => $profil->id,
+                        'active_identity' => $profil->nim ?? $profil->nik
+                    ]);
+                }
 
                 return redirect()->route('dashboard')
                     ->with('alert', ['title' => 'Success', 'message' => 'Login Berhasil!', 'status' => 'success']);
