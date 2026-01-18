@@ -56,7 +56,7 @@ class PikdiUserSeeder extends Seeder
             ]
         );
 
-        $this->command->info('Akun Backdoor PIKDI berhasil ditanam & Profil Dummy dibuat!');
+        $this->command->info('Akun Backdoor PIKDI berhasil ditanam & Profil dibuat!');
         $this->command->info("Email: $email");
         $this->command->info("Username: $username");
         $this->command->info("Password: (Sesuai Config)");

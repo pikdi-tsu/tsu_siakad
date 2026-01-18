@@ -74,7 +74,7 @@ class EmergencyLoginController extends Controller
 
             if ($targetRole === 'mahasiswa') {
                 $profil = DataMahasiswa::query()->where('user_id', $user->id)->first();
-            } elseif (in_array($targetRole, ['dosen', 'tendik', 'admin_prodi'])) {
+            } elseif (in_array($targetRole, ['dosen', 'tendik', 'admin prodi'])) {
                 $profil = DataDosenTendik::query()->where('user_id', $user->id)->first();
             }
 

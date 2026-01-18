@@ -26,20 +26,18 @@ return new class extends Migration
             $table->unsignedBigInteger('id_prodi')->nullable();
 
             // Relasi ke Master Jenjang (pmb_master_jenjang -> id [bigint unsigned])
-            // Biasanya prodi udah punya jenjang, tapi kadang di Siakad perlu disimpan eksplisit
             $table->unsignedBigInteger('id_jenjang')->nullable();
 
             // Relasi ke Waktu Kuliah (Pagi/Sore/Karyawan)
             $table->bigInteger('id_waktu_kuliah')->nullable();
 
-            $table->string('angkatan', 4); // Contoh: 2024
+            $table->string('angkatan', 4);
             $table->string('status_akademik')->default('AKTIF'); // AKTIF, CUTI, DO, LULUS
             $table->string('jalur_masuk')->nullable(); // SBMPTN, MANDIRI, PRESTASI (Bisa ambil dari pmb_master_beasiswa/jalur)
 
             // --- DATA PRIBADI (Diambil dari pmb_biodata) ---
-            $table->string('nik_ktp', 100)->unique()->nullable(); // Sesuai pmb_biodata varchar(100)
+            $table->string('nik_ktp', 100)->unique()->nullable();
             $table->string('nisn', 20)->nullable();
-
             $table->string('tempat_lahir', 100)->nullable();
             $table->date('tgl_lahir')->nullable();
             $table->string('jenis_kelamin', 20)->nullable(); // L/P
@@ -48,14 +46,12 @@ return new class extends Migration
             $table->string('email_pribadi')->nullable(); // Cadangan selain email kampus
 
             // --- DATA WILAYAH (Sesuai Master PMB) ---
-            // HATI-HATI: Provinsi pakai CHAR(2), bukan BigInt
             $table->char('id_provinsi', 2)->collation('utf8mb4_0900_ai_ci')->nullable();
-            // Kabupaten pakai BigInt Unsigned
             $table->unsignedBigInteger('id_kabupaten')->nullable();
             $table->text('alamat_lengkap')->nullable();
             $table->string('kodepos', 10)->nullable();
 
-            // --- DATA ORANG TUA (Ringkasan Penting Saja) ---
+            // --- DATA ORANG TUA ---
             $table->string('nama_ayah')->nullable();
             $table->string('nama_ibu')->nullable();
             $table->string('no_hp_ortu', 25)->nullable();
@@ -65,7 +61,7 @@ return new class extends Migration
             // --- DEFINISI FOREIGN KEY ---
             $table->foreign('id_prodi')
                 ->references('id')->on('pmb_master_jurusankuliah')
-                ->onDelete('restrict'); // Jangan hapus prodi kalau masih ada mahasiswanya
+                ->onDelete('restrict');
             $table->foreign('id_jenjang')
                 ->references('id')->on('pmb_master_jenjang')
                 ->onDelete('restrict');
@@ -85,8 +81,7 @@ return new class extends Migration
     /**
      * Reverse the migrations.
      */
-    public function down(): void
-    {
-        Schema::dropIfExists('data_mahasiswas');
+    public function down(): void {
+        Schema::dropIfExists(config('app.module.name', 'siakad') . '_data_mahasiswas');
     }
 };

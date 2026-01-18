@@ -11,6 +11,7 @@ use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Spatie\Permission\Models\Role;
 
@@ -131,7 +132,7 @@ class SsoController extends Controller
 
         } catch (\Exception $e) {
             // KASUS: ERROR LAIN-LAIN (General)
-            \Log::error($e->getMessage());
+            Log::error($e->getMessage());
             return response()->view('system::errors.index', [
                 'title' => 'Terjadi Kesalahan Login',
                 'message' => 'Terjadi kesalahan teknis saat memproses login',

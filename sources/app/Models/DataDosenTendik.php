@@ -5,12 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class DataDosenTendik extends Model
+class DataDosenTendik extends Authenticatable
 {
     use HasFactory, HasUuids;
 
-    protected $table = 'siakad_data_dosen_tendiks';
     protected $primaryKey = 'id';
     public $incrementing = false;
     protected $keyType = 'string';
@@ -20,6 +20,11 @@ class DataDosenTendik extends Model
     protected $casts = [
         'tgl_lahir' => 'date',
     ];
+
+    public function getTable()
+    {
+        return config('app.module.name') . '_data_dosen_tendiks';
+    }
 
     public function user()
     {

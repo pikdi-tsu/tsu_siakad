@@ -14,7 +14,6 @@ class User extends Authenticatable
 {
     use HasFactory, Notifiable, HasUuids, HasRoles;
 
-    protected $table = 'siakad_users';
     protected $primaryKey = 'id';
     public $incrementing = false;
     protected $keyType = 'string';
@@ -42,7 +41,7 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
-        'sso_access_token',  // Sembunyikan token biar gak bocor di API
+        'sso_access_token',
         'sso_refresh_token',
     ];
 
@@ -52,8 +51,13 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
-        'isactive' => 'boolean', // Biar otomatis jadi true/false di PHP
+        'isactive' => 'boolean',
     ];
+
+    public function getTable()
+    {
+        return config('app.module.name' . '_data_dosen_tendiks');
+    }
 
     // Relasi ke Profil Mahasiswa
     public function mahasiswa()

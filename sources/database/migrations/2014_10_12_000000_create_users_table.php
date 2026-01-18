@@ -17,24 +17,16 @@ class CreateUsersTable extends Migration
 
         Schema::create($tableName, static function (Blueprint $table) {
             $table->uuid('id')->primary();
-            // --- IDENTITAS SSO ---
-            $table->uuid('sso_id')->nullable()->unique()->index();
-            // Username NIM (Mhs) atau NIK (Dosen)
+            $table->uuid('sso_id')->nullable()->unique()->index()->comment('ID SSO dari TSU Homebase');
             $table->string('username')->unique()->nullable()->comment('Berisi NIM atau NIK dari Homebase');
-
             $table->string('name');
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password')->nullable(); // Nullable (SSO)
             $table->string('avatar_url', 2048)->nullable();
-
-            // Token SSO
             $table->text('sso_access_token')->nullable();
             $table->text('sso_refresh_token')->nullable();
-
-            // Status Keaktifan
             $table->tinyInteger('isactive')->default(1)->comment('1=Aktif, 0=Non-Aktif');
-
             $table->rememberToken();
             $table->timestamps();
         });
@@ -57,6 +49,6 @@ class CreateUsersTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists(config('auth.providers.users.table'));
     }
 }
