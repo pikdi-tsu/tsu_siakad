@@ -19,8 +19,7 @@
                   One Step Ahead This Season
                 </h2>
                 <div>
-                  <a href="{{route('login.mahasiswa')}}" class="primary-btn2 mb-3 mb-sm-0">Login Mahasiswa</a>
-                  <a href="{{route('login.dosen-tendik')}}" class="primary-btn2 ml-sm-3 ml-0">Login Dosen</a>
+                    <a href="{{route('login')}}" class="primary-btn2 ml-sm-3 ml-0">Login</a>
                 </div>
               </div>
             </div>
