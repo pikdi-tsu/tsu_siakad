@@ -1,18 +1,17 @@
-# --- 1. SAMPAH SISTEM OPERASI (Wajib) ---
+# --- 1. SAMPAH SISTEM OPERASI ---
 .DS_Store
 Thumbs.db
 ehthumbs.db
 Desktop.ini
 
-# --- 2. SAMPAH EDITOR / IDE (Ini yang bandel tadi) ---
+# --- 2. SAMPAH EDITOR / IDE ---
 .idea
 .vscode
 *.swp
 *.swo
 *.sublime-workspace
 
-# --- 3. BLOKIR KERAS FOLDER 'SOURCES' (Safety Net) ---
-# Kita tulis path lengkap biar Git di Root gak salah paham
+# --- FOLDER 'SOURCES' (Safety Net) ---
 
 # > Keamanan & Environment
 sources/.env
@@ -20,7 +19,7 @@ sources/.env.backup
 sources/.env.production
 sources/auth.json
 
-# > Dependencies (Berat & Ribuan File)
+# > Dependencies
 sources/vendor
 sources/node_modules
 
@@ -40,7 +39,7 @@ sources/.phpunit.result.cache
 sources/npm-debug.log
 sources/yarn-error.log
 
-# --- 4. FOLDER PUBLIC (Di Luar Sources) ---
+# --- FOLDER PUBLIC ---
 public/storage
 public/hot
 public/build

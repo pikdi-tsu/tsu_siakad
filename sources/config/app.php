@@ -15,6 +15,41 @@ return [
 
     'name' => env('APP_NAME', 'Laravel'),
 
+    'module' => [
+        'full_name' => env('MODULE_FULL_NAME', 'tsu_siakad'),
+        'name' => env('MODULE_NAME', 'siakad'),
+    ],
+
+    // Main Apps
+    'tsu_homebase' => [
+        'url' => env('TSU_SSO_URL'),
+    ],
+
+    // Roles&Permissions
+    'roles' => [
+        'allowed' => env('APP_ALLOWED_ROLES')
+            ? explode(',', env('APP_ALLOWED_ROLES'))
+            : [],
+    ],
+
+    // Oauth Authorization Grant
+    'oauth' =>[
+        'authorization_id' => env('TSU_SSO_CLIENT_ID'),
+        'authorization_secret' => env('TSU_SSO_CLIENT_SECRET'),
+        'authorization_redirect' => env('TSU_SSO_REDIRECT_URI')
+    ],
+
+    // PIKDI Settings
+    'pikdi' => [
+        'name' => env('PIKDI_ADMIN_NAME', 'PIKDI TSU'),
+        'username' => env('PIKDI_ADMIN_USERNAME', 'pikditsu'),
+        'email' => env('PIKDI_ADMIN_EMAIL', 'pikdi@tsu.ac.id'),
+        'password' => env('MODULE_FULL_NAME', 'tsu_template'),
+        'key' => [
+            'emergency' => env('PIKDI_EMERGENCY_SECRET', 'pikdiemergency@TSU25'),
+            'rescue' => env('PIKDI_RESCUE_SECRET')
+        ],
+    ],
     /*
     |--------------------------------------------------------------------------
     | Application Environment
