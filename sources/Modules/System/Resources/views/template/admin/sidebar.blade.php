@@ -81,6 +81,353 @@
                     </ul>
                 </li>
                 @php
+                    $fakultas = checkmenu('Master Data', 'Master Fakultas');
+                    $jurusan = checkmenu('Master Data', 'Master Jurusan');
+                    $jenjang = checkmenu('Master Data', 'Master Jenjang Pendidikan');
+                    $batch = checkmenu('Master Data', 'Master Batch Pendaftaran');
+                    $ukt = checkmenu('Master Data', 'Master Tarif UKT');
+                    $provinsi = checkmenu('Master Data', 'Master Provinsi');
+                    $kabupaten = checkmenu('Master Data', 'Master Kabupaten Kota');
+                    $kecamatan = checkmenu('Master Data', 'Master kecamatan');
+                    $kelurahan = checkmenu('Master Data', 'Master Kelurahan');
+                @endphp
+                @if($fakultas+$jurusan+$jenjang+$batch+$ukt+$provinsi+$kabupaten+$kecamatan+$kelurahan>0)
+                    <li class="nav-item"> {{-- menu-open --}}
+                        <a href="#" class="nav-link"> {{-- active --}}
+                            <i class="nav-icon fas fa-clipboard-list"></i>
+                            <p>Master Data
+                                <i class="right fas fa-angle-left"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a href="#" class="nav-link"> {{-- active --}}
+                                    <i class="nav-icon fas fa-graduation-cap"></i>
+                                    <p>Perguruan Tinggi
+                                        <i class="right fas fa-angle-left"></i>
+                                    </p>
+                                </a>
+                                <ul class="nav nav-treeview">
+                                    @if ($fakultas > 0)
+                                        <li class="nav-item">
+                                            <a href="{{route('admin.fakultas.show')}}" class="nav-link">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                Fakultas
+                                            </a>
+                                        </li>
+                                    @endif
+                                    @if ($jurusan > 0)
+                                        <li class="nav-item">
+                                            <a href="{{route('admin.Jurusan.show')}}" class="nav-link">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                Program Studi
+                                            </a>
+                                        </li>
+                                    @endif
+                                    @if ($jenjang > 0)
+                                        <li class="nav-item">
+                                            <a href="{{route('admin.Jenjang.show')}}" class="nav-link">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                Jenjang Pendidikan Universitas
+                                            </a>
+                                        </li>
+                                    @endif
+                                    @if ($jenjang > 0)
+                                        <li class="nav-item">
+                                            <a href="{{route('sistem_kuliah.index')}}" class="nav-link">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                Sistem Kuliah
+                                            </a>
+                                        </li>
+                                    @endif
+                                    @if ($jenjang > 0)
+                                        <li class="nav-item">
+                                            <a href="{{route('ruang_kuliah.index')}}" class="nav-link">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                Ruang Kuliah
+                                            </a>
+                                        </li>
+                                    @endif
+                                    @if ($jenjang > 0)
+                                        <li class="nav-item">
+                                            <a href="{{route('kegiatan_akademik.index')}}" class="nav-link">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                Kegiatan Akademik
+                                            </a>
+                                        </li>
+                                    @endif
+                                    @if ($jenjang > 0)
+                                        <li class="nav-item">
+                                            <a href="{{route('kalender_akademik.index')}}" class="nav-link">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                Kalender Akademik
+                                            </a>
+                                        </li>
+                                    @endif
+                                    @if ($ukt > 0)
+                                        <li class="nav-item">
+                                            <a href="{{route('admin.TarifUKT.show')}}" class="nav-link">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                Tarif UKT
+                                            </a>
+                                        </li>
+                                    @endif
+                                </ul>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#" class="nav-link"> {{-- active --}}
+                                    <i class="nav-icon fas fa-person-booth"></i>
+                                    <p>Perkuliahan
+                                        <i class="right fas fa-angle-left"></i>
+                                    </p>
+                                </a>
+                                <ul class="nav nav-treeview">
+                                    @if ($fakultas > 0)
+                                        <li class="nav-item">
+                                            <a href="{{route('jenis_matakuliah.index')}}" class="nav-link">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                Jenis Matakuliah
+                                            </a>
+                                        </li>
+                                    @endif
+                                    @if ($fakultas > 0)
+                                        <li class="nav-item">
+                                            <a href="{{route('kelompok_matakuliah.index')}}" class="nav-link">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                Kelompok Matakuliah
+                                            </a>
+                                        </li>
+                                    @endif
+                                    @if ($fakultas > 0)
+                                        <li class="nav-item">
+                                            <a href="{{route('bidang_ilmu.index')}}" class="nav-link">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                Bidang Ilmu
+                                            </a>
+                                        </li>
+                                    @endif
+                                    @if ($fakultas > 0)
+                                        <li class="nav-item">
+                                            <a href="{{route('unsur_nilai.index')}}" class="nav-link">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                Unsur Nilai
+                                            </a>
+                                        </li>
+                                    @endif
+                                    @if ($fakultas > 0)
+                                        <li class="nav-item">
+                                            <a href="{{route('kelas_perkuliahan.index')}}" class="nav-link">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                Kelas Perkuliahan
+                                            </a>
+                                        </li>
+                                    @endif
+                                    @if ($fakultas > 0)
+                                        <li class="nav-item">
+                                            <a href="{{route('slot_waktu.index')}}" class="nav-link">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                Slot Waktu
+                                            </a>
+                                        </li>
+                                    @endif
+                                    @if ($fakultas > 0)
+                                        <li class="nav-item">
+                                            <a href="{{route('status_hadir.index')}}" class="nav-link">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                Status Hadir
+                                            </a>
+                                        </li>
+                                    @endif
+                                    @if ($fakultas > 0)
+                                        <li class="nav-item">
+                                            <a href="{{route('jenis_pertemuan.index')}}" class="nav-link">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                Jenis Pertemuan
+                                            </a>
+                                        </li>
+                                    @endif
+                                    @if ($fakultas > 0)
+                                        <li class="nav-item">
+                                            <a href="{{route('jenis_modul_mata_kuliah.index')}}" class="nav-link">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                Jenis Modul Mata Kuliah
+                                            </a>
+                                        </li>
+                                    @endif
+                                    @if ($fakultas > 0)
+                                        <li class="nav-item">
+                                            <a href="{{route('jenis_kegiatan_pendukung.index')}}" class="nav-link">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                Jenis Kegiatan Pendukung
+                                            </a>
+                                        </li>
+                                    @endif
+                                </ul>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#" class="nav-link"> {{-- active --}}
+                                    <i class="nav-icon fas fa-id-card"></i>
+                                    <p>Biodata
+                                        <i class="right fas fa-angle-left"></i>
+                                    </p>
+                                </a>
+                                <ul class="nav nav-treeview">
+                                    @if ($fakultas > 0)
+                                        <li class="nav-item">
+                                            <a href="{{route('agama.index')}}" class="nav-link">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                Agama
+                                            </a>
+                                        </li>
+                                    @endif
+                                    @if ($fakultas > 0)
+                                        <li class="nav-item">
+                                            <a href="{{route('pekerjaan.index')}}" class="nav-link">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                Pekerjaan
+                                            </a>
+                                        </li>
+                                    @endif
+                                    @if ($fakultas > 0)
+                                        <li class="nav-item">
+                                            <a href="{{route('penghasilan.index')}}" class="nav-link">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                Penghasilan
+                                            </a>
+                                        </li>
+                                    @endif
+                                    @if ($fakultas > 0)
+                                        <li class="nav-item">
+                                            <a href="{{route('jas_almamater.index')}}" class="nav-link">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                Jas Almamater
+                                            </a>
+                                        </li>
+                                    @endif
+                                </ul>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#" class="nav-link"> {{-- active --}}
+                                    <i class="nav-icon fas fa-child"></i>
+                                    <p>Mahasiswa
+                                        <i class="right fas fa-angle-left"></i>
+                                    </p>
+                                </a>
+                                <ul class="nav nav-treeview">
+                                    @if ($fakultas > 0)
+                                        <li class="nav-item">
+                                            <a href="{{route('status_mahasiswa.index')}}" class="nav-link">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                Status Mahasiswa
+                                            </a>
+                                        </li>
+                                    @endif
+                                    @if ($fakultas > 0)
+                                        <li class="nav-item">
+                                            <a href="{{route('jenis_tinggal.index')}}" class="nav-link">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                Jenis Tinggal
+                                            </a>
+                                        </li>
+                                    @endif
+                                    @if ($fakultas > 0)
+                                        <li class="nav-item">
+                                            <a href="{{route('transportasi.index')}}" class="nav-link">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                Transportasi
+                                            </a>
+                                        </li>
+                                    @endif
+                                    @if ($fakultas > 0)
+                                        <li class="nav-item">
+                                            <a href="{{route('kebutuhan_khusus.index')}}" class="nav-link">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                Kebutuhan Khusus
+                                            </a>
+                                        </li>
+                                    @endif
+                                </ul>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#" class="nav-link"> {{-- active --}}
+                                    <i class="nav-icon fas fa-map"></i>
+                                    <p>Wilayah
+                                        <i class="right fas fa-angle-left"></i>
+                                    </p>
+                                </a>
+                                <ul class="nav nav-treeview">
+                                    @if ($provinsi > 0)
+                                        <li class="nav-item">
+                                            <a href="{{route('admin.Provinsi.show')}}" class="nav-link">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                Provinsi
+                                            </a>
+                                        </li>
+                                    @endif
+                                    @if ($kabupaten > 0)
+                                        <li class="nav-item">
+                                            <a href="{{route('admin.Kabupaten.show')}}" class="nav-link">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                Kabupaten/Kota
+                                            </a>
+                                        </li>
+                                    @endif
+                                    @if ($kecamatan > 0)
+                                        <li class="nav-item">
+                                            <a href="{{route('admin.Kecamatan.show')}}" class="nav-link">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                Kecamatan
+                                            </a>
+                                        </li>
+                                    @endif
+                                    @if ($kelurahan > 0)
+                                        <li class="nav-item">
+                                            <a href="{{route('admin.Kelurahan.show')}}" class="nav-link">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                Kelurahan
+                                            </a>
+                                        </li>
+                                    @endif
+                                </ul>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#" class="nav-link"> {{-- active --}}
+                                    <i class="nav-icon fas fa-users-cog"></i>
+                                    <p>Settings
+                                        <i class="right fas fa-angle-left"></i>
+                                    </p>
+                                </a>
+                                <ul class="nav nav-treeview">
+                                    @if ($fakultas > 0)
+                                        <li class="nav-item">
+                                            <a href="{{route('kategori_kuesioner_layanan.index')}}" class="nav-link">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                Kuesioner Layanan
+                                            </a>
+                                        </li>
+                                    @endif
+                                    @if ($fakultas > 0)
+                                        <li class="nav-item">
+                                            <a href="{{route('setting.prodi.index')}}" class="nav-link">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                Setting Prodi
+                                            </a>
+                                        </li>
+                                    @endif
+                                    @if ($fakultas > 0)
+                                        <li class="nav-item">
+                                            <a href="{{route('periode_akademik.index')}}" class="nav-link">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                Periode Akademik
+                                            </a>
+                                        </li>
+                                    @endif
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                @endif
+                @php
                     $changepassword = checkmenu('Tools','Change Password');
                     $listmenu = checkmenu('Tools','List Menu');
                     $groupuser = checkmenu('Tools','Group User');

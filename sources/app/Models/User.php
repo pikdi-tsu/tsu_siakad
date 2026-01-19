@@ -56,7 +56,7 @@ class User extends Authenticatable
 
     public function getTable()
     {
-        return config('app.module.name' . '_data_dosen_tendiks');
+        return config('auth.providers.users.table');
     }
 
     // Relasi ke Profil Mahasiswa
