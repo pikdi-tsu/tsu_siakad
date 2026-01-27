@@ -44,6 +44,27 @@ use Modules\System\Http\Controllers\masterdata\KelompokMataKuliahController;
 use Modules\System\Http\Controllers\masterdata\JenisModulMataKuliahController;
 use Modules\System\Http\Controllers\masterdata\JenisKegiatanPendukungController;
 use Modules\System\Http\Controllers\masterdata\KategoriKuesionerLayananController;
+use Modules\System\Http\Controllers\masterdata\{
+    DataPerguruanTinggiController,
+    ProgramStudiController,
+    KonsentrasiController,
+    TingkatPendidikanUniversitasController,
+    InstansiController,
+    ContactPersonController,
+    TingkatPendidikanController,
+    GedungController,
+    LokasiKampusController,
+    KelompokPerkuliahanController,
+    GroupMkWajibPilihanController,
+    JenisSertifikatController,
+    PenyelenggaraSertifikatController,
+    NegaraController,
+    JenisPegawaiController,
+    GolonganPangkatController,
+    JabatanFungsionalController,
+    JabatanStrukturalController,
+    StatusKeaktifanController
+};
 
 /*
 |--------------------------------------------------------------------------
@@ -374,49 +395,200 @@ Route::prefix('')->group(function () {
                 Route::get('/EditUKT/{params}', [TarifUKTController::class, 'ShowUKT'])->name('admin.TarifUKT.Edit');
                 Route::get('/Status/{params1}/{params2}', [TarifUKTController::class, 'delete'])->name('admin.TarifUKT.delete');
             });
-        });
 
-        //Setting
-        Route::prefix('setting')->group(function () {
-            //Change Password
-            Route::get('/changepassword', [SettingController::class, 'showChangePassword'])->name('show.changepassword');
-            Route::post('/changepasswordsave', [SettingController::class, 'saveChangePassword'])->name('save.changepassword');
+            // Data Perguruan Tinggi
+            Route::prefix('DataPerguruanTinggi')->group(function () {
+                Route::get('/', [DataPerguruanTinggiController::class, 'index'])->name('perguruan_tinggi.index');
+                Route::post('/store', [DataPerguruanTinggiController::class, 'store'])->name('perguruan_tinggi.store');
+                Route::get('/edit/{id}', [DataPerguruanTinggiController::class, 'edit'])->name('perguruan_tinggi.edit');
+                Route::delete('/delete/{id}', [DataPerguruanTinggiController::class, 'destroy'])->name('perguruan_tinggi.delete');
+            });
 
-            //Edit Profile
-            Route::get('/changeprofile', [SettingController::class, 'showEditProfile'])->name('show.changeprofile');
-            Route::post('/changeprofilesave', [SettingController::class, 'saveEditProfile'])->name('save.changeprofile');
+            // Program Studi
+            Route::prefix('ProgramStudi')->group(function () {
+                Route::get('/', [ProgramStudiController::class, 'index'])->name('program_studi.index');
+                Route::post('/store', [ProgramStudiController::class, 'store'])->name('program_studi.store');
+                Route::get('/edit/{id}', [ProgramStudiController::class, 'edit'])->name('program_studi.edit');
+                Route::delete('/delete/{id}', [ProgramStudiController::class, 'destroy'])->name('program_studi.delete');
+            });
 
-            //User Management
-            Route::get('/usermanagement', [SettingController::class, 'userManagement'])->name('show.userManagement');
-            Route::get('/tabelPegawai', [SettingController::class, 'table_pegawai'])->name('show.tabelPegawai');
-            Route::get('/tabelMahasiswa', [SettingController::class, 'table_mahasiswa'])->name('show.tabelMahasiswa');
-            Route::get('/finduser', [SettingController::class, 'searchNama'])->name('show.finduser');
-            Route::post('/StoreUser', [SettingController::class, 'StoreUser'])->name('show.saveUser');
-            Route::get('/detailuser/{params}', [SettingController::class, 'DetailUser'])->name('show.detailuser');
-            Route::get('/deleteuser/{params}', [SettingController::class, 'DeleteUser'])->name('show.deleteuser');
+            // Konsentrasi
+            Route::prefix('Konsentrasi')->group(function () {
+                Route::get('/', [KonsentrasiController::class, 'index'])->name('konsentrasi.index');
+                Route::post('/store', [KonsentrasiController::class, 'store'])->name('konsentrasi.store');
+                Route::get('/edit/{id}', [KonsentrasiController::class, 'edit'])->name('konsentrasi.edit');
+                Route::delete('/delete/{id}', [KonsentrasiController::class, 'destroy'])->name('konsentrasi.delete');
+            });
 
-            //User Reset
-            Route::get('/userreset', [SettingController::class, 'UserReset'])->name('UserReset.show');
-            Route::get('/userreset_tabelPegawai', [SettingController::class, 'UserReset_TablePegawai'])->name('UserReset.tabelPegawai');
-            Route::get('/userreset_tabelMahasiswa', [SettingController::class, 'UserReset_TableMahasiswa'])->name('UserReset.tabelMahasiswa');
-            Route::get('/ResetPassword/{params}', [SettingController::class, 'ResetPassword'])->name('UserReset.ResetPassword');
-            Route::get('/ResetQA/{params}', [SettingController::class, 'ResetQA'])->name('UserReset.ResetQA');
+            // Tingkat Pendidikan Universitas
+            Route::prefix('TingkatPendidikanUniversitas')->group(function () {
+                Route::get('/', [TingkatPendidikanUniversitasController::class, 'index'])->name('tingkat_pendidikan_univ.index');
+                Route::post('/store', [TingkatPendidikanUniversitasController::class, 'store'])->name('tingkat_pendidikan_univ.store');
+                Route::get('/edit/{id}', [TingkatPendidikanUniversitasController::class, 'edit'])->name('tingkat_pendidikan_univ.edit');
+                Route::delete('/delete/{id}', [TingkatPendidikanUniversitasController::class, 'destroy'])->name('tingkat_pendidikan_univ.delete');
+            });
 
-            //List Menu
-            Route::get('/ShowMenu', [SettingController::class, 'ShowMenu'])->name('menu.show');
-            Route::get('/LisMenu', [SettingController::class, 'table_menu'])->name('menu.TabelMenu');
-            Route::post('/SaveUpdateMenu', [SettingController::class, 'SaveUpdateMenu'])->name('menu.SaveMenu');
-            Route::get('/GetMenu/{params}', [SettingController::class, 'GetMenu'])->name('menu.GetMenu');
-            Route::get('/DeleteAktif/{params1}/{params2}', [SettingController::class, 'DeleteMenu'])->name('menu.DeleteAktif');
+            // Instansi
+            Route::prefix('Instansi')->group(function () {
+                Route::get('/', [InstansiController::class, 'index'])->name('instansi.index');
+                Route::post('/store', [InstansiController::class, 'store'])->name('instansi.store');
+                Route::get('/edit/{id}', [InstansiController::class, 'edit'])->name('instansi.edit');
+                Route::delete('/delete/{id}', [InstansiController::class, 'destroy'])->name('instansi.delete');
+            });
 
-            //Group User
-            Route::get('/ShowGroupUser', [SettingController::class, 'ShowGroupUser'])->name('gruopuser.show');
-            Route::get('/LisGroupUser', [SettingController::class, 'table_groupuser'])->name('gruopuser.TabelGroupUser');
-            Route::post('/SaveUpdateGroupUser', [SettingController::class, 'SaveUpdateGroupUser'])->name('gruopuser.Save');
-            Route::get('/GetGroupUser/{params}', [SettingController::class, 'GetGroupUser'])->name('gruopuser.GetGroupUser');
-            Route::get('/ShowPrivilege/{params}', [SettingController::class, 'ShowPrivilege'])->name('gruopuser.ShowPrivilege');
-            Route::post('/SavePrivilege/{params}', [SettingController::class, 'StorePrivilege'])->name('gruopuser.SavePrivilege');
+            // Contact Person
+            Route::prefix('ContactPerson')->group(function () {
+                Route::get('/', [ContactPersonController::class, 'index'])->name('contact_person.index');
+                Route::post('/store', [ContactPersonController::class, 'store'])->name('contact_person.store');
+                Route::get('/edit/{id}', [ContactPersonController::class, 'edit'])->name('contact_person.edit');
+                Route::delete('/delete/{id}', [ContactPersonController::class, 'destroy'])->name('contact_person.delete');
+            });
+
+            // Tingkat Pendidikan
+            Route::prefix('TingkatPendidikan')->group(function () {
+                Route::get('/', [TingkatPendidikanController::class, 'index'])->name('tingkat_pendidikan.index');
+                Route::post('/store', [TingkatPendidikanController::class, 'store'])->name('tingkat_pendidikan.store');
+                Route::get('/edit/{id}', [TingkatPendidikanController::class, 'edit'])->name('tingkat_pendidikan.edit');
+                Route::delete('/delete/{id}', [TingkatPendidikanController::class, 'destroy'])->name('tingkat_pendidikan.delete');
+            });
+
+            // Gedung
+            Route::prefix('Gedung')->group(function () {
+                Route::get('/', [GedungController::class, 'index'])->name('gedung.index');
+                Route::post('/store', [GedungController::class, 'store'])->name('gedung.store');
+                Route::get('/edit/{id}', [GedungController::class, 'edit'])->name('gedung.edit');
+                Route::delete('/delete/{id}', [GedungController::class, 'destroy'])->name('gedung.delete');
+            });
+
+            // Lokasi Kampus
+            Route::prefix('LokasiKampus')->group(function () {
+                Route::get('/', [LokasiKampusController::class, 'index'])->name('lokasi_kampus.index');
+                Route::post('/store', [LokasiKampusController::class, 'store'])->name('lokasi_kampus.store');
+                Route::get('/edit/{id}', [LokasiKampusController::class, 'edit'])->name('lokasi_kampus.edit');
+                Route::delete('/delete/{id}', [LokasiKampusController::class, 'destroy'])->name('lokasi_kampus.delete');
+            });
+
+            // Kelompok Perkuliahan
+            Route::prefix('KelompokPerkuliahan')->group(function () {
+                Route::get('/', [KelompokPerkuliahanController::class, 'index'])->name('kelompok_perkuliahan.index');
+                Route::post('/store', [KelompokPerkuliahanController::class, 'store'])->name('kelompok_perkuliahan.store');
+                Route::get('/edit/{id}', [KelompokPerkuliahanController::class, 'edit'])->name('kelompok_perkuliahan.edit');
+                Route::delete('/delete/{id}', [KelompokPerkuliahanController::class, 'destroy'])->name('kelompok_perkuliahan.delete');
+            });
+
+            // Group MK Wajib / Pilihan
+            Route::prefix('GroupMkWajibPilihan')->group(function () {
+                Route::get('/', [GroupMkWajibPilihanController::class, 'index'])->name('group_mk.index');
+                Route::post('/store', [GroupMkWajibPilihanController::class, 'store'])->name('group_mk.store');
+                Route::get('/edit/{id}', [GroupMkWajibPilihanController::class, 'edit'])->name('group_mk.edit');
+                Route::delete('/delete/{id}', [GroupMkWajibPilihanController::class, 'destroy'])->name('group_mk.delete');
+            });
+
+            // Jenis Sertifikat
+            Route::prefix('JenisSertifikat')->group(function () {
+                Route::get('/', [JenisSertifikatController::class, 'index'])->name('jenis_sertifikat.index');
+                Route::post('/store', [JenisSertifikatController::class, 'store'])->name('jenis_sertifikat.store');
+                Route::get('/edit/{id}', [JenisSertifikatController::class, 'edit'])->name('jenis_sertifikat.edit');
+                Route::delete('/delete/{id}', [JenisSertifikatController::class, 'destroy'])->name('jenis_sertifikat.delete');
+            });
+
+            // Penyelenggara Sertifikat
+            Route::prefix('PenyelenggaraSertifikat')->group(function () {
+                Route::get('/', [PenyelenggaraSertifikatController::class, 'index'])->name('penyelenggara_sertifikat.index');
+                Route::post('/store', [PenyelenggaraSertifikatController::class, 'store'])->name('penyelenggara_sertifikat.store');
+                Route::get('/edit/{id}', [PenyelenggaraSertifikatController::class, 'edit'])->name('penyelenggara_sertifikat.edit');
+                Route::delete('/delete/{id}', [PenyelenggaraSertifikatController::class, 'destroy'])->name('penyelenggara_sertifikat.delete');
+            });
+
+            // Negara
+            Route::prefix('Negara')->group(function () {
+                Route::get('/', [NegaraController::class, 'index'])->name('negara.index');
+                Route::post('/store', [NegaraController::class, 'store'])->name('negara.store');
+                Route::get('/edit/{id}', [NegaraController::class, 'edit'])->name('negara.edit');
+                Route::delete('/delete/{id}', [NegaraController::class, 'destroy'])->name('negara.delete');
+            });
+
+            // Jenis Pegawai
+            Route::prefix('JenisPegawai')->group(function () {
+                Route::get('/', [JenisPegawaiController::class, 'index'])->name('jenis_pegawai.index');
+                Route::post('/store', [JenisPegawaiController::class, 'store'])->name('jenis_pegawai.store');
+                Route::get('/edit/{id}', [JenisPegawaiController::class, 'edit'])->name('jenis_pegawai.edit');
+                Route::delete('/delete/{id}', [JenisPegawaiController::class, 'destroy'])->name('jenis_pegawai.delete');
+            });
+
+            // Golongan Pangkat
+            Route::prefix('GolonganPangkat')->group(function () {
+                Route::get('/', [GolonganPangkatController::class, 'index'])->name('golongan_pangkat.index');
+                Route::post('/store', [GolonganPangkatController::class, 'store'])->name('golongan_pangkat.store');
+                Route::get('/edit/{id}', [GolonganPangkatController::class, 'edit'])->name('golongan_pangkat.edit');
+                Route::delete('/delete/{id}', [GolonganPangkatController::class, 'destroy'])->name('golongan_pangkat.delete');
+            });
+
+            // Jabatan Fungsional
+            Route::prefix('JabatanFungsional')->group(function () {
+                Route::get('/', [JabatanFungsionalController::class, 'index'])->name('jabatan_fungsional.index');
+                Route::post('/store', [JabatanFungsionalController::class, 'store'])->name('jabatan_fungsional.store');
+                Route::get('/edit/{id}', [JabatanFungsionalController::class, 'edit'])->name('jabatan_fungsional.edit');
+                Route::delete('/delete/{id}', [JabatanFungsionalController::class, 'destroy'])->name('jabatan_fungsional.delete');
+            });
+
+            // Jabatan Struktural
+            Route::prefix('JabatanStruktural')->group(function () {
+                Route::get('/', [JabatanStrukturalController::class, 'index'])->name('jabatan_struktural.index');
+                Route::post('/store', [JabatanStrukturalController::class, 'store'])->name('jabatan_struktural.store');
+                Route::get('/edit/{id}', [JabatanStrukturalController::class, 'edit'])->name('jabatan_struktural.edit');
+                Route::delete('/delete/{id}', [JabatanStrukturalController::class, 'destroy'])->name('jabatan_struktural.delete');
+            });
+
+            // Status Keaktifan
+            Route::prefix('StatusKeaktifan')->group(function () {
+                Route::get('/', [StatusKeaktifanController::class, 'index'])->name('status_keaktifan.index');
+                Route::post('/store', [StatusKeaktifanController::class, 'store'])->name('status_keaktifan.store');
+                Route::get('/edit/{id}', [StatusKeaktifanController::class, 'edit'])->name('status_keaktifan.edit');
+                Route::delete('/delete/{id}', [StatusKeaktifanController::class, 'destroy'])->name('status_keaktifan.delete');
+            });
+
+            //Setting
+            Route::prefix('setting')->group(function () {
+                //Change Password
+                Route::get('/changepassword', [SettingController::class, 'showChangePassword'])->name('show.changepassword');
+                Route::post('/changepasswordsave', [SettingController::class, 'saveChangePassword'])->name('save.changepassword');
+
+                //Edit Profile
+                Route::get('/changeprofile', [SettingController::class, 'showEditProfile'])->name('show.changeprofile');
+                Route::post('/changeprofilesave', [SettingController::class, 'saveEditProfile'])->name('save.changeprofile');
+
+                //User Management
+                Route::get('/usermanagement', [SettingController::class, 'userManagement'])->name('show.userManagement');
+                Route::get('/tabelPegawai', [SettingController::class, 'table_pegawai'])->name('show.tabelPegawai');
+                Route::get('/tabelMahasiswa', [SettingController::class, 'table_mahasiswa'])->name('show.tabelMahasiswa');
+                Route::get('/finduser', [SettingController::class, 'searchNama'])->name('show.finduser');
+                Route::post('/StoreUser', [SettingController::class, 'StoreUser'])->name('show.saveUser');
+                Route::get('/detailuser/{params}', [SettingController::class, 'DetailUser'])->name('show.detailuser');
+                Route::get('/deleteuser/{params}', [SettingController::class, 'DeleteUser'])->name('show.deleteuser');
+
+                //User Reset
+                Route::get('/userreset', [SettingController::class, 'UserReset'])->name('UserReset.show');
+                Route::get('/userreset_tabelPegawai', [SettingController::class, 'UserReset_TablePegawai'])->name('UserReset.tabelPegawai');
+                Route::get('/userreset_tabelMahasiswa', [SettingController::class, 'UserReset_TableMahasiswa'])->name('UserReset.tabelMahasiswa');
+                Route::get('/ResetPassword/{params}', [SettingController::class, 'ResetPassword'])->name('UserReset.ResetPassword');
+                Route::get('/ResetQA/{params}', [SettingController::class, 'ResetQA'])->name('UserReset.ResetQA');
+
+                //List Menu
+                Route::get('/ShowMenu', [SettingController::class, 'ShowMenu'])->name('menu.show');
+                Route::get('/LisMenu', [SettingController::class, 'table_menu'])->name('menu.TabelMenu');
+                Route::post('/SaveUpdateMenu', [SettingController::class, 'SaveUpdateMenu'])->name('menu.SaveMenu');
+                Route::get('/GetMenu/{params}', [SettingController::class, 'GetMenu'])->name('menu.GetMenu');
+                Route::get('/DeleteAktif/{params1}/{params2}', [SettingController::class, 'DeleteMenu'])->name('menu.DeleteAktif');
+
+                //Group User
+                Route::get('/ShowGroupUser', [SettingController::class, 'ShowGroupUser'])->name('gruopuser.show');
+                Route::get('/LisGroupUser', [SettingController::class, 'table_groupuser'])->name('gruopuser.TabelGroupUser');
+                Route::post('/SaveUpdateGroupUser', [SettingController::class, 'SaveUpdateGroupUser'])->name('gruopuser.Save');
+                Route::get('/GetGroupUser/{params}', [SettingController::class, 'GetGroupUser'])->name('gruopuser.GetGroupUser');
+                Route::get('/ShowPrivilege/{params}', [SettingController::class, 'ShowPrivilege'])->name('gruopuser.ShowPrivilege');
+                Route::post('/SavePrivilege/{params}', [SettingController::class, 'StorePrivilege'])->name('gruopuser.SavePrivilege');
+            });
         });
     });
-    //    });
 });
