@@ -1,8 +1,4 @@
 <!DOCTYPE html>
-<!--
-This is a starter template page. Use this page to start your new project from
-scratch. This page gets rid of all links and provides the needed markup only.
--->
 <html lang="en">
 
 <head>
@@ -15,14 +11,18 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <link rel="stylesheet"
         href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
     <!-- Font Awesome Icons -->
-    <link rel="stylesheet" href="{{ asset('public/assets/plugins/fontawesome-free/css/all.min.css') }}">
+{{--    <link rel="stylesheet" href="{{ asset('public/assets/plugins/fontawesome-free/css/all.min.css') }}">--}}
+    <link rel="stylesheet" href="{{asset('public/assets/plugins/fontawesome-free-7.1.0-web/css/all.min.css')}}">
     <!-- Theme style -->
     <link rel="stylesheet" href="{{ asset('public/assets/dist/css/adminlte.min.css') }}">
     <!-- icheck bootstrap -->
     <link rel="stylesheet" href="{{ asset('public/assets/plugins/icheck-bootstrap/icheck-bootstrap.min.css') }}">
-        <!-- Select2 -->
+    <!-- Select2 -->
     <link rel="stylesheet" href="{{asset('public/assets/plugins/select2/css/select2.min.css')}}">
     <link rel="stylesheet" href="{{asset('public/assets/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css')}}">
+    <!-- SweetAlert 2 -->
+    <link rel="stylesheet" href="{{ asset('public/assets/plugins/sweetalert2/sweetalert2.min.css') }}">
+    <script src="{{ asset('public/assets/plugins/sweetalert2/sweetalert2.all.min.js') }}"></script>
     @yield('link_href')
 </head>
 
@@ -75,19 +75,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
                 '{{ session('alert')['status'] }}')
         @endif
 
-        function sweetAlert(alert, desc, text) {
-            const Alert = Swal.mixin({
-                showConfirmButton: true,
-                timer: 2000
-            });
-
-            Alert.fire({
-                icon: alert,
-                title: desc,
-                text: text,
-            });
-        }
-
         const passwordInput = document.getElementById('password');
         const togglePasswordButton = document.getElementById('toggle-password');
         let passwordVisible = false;
@@ -114,29 +101,29 @@ scratch. This page gets rid of all links and provides the needed markup only.
             }
         });
 
-        var $alert = $('.alert-danger');
-
-        if ($alert.length) {
-            var text = $alert.text();
-            var match = text.match(/(\d+)/);
-
-            if (match) {
-                var seconds = parseInt(match[0]);
-
-                var timer = setInterval(function() {
-                    seconds--;
-
-                    if (seconds >= 0) {
-                        $alert.text('Silakan coba lagi dalam ' + seconds + ' detik.');
-                    } else {
-                        clearInterval(timer);
-
-                        $alert.removeClass('alert-danger').addClass('alert-info').text('Silakan coba login kembali.');
-                    }
-                }, 1000);
-            }
-        }
-
+        // var $alert = $('.alert-danger');
+        //
+        // if ($alert.length) {
+        //     var text = $alert.text();
+        //     var match = text.match(/(\d+)/);
+        //
+        //     if (match) {
+        //         var seconds = parseInt(match[0]);
+        //
+        //         var timer = setInterval(function() {
+        //             seconds--;
+        //
+        //             if (seconds >= 0) {
+        //                 $alert.text('Silakan coba lagi dalam ' + seconds + ' detik.');
+        //             } else {
+        //                 clearInterval(timer);
+        //
+        //                 $alert.removeClass('alert-danger').addClass('alert-info').text('Silakan coba login kembali.');
+        //             }
+        //         }, 1000);
+        //     }
+        // }
+        //
         // $("#password,#a_1,#a_2").keypress(function(event){
         //     var ew = event.which;
         //
@@ -149,6 +136,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
         //     return false;
         // });
     </script>
+    @include('system::components.alert')
     @yield('script')
 </body>
 

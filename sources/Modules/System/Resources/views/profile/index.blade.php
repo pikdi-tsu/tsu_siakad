@@ -169,7 +169,7 @@
 
                                 {{-- TAB 1: UPDATE FOTO --}}
                                 <div class="active tab-pane" id="foto_profil">
-                                    <form action="{{route('save.change-profile')}}" class="form-horizontal" method="POST" id="form-profile" enctype="multipart/form-data">
+                                    <form action="{{route('profile.save.change-profile')}}" class="form-horizontal" method="POST" id="form-profile" enctype="multipart/form-data">
                                         @csrf
 
                                         <div class="callout callout-info">
@@ -392,7 +392,7 @@
             var originalPhotoUrl = $('#result-preview-img').attr('src');
             var hasInitialPhoto = !originalPhotoUrl.includes('ui-avatars.com') && originalPhotoUrl !== '';
 
-            // === 1. PEMILIHAN FILE ===
+            // === PEMILIHAN FILE ===
             $inputImage.change(function (event) {
                 var files = event.target.files;
                 if (files && files.length > 0) {
@@ -410,7 +410,7 @@
                 }
             });
 
-            // === 2. INIT CROPPER ===
+            // === INIT CROPPER ===
             $modal.on('shown.bs.modal', function () {
                 cropper = new Cropper(image, {
                     aspectRatio: 1, viewMode: 1, dragMode: 'move', autoCropArea: 1, guides: true, center: true, cropBoxMovable: false, cropBoxResizable: true, toggleDragModeOnDblclick: false,
@@ -423,7 +423,7 @@
                 }
             });
 
-            // === 3. EKSEKUSI CROP ===
+            // === EKSEKUSI CROP ===
             $('#btn-crop').click(function () {
                 var canvas = cropper.getCroppedCanvas({ width: 400, height: 400 });
                 canvas.toBlob(function (blob) {
@@ -492,7 +492,6 @@
                 });
             });
             // ===== End Logic Update Foto Profil =====
-
         });
     </script>
 @endsection

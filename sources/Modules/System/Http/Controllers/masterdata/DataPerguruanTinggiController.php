@@ -33,7 +33,7 @@ class DataPerguruanTinggiController extends Controller
                 ->make(true);
         }
 
-        return view('system::masterdata.data_perguruan_tinggi.index', $data);
+        return view('system::masterdata.dataPerguruanTinggi.index', $data);
     }
 
     public function store(Request $request)

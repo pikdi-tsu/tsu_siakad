@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -23,6 +24,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        $superAdminModule = 'super admin ' . config('app.module.name');
+        Gate::before(static function ($user, $ability) use ($superAdminModule){
+            return $user->hasRole('Super Admin|'.$superAdminModule) ? true : null;
+        });
     }
 }
