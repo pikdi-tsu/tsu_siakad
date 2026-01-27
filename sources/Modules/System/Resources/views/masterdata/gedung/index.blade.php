@@ -1,0 +1,255 @@
+@extends('system::template/admin/header')
+@section('title', $title)
+
+@section('content')
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1>{{ $menu }}</h1>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
+                        <li class="breadcrumb-item">Data Pelengkap</li>
+                        <li class="breadcrumb-item">Biodata</li>
+                        <li class="breadcrumb-item active">{{ $menu }}</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card card-primary card-outline">
+
+                        <div class="card-header">
+                            <h5 class="m-0 d-inline-block">Daftar {{ $menu }}</h5>
+                            <button class="btn btn-success float-right" id="btn-tambah">
+                                <i class="fas fa-plus"></i> Tambah
+                            </button>
+                        </div>
+
+                        <div class="card-body">
+
+                            <div id="form-container" class="mb-4 p-3 border rounded bg-light" style="display:none">
+
+                                <h5 class="text-primary mb-3" id="form-title">
+                                    <i class="fas fa-plus"></i> Input Gedung
+                                </h5>
+
+                                <form id="form-gedung">
+                                    @csrf
+                                    <input type="hidden" name="id" id="id">
+
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label>Kode Gedung <span class="text-danger">*</span></label>
+                                                <input type="text" class="form-control" name="kode_gedung"
+                                                    id="kode_gedung" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label>Nama Gedung <span class="text-danger">*</span></label>
+                                                <input type="text" class="form-control" name="nama_gedung"
+                                                    id="nama_gedung" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label>Lokasi Kampus</label>
+                                                <input type="text" class="form-control" name="lokasi_kampus"
+                                                    id="lokasi_kampus">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label>Telepon</label>
+                                                <input type="text" class="form-control" name="telepon" id="telepon">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label>Jumlah Lantai</label>
+                                                <input type="text" class="form-control" name="jml_lantai"
+                                                    id="jml_lantai">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label>Jumlah Ruang</label>
+                                                <input type="text" class="form-control" name="jml_ruang" id="jml_ruang">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="text-right">
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fas fa-save"></i> Simpan
+                                        </button>
+                                        <button type="button" id="btn-cancel" class="btn btn-secondary btn-sm">
+                                            Batal / Tutup Form
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+
+                            <div class="table-responsive">
+                                <table id="table-gedung" class="table table-bordered table-striped" style="width:100%">
+                                    <thead style="background:#003366;color:white">
+                                        <tr>
+                                            <th width="5%">No</th>
+                                            <th>Kode Gedung</th>
+                                            <th>Nama Gedung</th>
+                                            <th>Lokasi Kampus</th>
+                                            <th>Telepon</th>
+                                            <th>Jumlah Lantai</th>
+                                            <th>Jumlah Ruang</th>
+                                            <th width="15%" class="text-center">Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+@endsection
+
+@section('script')
+    <script>
+        $(document).ready(function() {
+
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+
+            let table = $('#table-gedung').DataTable({
+                processing: true,
+                serverSide: true,
+                ajax: "{{ route('gedung.index') }}",
+                columns: [{
+                        data: 'DT_RowIndex',
+                        orderable: false,
+                        searchable: false
+                    },
+                    {
+                        data: 'kode_gedung',
+                        name: 'kode_gedung'
+                    },
+                    {
+                        data: 'nama_gedung',
+                        name: 'nama_gedung'
+                    },
+                    {
+                        data: 'lokasi_kampus',
+                        name: 'lokasi_kampus'
+                    },
+                    {
+                        data: 'telepon',
+                        name: 'telepon'
+                    },
+                    {
+                        data: 'jml_lantai',
+                        name: 'jml_lantai'
+                    },
+                    {
+                        data: 'jml_ruang',
+                        name: 'jml_ruang'
+                    },
+                    {
+                        data: 'action',
+                        orderable: false,
+                        searchable: false,
+                        className: 'text-center'
+                    }
+                ]
+            });
+
+            $('#btn-tambah').click(function() {
+                resetForm();
+                $('#form-container').slideDown();
+                $('#kode_gedung').focus();
+            });
+            $('#btn-cancel').click(function() {
+                resetForm();
+                $('#form-container').slideUp();
+            });
+
+            $('#form-gedung').submit(function(e) {
+                e.preventDefault();
+                $.post("{{ route('gedung.store') }}", $(this).serialize(), function(res) {
+                    if (res.status === 'success') {
+                        Swal.fire('Berhasil', res.message, 'success');
+                        table.ajax.reload();
+                        resetForm();
+                        $('#form-container').slideUp();
+                    } else {
+                        Swal.fire('Gagal', res.message, 'error');
+                    }
+                });
+            });
+
+            $('body').on('click', '.btn_edit', function() {
+                let id = $(this).data('id');
+                $.get("{{ route('gedung.edit', ':id') }}".replace(':id', id), function(res) {
+                    if (res.status === 'success') {
+                        $('#id').val(res.data.id);
+                        $('#kode_gedung').val(res.data.kode_gedung);
+                        $('#nama_gedung').val(res.data.nama_gedung);
+                        $('#lokasi_kampus').val(res.data.lokasi_kampus);
+                        $('#telepon').val(res.data.telepon);
+                        $('#jml_lantai').val(res.data.jml_lantai);
+                        $('#jml_ruang').val(res.data.jml_ruang);
+                        $('#form-title').html('<i class="fas fa-edit"></i> Edit Gedung');
+                        $('#form-container').slideDown();
+                    }
+                });
+            });
+
+            $('body').on('click', '.btn_hapus', function() {
+                let id = $(this).data('id');
+                Swal.fire({
+                    title: 'Hapus data ini?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    confirmButtonText: 'Ya, Hapus!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            type: 'DELETE',
+                            url: "{{ route('gedung.delete', ':id') }}".replace(':id', id),
+                            success: function(res) {
+                                Swal.fire('Terhapus', res.message, 'success');
+                                table.ajax.reload();
+                            }
+                        });
+                    }
+                });
+            });
+
+            function resetForm() {
+                $('#form-gedung')[0].reset();
+                $('#id').val('');
+                $('#form-title').html('<i class="fas fa-plus"></i> Input Gedung');
+            }
+
+        });
+    </script>
+@endsection
