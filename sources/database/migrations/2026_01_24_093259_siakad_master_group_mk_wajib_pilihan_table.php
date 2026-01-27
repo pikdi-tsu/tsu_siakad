@@ -12,7 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('siakad_master_group_mk_wajib_pilihan', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
+            $table->string('nama_group_mk', 50)->unique();
             $table->timestamps();
         });
     }

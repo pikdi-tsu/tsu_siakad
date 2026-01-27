@@ -12,7 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('siakad_master_negara', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
+            $table->string('kode_negara', 3)->unique();
+            $table->string('nama_negara', 150);
+            $table->string('kode_emis', 10)->nullable();
             $table->timestamps();
         });
     }

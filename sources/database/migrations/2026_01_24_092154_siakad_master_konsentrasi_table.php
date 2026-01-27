@@ -12,8 +12,21 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('siakad_master_konsentrasi', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
+            $table->uuid('program_studi_id');
+
+            $table->string('kode', 20);
+            $table->string('nama_konsentrasi', 200);
+            $table->string('nama_konsentrasi_en', 200)->nullable();
+
             $table->timestamps();
+
+            $table->unique(['program_studi_id', 'kode']);
+
+            $table->foreign('program_studi_id')
+                ->references('id')
+                ->on('siakad_master_program_studi')
+                ->onDelete('cascade');
         });
     }
 

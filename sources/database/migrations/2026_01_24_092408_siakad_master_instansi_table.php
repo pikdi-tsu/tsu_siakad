@@ -12,7 +12,16 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('siakad_master_instansi', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
+
+            // Identitas instansi
+            $table->string('kode_instansi', 30)->unique();
+            $table->string('nama_instansi', 200);
+
+            // Alamat & kontak
+            $table->text('alamat');
+            $table->string('no_telepon', 30)->nullable();
+
             $table->timestamps();
         });
     }

@@ -12,7 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('siakad_master_jenis_sertifikat', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
+            $table->string('nama_jenis_sertifikat', 150)->unique();
+            $table->boolean('ukom');
             $table->timestamps();
         });
     }

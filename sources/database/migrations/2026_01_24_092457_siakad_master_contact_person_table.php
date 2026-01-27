@@ -12,7 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('siakad_master_contact_person', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
+
+            $table->string('nama', 150);
+            $table->enum('jenis_kelamin', ['L', 'P']);
+            $table->string('no_telepon', 30)->nullable();
+            $table->string('alamat_email', 150)->nullable();
+
             $table->timestamps();
         });
     }

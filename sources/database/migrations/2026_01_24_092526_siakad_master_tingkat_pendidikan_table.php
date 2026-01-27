@@ -12,7 +12,23 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('siakad_master_tingkat_pendidikan', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
+
+            // Kode jenjang (baku PDDIKTI)
+            $table->string('jenjang', 10)->unique();
+
+            // Nama jenjang
+            $table->string('nama_jenjang_pendidikan', 100);
+            $table->string('nama_jenjang_pendidikan_en', 100)->nullable();
+
+            // Urutan untuk sorting jenjang
+            $table->unsignedTinyInteger('urutan_jenjang_pendidikan');
+
+            // Flag PDDIKTI
+            $table->boolean('perguruan_tinggi');
+            $table->boolean('pasca_sarjana');
+            $table->boolean('jenjang_rpl');
+
             $table->timestamps();
         });
     }

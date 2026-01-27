@@ -11,7 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        //
+        Schema::create('siakad_master_golongan_pangkat', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->string('kode_golongan_pangkat', 10)->unique();
+            $table->string('nama_golongan_pangkat', 150);
+            $table->timestamps();
+        });
     }
 
     /**
@@ -19,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        //
+        Schema::dropIfExists('siakad_master_golongan_pangkat');
     }
 };

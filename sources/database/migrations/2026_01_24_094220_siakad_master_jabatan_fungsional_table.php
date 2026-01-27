@@ -12,7 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('siakad_master_jabatan_fungsional', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
+            $table->string('kode_jabatan_fungsional', 20)->unique();
+            $table->string('nama_jabatan_fungsional', 150);
+            $table->unsignedTinyInteger('sks_maksimal');
             $table->timestamps();
         });
     }

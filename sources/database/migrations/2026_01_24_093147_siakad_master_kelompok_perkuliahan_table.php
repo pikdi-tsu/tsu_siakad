@@ -12,7 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('siakad_master_kelompok_perkuliahan', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
+
+            $table->string('nama_kelompok_perkuliahan', 100);
+            $table->unsignedTinyInteger('urutan');
+
             $table->timestamps();
         });
     }

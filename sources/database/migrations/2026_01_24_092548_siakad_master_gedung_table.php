@@ -12,7 +12,21 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('siakad_master_gedung', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
+
+            $table->string('kode_gedung', 20)->unique();
+            $table->string('nama_gedung', 150);
+
+            // Lokasi / kampus
+            $table->string('lokasi_kampus', 150);
+
+            // Kontak gedung
+            $table->string('telepon', 30)->nullable();
+
+            // Sarana prasarana
+            $table->unsignedTinyInteger('jml_lantai');
+            $table->unsignedSmallInteger('jml_ruang');
+
             $table->timestamps();
         });
     }

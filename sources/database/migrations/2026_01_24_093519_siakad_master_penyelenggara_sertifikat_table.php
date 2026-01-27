@@ -12,7 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('siakad_master_penyelenggara_sertifikat', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
+            $table->string('nama_penyelenggara_sertifikat', 200)->unique();
             $table->timestamps();
         });
     }

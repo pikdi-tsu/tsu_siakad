@@ -12,7 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('siakad_master_lokasi_kampus', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
+
+            $table->string('kode', 20)->unique();
+            $table->string('nama', 150);
+            $table->text('alamat');
+            $table->string('telepon', 30)->nullable();
+
             $table->timestamps();
         });
     }
