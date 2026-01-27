@@ -27,6 +27,7 @@ class CreateUsersTable extends Migration
             $table->text('sso_access_token')->nullable();
             $table->text('sso_refresh_token')->nullable();
             $table->tinyInteger('isactive')->default(1)->comment('1=Aktif, 0=Non-Aktif');
+            $table->timestamp('last_login_at')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

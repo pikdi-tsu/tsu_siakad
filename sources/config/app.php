@@ -22,8 +22,11 @@ return [
 
     // Main Apps
     'tsu_homebase' => [
-        'url' => env('TSU_SSO_URL'),
+        'url' => env('HOMEBASE_URL'),
     ],
+
+    // Urutan menentukan prioritas pengecekan.
+    'active_guards' => ['web'],
 
     // Roles&Permissions
     'roles' => [
@@ -33,10 +36,16 @@ return [
     ],
 
     // Oauth Authorization Grant
-    'oauth' =>[
-        'authorization_id' => env('TSU_SSO_CLIENT_ID'),
-        'authorization_secret' => env('TSU_SSO_CLIENT_SECRET'),
-        'authorization_redirect' => env('TSU_SSO_REDIRECT_URI')
+    'oauth' => [
+        'authorization' => [
+            'id' => env('TSU_SSO_CLIENT_ID'),
+            'secret' => env('TSU_SSO_CLIENT_SECRET'),
+            'redirect' => env('TSU_SSO_REDIRECT_URI')
+        ],
+        'client' => [
+            'id' => env('HOMEBASE_CLIENT_ID'),
+            'secret' => env('HOMEBASE_CLIENT_SECRET'),
+        ],
     ],
 
     // PIKDI Settings

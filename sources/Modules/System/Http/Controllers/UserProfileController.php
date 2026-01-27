@@ -136,7 +136,7 @@ class UserProfileController extends Controller
                 ->acceptJson()
                 ->withoutVerifying()
                 ->attach(
-                    'photoprofile', // Nama field yang diminta Homebase
+                    'photoprofile',
                     file_get_contents($file->getRealPath()),
                     $file->getClientOriginalName()
                 )
@@ -151,15 +151,16 @@ class UserProfileController extends Controller
                 // Hapus accessor foto lama jika ada
                 $oldPhoto = $user->avatar_url;
 
-                if ($oldPhoto && !str_starts_with($oldPhoto, 'https')) {
-                    \Illuminate\Support\Facades\Storage::disk('public')->delete($oldPhoto);
+                if ($oldPhoto && !str_starts_with($oldPhoto, 'http') && \Storage::disk('public')->exists($oldPhoto)) {
+                    \Storage::disk('public')->delete($oldPhoto);
                 }
 
-                // UPDATE DATABASE PAKSA (Query Builder)
+                // Update database (Query Builder)
                 User::query()->where('id', $user->id)->update(['avatar_url' => $homebaseUrl]);
 
                 // Update database LOKAL Template (Manual Query)
                 $user->avatar_url = $homebaseUrl;
+                $user->save();
 
                 return back()->with('success', 'Foto profil berhasil disinkronkan ke Pusat & Lokal!');
             }

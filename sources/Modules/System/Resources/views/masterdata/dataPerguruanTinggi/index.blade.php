@@ -138,7 +138,7 @@
             let table = $('#table-perguruan-tinggi').DataTable({
                 processing: true,
                 serverSide: true,
-                ajax: "{{ route('data_perguruan_tinggi.index') }}",
+                ajax: "{{ route('perguruan_tinggi.index') }}",
                 columns: [{
                         data: 'DT_RowIndex',
                         orderable: false,
@@ -182,7 +182,7 @@
 
             $('#form-perguruan-tinggi').submit(function(e) {
                 e.preventDefault();
-                $.post("{{ route('data_perguruan_tinggi.store') }}", $(this).serialize(), function(res) {
+                $.post("{{ route('perguruan_tinggi.store') }}", $(this).serialize(), function(res) {
                     if (res.status === 'success') {
                         Swal.fire('Berhasil', res.message, 'success');
                         table.ajax.reload();
@@ -196,7 +196,7 @@
 
             $('body').on('click', '.btn_edit', function() {
                 let id = $(this).data('id');
-                $.get("{{ route('data_perguruan_tinggi.edit', ':id') }}".replace(':id', id), function(res) {
+                $.get("{{ route('perguruan_tinggi.edit', ':id') }}".replace(':id', id), function(res) {
                     if (res.status === 'success') {
                         $('#id').val(res.data.id);
                         $('#kode_unit').val(res.data.kode_unit);
@@ -222,7 +222,7 @@
                     if (result.isConfirmed) {
                         $.ajax({
                             type: 'DELETE',
-                            url: "{{ route('data_perguruan_tinggi.delete', ':id') }}"
+                            url: "{{ route('perguruan_tinggi.delete', ':id') }}"
                                 .replace(':id', id),
                             success: function(res) {
                                 Swal.fire('Terhapus', res.message, 'success');

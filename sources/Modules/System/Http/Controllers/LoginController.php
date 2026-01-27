@@ -18,6 +18,7 @@ use Illuminate\Foundation\Auth\ThrottlesLogins;
 use Illuminate\Routing\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Hash;
@@ -47,9 +48,32 @@ class LoginController extends Controller
                 ->with('alert', ['title' => 'Info', 'message' => 'Anda sudah login.', 'status' => 'info']);
         }
 
+        // SSO Block (IP Based)
+        $ssoThrottleKey = 'sso-attempt:' . request()->ip();
+        $ssoSeconds = 0;
+        if (RateLimiter::tooManyAttempts($ssoThrottleKey, 5)) {
+            $ssoSeconds = RateLimiter::availableIn($ssoThrottleKey);
+            session()->now('error', "SECURITY LOCKDOWN: Tunggu <b id='sso-alert-timer'>$ssoSeconds</b> detik lagi.");
+        }
+
+        // Manual Block (Session Based)
+        $manualSeconds = 0;
+        if (session()->has('manual_block_until')) {
+            $timeLeft = session('manual_block_until') - now()->timestamp;
+
+            if ($timeLeft > 0) {
+                $manualSeconds = $timeLeft;
+                session()->now('error', "SECURITY LOCKDOWN: Tunggu <b id='sso-alert-timer'>$manualSeconds</b> detik lagi.");
+            } else {
+                session()->forget('manual_block_until');
+            }
+        }
+
         $data = [
             'title' => 'Login Administrator (Local)',
             'app_name' => config('app.name', 'Siakad TSU'),
+            'existing_sso_seconds' => $ssoSeconds,
+            'existing_manual_seconds' => $manualSeconds,
         ];
 
         return view('system::login.loginform', $data);
@@ -67,7 +91,11 @@ class LoginController extends Controller
         if ($this->hasTooManyLoginAttempts($request)) {
             $this->fireLockoutEvent($request);
             $seconds = $this->limiter()->availableIn($this->throttleKey($request));
-            return back()->with('alert', ['title' => 'Blocked', 'message' => "Terlalu banyak percobaan. Tunggu $seconds detik.", 'status' => 'danger']);
+            session()->put('manual_block_until', now()->addSeconds($seconds)->timestamp);
+            return back()
+                ->with('error', "SECURITY LOCKDOWN: Tunggu <b id='sso-alert-timer'>$seconds</b> detik lagi.")
+                ->with('retry_seconds_manual', $seconds)
+                ->withInput($request->only('identity'));
         }
 
         // Tentukan Login Pakai Email atau Username
@@ -82,31 +110,37 @@ class LoginController extends Controller
 
         // Eksekusi Login
         if (Auth::attempt($credentials)) {
-
             $request->session()->regenerate();
-            Session::put('appname', config('app.name'));
 
+            $superAdminModule = 'super admin ' . config('app.module.name');
             $user = Auth::user();
             $roles = $user->getRoleNames()->toArray();
+            $isMahasiswa = in_array('mahasiswa', $roles, true);
 
-            if (in_array('dosen', $roles) || in_array('tendik', $roles) || in_array('super admin', $roles) || in_array('admin', $roles)) {
-                $profil = DataDosenTendik::query()->where('user_id', $user->id)->first();
-                $roleAktif = 'tendik';
-            } else {
+            $profil = null;
+            if ($isMahasiswa) {
                 $profil = DataMahasiswa::query()->where('user_id', $user->id)->first();
-                $roleAktif = 'mahasiswa';
+                $roleLabel = 'mahasiswa';
+            } else {
+                $profil = DataDosenTendik::query()->where('user_id', $user->id)->first();
+                $roleLabel = $roles[0] ?? 'user';
             }
 
             if ($profil) {
-                Session::put('active_role', $roleAktif);
+                Session::put('active_role', $roleLabel);
                 Session::put('active_profile_id', $profil->id);
-                Session::put('active_identity', $profil->nim ?? $profil->nik);
+                Session::put('active_identity', $profil->nim ?? $profil->nik ?? $profil->nidn ?? '-');
+            } elseif ($user->email === config('app.pikdi.email') || in_array($superAdminModule, $roles, true)) {
+                // Biarkan masuk mode darurat tanpa profil
+                Session::put('active_role', 'super admin');
+                Session::put('active_identity', 'ADMIN-PUSAT');
             } else {
-                // logout paksa jika akun baru/not found
-                 Auth::logout();
-                 return back()->with('alert', ['title' => 'Gagal', 'message' => 'Profil User tidak ditemukan.', 'status' => 'danger']);
+                Auth::logout();
+                return back()->with('alert', ['title' => 'Gagal', 'message' => 'Data Profil (Dosen/Mhs) tidak ditemukan. Hubungi Admin.', 'status' => 'danger']);
             }
 
+            // Bersihkan rate limiter dan session block
+            session()->forget('manual_block_until');
             $this->clearLoginAttempts($request);
 
             return redirect()->route('dashboard')
@@ -114,7 +148,7 @@ class LoginController extends Controller
         }
 
         $this->incrementLoginAttempts($request);
-        return back()->with('alert', ['title' => 'Gagal', 'message' => 'Akun tidak ditemukan atau password salah.', 'status' => 'danger']);
+        return back()->with('alert', ['title' => 'Gagal', 'message' => 'Username atau Password salah / Akun tidak aktif.', 'status' => 'danger'])->withInput($request->only('identity'));
     }
 
     public function logout(Request $req)

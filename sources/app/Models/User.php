@@ -32,7 +32,8 @@ class User extends Authenticatable
         'avatar_url',       // Foto Profil URL
         'isactive',        // Status Aktif (1/0)
         'sso_access_token', // Token OAuth
-        'sso_refresh_token'
+        'sso_refresh_token',
+        'password'
     ];
 
     /**
@@ -106,19 +107,30 @@ class User extends Authenticatable
 
     public function getProfilePhotoUrlAttribute()
     {
-        // Cek foto dari SSO (avatar_url)
-        if (!empty($this->attributes['avatar_url'])) {
-            return $this->attributes['avatar_url'];
+        $path = $this->avatar_url;
+
+        if (empty($path)) {
+            return 'https://ui-avatars.com/api/?name=' . urlencode($this->name) . '&color=FFFFFF&background=2d394a';
         }
 
-        // Cek foto manual upload (profile_photo_path - bawaan template)
-        // (Jaga-jaga fitur upload foto manual)
-        if (!empty($this->attributes['profile_photo_path'])) {
-            return asset('storage/' . $this->attributes['profile_photo_path']);
+        if (str_starts_with($path, 'https')) {
+            return $path;
         }
 
-        // Default Avatar Huruf (Inisial Nama)
-        $name = trim($this->name);
-        return 'https://ui-avatars.com/api/?name=' . urlencode($name) . '&color=7F9CF5&background=2d394a';
+        return asset('storage/' . $path);
+    }
+
+    // Sync Delete
+    protected static function booted()
+    {
+        static::deleting(static function ($user) {
+            if ($user->mahasiswa) {
+                $user->mahasiswa->delete();
+            }
+
+            if ($user->dosen) {
+                $user->dosen->delete();
+            }
+        });
     }
 }
