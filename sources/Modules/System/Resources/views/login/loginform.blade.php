@@ -2,7 +2,6 @@
 @section('title', $title)
 @section('link_href')
     <style>
-        /* CSS Wajib biar pas diklik barbar teksnya gak ke-blok biru */
         #secret-trigger {
             cursor: default;
             user-select: none; /* Chrome, Opera, Safari */
@@ -17,7 +16,6 @@
     <div class="login-box">
         <div class="card card-outline card-primary">
             <div class="card-header text-center">
-                {{-- Tambahkan ID secret-trigger --}}
                 <a href="javascript:void(0)" id="secret-trigger" class="h1 text-dark" style="text-decoration: none;">
                     <b>TSU</b> {{ ucfirst(config('app.module.name')) }}
                 </a>
