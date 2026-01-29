@@ -38,6 +38,7 @@ class SystemServiceProvider extends ServiceProvider
         // $this->registerFactories();
         $this->loadMigrationsFrom(module_path($this->moduleName, 'Database/Migrations'));
         Blade::component('layouts.sidebar', Sidebar::class);
+        Blade::component('system::components.sidebar-item', 'sidebar-item');
     }
 
     /**
