@@ -32,7 +32,7 @@ class StatusKeaktifanController extends Controller
                 ->make(true);
         }
 
-        return view('system::masterdata.status_keaktifan.index', $data);
+        return view('system::masterdata.statusKeaktifan.index', $data);
     }
 
     public function store(Request $request)

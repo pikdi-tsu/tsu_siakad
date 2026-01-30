@@ -16,7 +16,6 @@
                             <a href="{{ route('dashboard') }}">Dashboard</a>
                         </li>
                         <li class="breadcrumb-item">Data Pelengkap</li>
-                        <li class="breadcrumb-item">Biodata</li>
                         <li class="breadcrumb-item active">{{ $menu }}</li>
                     </ol>
                 </div>
@@ -29,6 +28,7 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-12">
+
                     <div class="card card-primary card-outline">
 
                         {{-- CARD HEADER --}}
@@ -42,7 +42,7 @@
                         {{-- CARD BODY --}}
                         <div class="card-body">
 
-                            {{-- FORM --}}
+                            {{-- FORM CREATE / EDIT --}}
                             <div id="form-container" class="mb-4 p-3 border rounded bg-light" style="display:none">
 
                                 <h5 class="text-primary mb-3" id="form-title">
@@ -90,9 +90,13 @@
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label>Status Prodi</label>
-                                                <input type="text" class="form-control" name="status_prodi"
-                                                    id="status_prodi">
+                                                <label>Status Prodi <span class="text-danger">*</span></label>
+                                                <select class="form-control" name="status_prodi" id="status_prodi" required>
+                                                    <option value="">-- Pilih Status --</option>
+                                                    <option value="Aktif">Aktif</option>
+                                                    <option value="Tidak Aktif">Tidak Aktif</option>
+                                                    <option value="Tutup">Tutup</option>
+                                                </select>
                                             </div>
                                         </div>
                                     </div>
@@ -101,8 +105,8 @@
                                         <button type="submit" class="btn btn-primary">
                                             <i class="fas fa-save"></i> Simpan
                                         </button>
-                                        <button type="button" id="btn-cancel" class="btn btn-secondary btn-sm">
-                                            Batal / Tutup Form
+                                        <button type="button" id="btn-cancel" class="btn btn-secondary">
+                                            Batal
                                         </button>
                                     </div>
                                 </form>
@@ -110,7 +114,7 @@
 
                             {{-- TABLE --}}
                             <div class="table-responsive">
-                                <table id="table-prodi" class="table table-bordered table-striped" style="width:100%">
+                                <table id="table-prodi" class="table table-bordered table-striped" width="100%">
                                     <thead style="background:#003366;color:white">
                                         <tr>
                                             <th width="5%">No</th>
@@ -118,7 +122,7 @@
                                             <th>Nama Prodi</th>
                                             <th>Ketua Prodi</th>
                                             <th>Fakultas ID</th>
-                                            <th>Status Prodi</th>
+                                            <th>Status</th>
                                             <th width="15%" class="text-center">Aksi</th>
                                         </tr>
                                     </thead>
@@ -128,6 +132,7 @@
 
                         </div>
                     </div>
+
                 </div>
             </div>
         </div>
@@ -137,7 +142,7 @@
 
 @section('script')
     <script>
-        $(document).ready(function() {
+        $(function() {
 
             $.ajaxSetup({
                 headers: {
@@ -149,6 +154,9 @@
                 processing: true,
                 serverSide: true,
                 ajax: "{{ route('program_studi.index') }}",
+                order: [
+                    [2, 'asc']
+                ],
                 columns: [{
                         data: 'DT_RowIndex',
                         orderable: false,
@@ -172,7 +180,15 @@
                     },
                     {
                         data: 'status_prodi',
-                        name: 'status_prodi'
+                        name: 'status_prodi',
+                        render: function(data) {
+                            let map = {
+                                'Aktif': 'success',
+                                'Tidak Aktif': 'warning',
+                                'Tutup': 'danger'
+                            };
+                            return `<span class="badge badge-${map[data] ?? 'secondary'}">${data}</span>`;
+                        }
                     },
                     {
                         data: 'action',
@@ -188,6 +204,7 @@
                 $('#form-container').slideDown();
                 $('#kode_prodi').focus();
             });
+
             $('#btn-cancel').click(function() {
                 resetForm();
                 $('#form-container').slideUp();
@@ -229,10 +246,9 @@
                     title: 'Hapus data ini?',
                     icon: 'warning',
                     showCancelButton: true,
-                    confirmButtonColor: '#d33',
-                    confirmButtonText: 'Ya, Hapus!'
-                }).then((result) => {
-                    if (result.isConfirmed) {
+                    confirmButtonText: 'Ya, hapus'
+                }).then(r => {
+                    if (r.isConfirmed) {
                         $.ajax({
                             type: 'DELETE',
                             url: "{{ route('program_studi.delete', ':id') }}".replace(':id',

@@ -16,8 +16,7 @@ class ProgramStudiController extends Controller
         $data['menu']  = "Program Studi";
 
         if ($request->ajax()) {
-            $query = Master_ProgramStudi::query()
-                ->orderBy('nama_prodi', 'asc');
+            $query = Master_ProgramStudi::get();
 
             return DataTables::of($query)
                 ->addIndexColumn()
@@ -29,11 +28,11 @@ class ProgramStudiController extends Controller
 
                     return '<div class="text-center">' . $btn . '</div>';
                 })
-                ->rawColumns(['action'])
+                ->rawColumns(['action', 'kode_prodi', 'nama_prodi', 'fakultas_id', 'ketua_prodi', 'status_prodi'])
                 ->make(true);
         }
 
-        return view('system::masterdata.program_studi.index', $data);
+        return view('system::masterdata.programStudi.index', $data);
     }
 
     public function store(Request $request)

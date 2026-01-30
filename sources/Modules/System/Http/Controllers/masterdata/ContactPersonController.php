@@ -32,7 +32,7 @@ class ContactPersonController extends Controller
                 ->make(true);
         }
 
-        return view('system::masterdata.contact_person.index', $data);
+        return view('system::masterdata.contactPerson.index', $data);
     }
 
     public function store(Request $request)

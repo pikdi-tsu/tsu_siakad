@@ -16,8 +16,7 @@ class KonsentrasiController extends Controller
         $data['menu']  = "Konsentrasi";
 
         if ($request->ajax()) {
-            $query = Master_Konsentrasi::query()
-                ->orderBy('nama_konsentrasi', 'asc');
+            $query = Master_Konsentrasi::query();
 
             return DataTables::of($query)
                 ->addIndexColumn()

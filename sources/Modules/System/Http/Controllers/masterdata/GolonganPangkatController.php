@@ -32,7 +32,7 @@ class GolonganPangkatController extends Controller
                 ->make(true);
         }
 
-        return view('system::masterdata.golongan_pangkat.index', $data);
+        return view('system::masterdata.golonganPangkat.index', $data);
     }
 
     public function store(Request $request)

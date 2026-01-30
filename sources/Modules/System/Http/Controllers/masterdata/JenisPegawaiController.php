@@ -32,7 +32,7 @@ class JenisPegawaiController extends Controller
                 ->make(true);
         }
 
-        return view('system::masterdata.jenis_pegawai.index', $data);
+        return view('system::masterdata.jenisPegawai.index', $data);
     }
 
     public function store(Request $request)

@@ -85,6 +85,7 @@ class DataPerguruanTinggiController extends Controller
                 'alamat_website',
                 'fax'
             ])
+
         );
 
         return response()->json([

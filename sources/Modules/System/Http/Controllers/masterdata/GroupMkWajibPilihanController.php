@@ -32,7 +32,7 @@ class GroupMkWajibPilihanController extends Controller
                 ->make(true);
         }
 
-        return view('system::masterdata.group_mk_wajib_pilihan.index', $data);
+        return view('system::masterdata.groupMkWajibPilihan.index', $data);
     }
 
     public function store(Request $request)

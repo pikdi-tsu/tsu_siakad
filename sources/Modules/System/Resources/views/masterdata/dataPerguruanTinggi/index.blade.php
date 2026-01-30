@@ -2,8 +2,6 @@
 @section('title', $title)
 
 @section('content')
-
-    {{-- HEADER --}}
     <div class="content-header">
         <div class="container-fluid">
             <div class="row mb-2">
@@ -12,11 +10,8 @@
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item">
-                            <a href="{{ route('dashboard') }}">Dashboard</a>
-                        </li>
-                        <li class="breadcrumb-item">Data Pelengkap</li>
-                        <li class="breadcrumb-item">Biodata</li>
+                        <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
+                        <li class="breadcrumb-item">Master Data</li>
                         <li class="breadcrumb-item active">{{ $menu }}</li>
                     </ol>
                 </div>
@@ -24,220 +19,231 @@
         </div>
     </div>
 
-    {{-- CONTENT --}}
     <div class="content">
         <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="card card-primary card-outline">
 
-                        {{-- CARD HEADER --}}
-                        <div class="card-header">
-                            <h5 class="m-0 d-inline-block">Daftar {{ $menu }}</h5>
-                            <button class="btn btn-success float-right" id="btn-tambah">
-                                <i class="fas fa-plus"></i> Tambah
-                            </button>
-                        </div>
-
-                        {{-- CARD BODY --}}
-                        <div class="card-body">
-
-                            {{-- FORM --}}
-                            <div id="form-container" class="mb-4 p-3 border rounded bg-light" style="display:none">
-
-                                <h5 class="text-primary mb-3" id="form-title">
-                                    <i class="fas fa-plus"></i> Input Data Perguruan Tinggi
-                                </h5>
-
-                                <form id="form-perguruan-tinggi">
-                                    @csrf
-                                    <input type="hidden" name="id" id="id">
-
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label>Kode Unit <span class="text-danger">*</span></label>
-                                                <input type="text" class="form-control" name="kode_unit" id="kode_unit"
-                                                    placeholder="Contoh: UN001" required>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label>Nama Unit <span class="text-danger">*</span></label>
-                                                <input type="text" class="form-control" name="nama_unit" id="nama_unit"
-                                                    placeholder="Nama Perguruan Tinggi" required>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label>Nama Singkat</label>
-                                                <input type="text" class="form-control" name="nama_singkat"
-                                                    id="nama_singkat" placeholder="Singkatan">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label>Jenis Perguruan Tinggi</label>
-                                                <input type="text" class="form-control" name="jenis_perguruan_tinggi"
-                                                    id="jenis_perguruan_tinggi">
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="text-right">
-                                        <button type="submit" class="btn btn-primary">
-                                            <i class="fas fa-save"></i> Simpan
-                                        </button>
-                                        <button type="button" id="btn-cancel" class="btn btn-secondary btn-sm">
-                                            Batal / Tutup Form
-                                        </button>
-                                    </div>
-                                </form>
-                            </div>
-
-                            {{-- TABLE --}}
-                            <div class="table-responsive">
-                                <table id="table-perguruan-tinggi" class="table table-bordered table-striped"
-                                    style="width:100%">
-                                    <thead style="background:#003366;color:white">
-                                        <tr>
-                                            <th width="5%">No</th>
-                                            <th>Kode Unit</th>
-                                            <th>Nama Unit</th>
-                                            <th>Nama Singkat</th>
-                                            <th>Jenis PT</th>
-                                            <th width="15%" class="text-center">Aksi</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody></tbody>
-                                </table>
-                            </div>
-
-                        </div>
+            <div class="card card-primary card-outline">
+                <div class="card-header">
+                    <h5 class="m-0 d-inline-block">Data {{ $menu }}</h5>
+                    <div class="float-right">
+                        <button class="btn btn-success btn-sm" id="btn-create">
+                            <i class="fas fa-plus"></i> Tambah
+                        </button>
+                        <button class="btn btn-warning btn-sm d-none" id="btn-edit">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
                     </div>
                 </div>
+
+                <div class="card-body">
+
+                    <form id="form-pt">
+                        @csrf
+                        <input type="hidden" name="id" id="id">
+
+                        {{-- IDENTITAS --}}
+                        <div class="row">
+                            <div class="col-md-3">
+                                <label>Kode Unit *</label>
+                                <input type="text" name="kode_unit" id="kode_unit" class="form-control form-input"
+                                    disabled>
+                            </div>
+                            <div class="col-md-6">
+                                <label>Nama Perguruan Tinggi *</label>
+                                <input type="text" name="nama_unit" id="nama_unit" class="form-control form-input"
+                                    disabled>
+                            </div>
+                            <div class="col-md-6">
+                                <label>Nama Perguruan Tinggi EN*</label>
+                                <input type="text" name="nama_unit_en" id="nama_unit_en" class="form-control form-input"
+                                    disabled>
+                            </div>
+                            <div class="col-md-3">
+                                <label>Nama Singkat</label>
+                                <input type="text" name="nama_singkat" id="nama_singkat" class="form-control form-input"
+                                    disabled>
+                            </div>
+                        </div>
+
+                        <hr>
+
+                        {{-- KLASIFIKASI --}}
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label>Jenis Perguruan Tinggi</label>
+                                <input type="text" name="jenis_perguruan_tinggi" id="jenis_perguruan_tinggi"
+                                    class="form-control form-input" disabled>
+                            </div>
+                            <div class="col-md-4">
+                                <label>Lembaga Naungan</label>
+                                <input type="text" name="lembaga_naungan" id="lembaga_naungan"
+                                    class="form-control form-input" disabled>
+                            </div>
+                            <div class="col-md-4">
+                                <label>Unit Satuan Kerja</label>
+                                <input type="text" name="unit_satuan_kerja" id="unit_satuan_kerja"
+                                    class="form-control form-input" disabled>
+                            </div>
+                        </div>
+
+                        <hr>
+
+                        {{-- LEGALITAS --}}
+                        <div class="row">
+                            <div class="col-md-3">
+                                <label>Periode Berdiri</label>
+                                <input type="number" name="periode_berdiri" id="periode_berdiri"
+                                    class="form-control form-input" disabled>
+                            </div>
+                            <div class="col-md-3">
+                                <label>No SK Pendirian</label>
+                                <input type="text" name="no_sk_pendirian" id="no_sk_pendirian"
+                                    class="form-control form-input" disabled>
+                            </div>
+                            <div class="col-md-3">
+                                <label>Tgl SK Pendirian</label>
+                                <input type="date" name="tanggal_sk_pendirian" id="tanggal_sk_pendirian"
+                                    class="form-control form-input" disabled>
+                            </div>
+                            <div class="col-md-3">
+                                <label>Rektor</label>
+                                <input type="text" name="rektor" id="rektor" class="form-control form-input"
+                                    disabled>
+                            </div>
+                        </div>
+
+                        <hr>
+
+                        {{-- PIMPINAN --}}
+                        <div class="row">
+                            <div class="col-md-3"><label>WR I</label><input disabled name="wr1" id="wr1"
+                                    class="form-control form-input"></div>
+                            <div class="col-md-3"><label>WR II</label><input disabled name="wr2" id="wr2"
+                                    class="form-control form-input"></div>
+                            <div class="col-md-3"><label>WR III</label><input disabled name="wr3" id="wr3"
+                                    class="form-control form-input"></div>
+                            <div class="col-md-3"><label>WR IV</label><input disabled name="wr4" id="wr4"
+                                    class="form-control form-input"></div>
+                        </div>
+
+                        <hr>
+
+                        {{-- AKREDITASI --}}
+                        <div class="row">
+                            <div class="col-md-4"><label>Lembaga Akreditasi</label><input disabled
+                                    name="lembaga_akreditasi" id="lembaga_akreditasi" class="form-control form-input">
+                            </div>
+                            <div class="col-md-2"><label>Peringkat</label><input disabled name="peringkat_akreditasi"
+                                    id="peringkat_akreditasi" class="form-control form-input"></div>
+                            <div class="col-md-2"><label>Nilai</label><input disabled name="nilai_akreditasi"
+                                    id="nilai_akreditasi" class="form-control form-input"></div>
+                            <div class="col-md-4"><label>No SK Akreditasi</label><input disabled name="no_sk_akreditasi"
+                                    id="no_sk_akreditasi" class="form-control form-input"></div>
+                        </div>
+
+                        <div class="row mt-2">
+                            <div class="col-md-4"><label>Tgl SK Akreditasi</label><input type="date" disabled
+                                    name="tanggal_sk_akreditasi" id="tanggal_sk_akreditasi"
+                                    class="form-control form-input">
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col-md-4"><label>Tgl SK Akreditasi</label><input type="date" disabled
+                                        name="tanggal_berlaku_akreditasi" id="tanggal_berlaku_akreditasi"
+                                        class="form-control form-input">
+                                </div>
+
+                                <div class="col-md-4"><label>Berakhir</label><input type="date" disabled
+                                        name="tgl_berakhir_akreditasi" id="tgl_berakhir_akreditasi"
+                                        class="form-control form-input"></div>
+                            </div>
+
+                            <hr>
+
+                            {{-- VISI MISI --}}
+                            <div class="row">
+                                <div class="col-md-6"><label>Visi</label>
+                                    <textarea disabled name="visi" id="visi" rows="3" class="form-control form-input"></textarea>
+                                </div>
+                                <div class="col-md-6"><label>Misi</label>
+                                    <textarea disabled name="misi" id="misi" rows="3" class="form-control form-input"></textarea>
+                                </div>
+                            </div>
+
+                            <hr>
+
+                            {{-- KONTAK --}}
+                            <div class="row">
+                                <div class="col-md-6"><label>Alamat</label>
+                                    <textarea disabled name="alamat" id="alamat" rows="2" class="form-control form-input"></textarea>
+                                </div>
+                                <div class="col-md-2"><label>Telepon</label><input disabled name="telepon" id="telepon"
+                                        class="form-control form-input"></div>
+                                <div class="col-md-2"><label>Fax</label><input disabled name="fax" id="fax"
+                                        class="form-control form-input"></div>
+                                <div class="col-md-2"><label>Email</label><input disabled name="email" id="email"
+                                        class="form-control form-input"></div>
+                            </div>
+
+                            <div class="row mt-2">
+                                <div class="col-md-4"><label>Website</label><input disabled name="website" id="website"
+                                        class="form-control form-input"></div>
+                            </div>
+
+                            <hr>
+
+                            <div class="text-right d-none" id="form-action">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save"></i> Simpan
+                                </button>
+                                <button type="button" class="btn btn-secondary" id="btn-cancel">Batal</button>
+                            </div>
+
+                    </form>
+                </div>
             </div>
+
         </div>
     </div>
-
 @endsection
-
 @section('script')
     <script>
-        $(document).ready(function() {
+        $(function() {
 
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
+            function setMode(mode) {
+                let edit = mode === 'edit';
+
+                $('.form-input').prop('disabled', !edit);
+                $('#form-action').toggleClass('d-none', !edit);
+                $('#btn-create').toggleClass('d-none', edit);
+                $('#btn-edit').toggleClass('d-none', edit);
+            }
+
+            setMode('view');
+
+            $('#btn-create').click(function() {
+                $('#form-pt')[0].reset();
+                $('#id').val('');
+                setMode('edit');
             });
 
-            let table = $('#table-perguruan-tinggi').DataTable({
-                processing: true,
-                serverSide: true,
-                ajax: "{{ route('perguruan_tinggi.index') }}",
-                columns: [{
-                        data: 'DT_RowIndex',
-                        orderable: false,
-                        searchable: false
-                    },
-                    {
-                        data: 'kode_unit',
-                        name: 'kode_unit'
-                    },
-                    {
-                        data: 'nama_unit',
-                        name: 'nama_unit'
-                    },
-                    {
-                        data: 'nama_singkat',
-                        name: 'nama_singkat'
-                    },
-                    {
-                        data: 'jenis_perguruan_tinggi',
-                        name: 'jenis_perguruan_tinggi'
-                    },
-                    {
-                        data: 'action',
-                        orderable: false,
-                        searchable: false,
-                        className: 'text-center'
-                    }
-                ]
-            });
-
-            $('#btn-tambah').click(function() {
-                resetForm();
-                $('#form-container').slideDown();
-                $('#kode_unit').focus();
+            $('#btn-edit').click(function() {
+                setMode('edit');
             });
 
             $('#btn-cancel').click(function() {
-                resetForm();
-                $('#form-container').slideUp();
+                setMode('view');
             });
 
-            $('#form-perguruan-tinggi').submit(function(e) {
+            $('#form-pt').submit(function(e) {
                 e.preventDefault();
                 $.post("{{ route('perguruan_tinggi.store') }}", $(this).serialize(), function(res) {
+                    Swal.fire(res.status === 'success' ? 'Berhasil' : 'Gagal', res.message, res
+                        .status);
                     if (res.status === 'success') {
-                        Swal.fire('Berhasil', res.message, 'success');
-                        table.ajax.reload();
-                        resetForm();
-                        $('#form-container').slideUp();
-                    } else {
-                        Swal.fire('Gagal', res.message, 'error');
+                        setMode('view');
                     }
                 });
             });
-
-            $('body').on('click', '.btn_edit', function() {
-                let id = $(this).data('id');
-                $.get("{{ route('perguruan_tinggi.edit', ':id') }}".replace(':id', id), function(res) {
-                    if (res.status === 'success') {
-                        $('#id').val(res.data.id);
-                        $('#kode_unit').val(res.data.kode_unit);
-                        $('#nama_unit').val(res.data.nama_unit);
-                        $('#nama_singkat').val(res.data.nama_singkat);
-                        $('#jenis_perguruan_tinggi').val(res.data.jenis_perguruan_tinggi);
-                        $('#form-title').html(
-                            '<i class="fas fa-edit"></i> Edit Data Perguruan Tinggi');
-                        $('#form-container').slideDown();
-                    }
-                });
-            });
-
-            $('body').on('click', '.btn_hapus', function() {
-                let id = $(this).data('id');
-                Swal.fire({
-                    title: 'Hapus data ini?',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#d33',
-                    confirmButtonText: 'Ya, Hapus!'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        $.ajax({
-                            type: 'DELETE',
-                            url: "{{ route('perguruan_tinggi.delete', ':id') }}"
-                                .replace(':id', id),
-                            success: function(res) {
-                                Swal.fire('Terhapus', res.message, 'success');
-                                table.ajax.reload();
-                            }
-                        });
-                    }
-                });
-            });
-
-            function resetForm() {
-                $('#form-perguruan-tinggi')[0].reset();
-                $('#id').val('');
-                $('#form-title').html('<i class="fas fa-plus"></i> Input Data Perguruan Tinggi');
-            }
 
         });
     </script>

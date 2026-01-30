@@ -32,7 +32,7 @@ class JenisSertifikatController extends Controller
                 ->make(true);
         }
 
-        return view('system::masterdata.jenis_sertifikat.index', $data);
+        return view('system::masterdata.jenisSertifikat.index', $data);
     }
 
     public function store(Request $request)
