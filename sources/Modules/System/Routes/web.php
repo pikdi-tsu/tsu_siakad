@@ -413,8 +413,6 @@ Route::prefix('')->group(function () {
             Route::get('/', [DataPerguruanTinggiController::class, 'index'])->name('perguruan_tinggi.index');
             Route::get('/searchPegawai', [DataPerguruanTinggiController::class, 'search'])->name('perguruan_tinggi.caripegawai');
             Route::post('/save', [DataPerguruanTinggiController::class, 'save'])->name('perguruan_tinggi.save');
-            Route::get('/edit/{id}', [DataPerguruanTinggiController::class, 'edit'])->name('perguruan_tinggi.edit');
-            Route::delete('/delete/{id}', [DataPerguruanTinggiController::class, 'destroy'])->name('perguruan_tinggi.delete');
         });
 
         // Program Studi

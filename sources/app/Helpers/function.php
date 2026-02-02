@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\PegawaiModel;
 use App\Models\User;
 use Illuminate\Support\Facades\Mail;
 use App\Models\SiakadMahasiswa;
@@ -63,6 +64,8 @@ if (!function_exists('photo_profile')) {
         return $photo;
     }
 }
+
+
 
 //if (!function_exists('photo_profile')) {
 //    function photo_profile()
@@ -166,5 +169,18 @@ if (! function_exists('BulanRomawi')) {
         elseif ($str == '11') $str = 'XI';
         elseif ($str == '12') $str = 'XII';
         return $str;
+    }
+}
+
+#-- funsi nama bulan romawi
+if (! function_exists('namapegawai')) {
+    function namapegawai($nip)
+    {
+        $cek = PegawaiModel::where('nip',$nip)->select('nip','nama')->first();
+        $nama = '';
+        if($cek){
+            $nama = $cek->nama;
+        }
+        return $nama;
     }
 }

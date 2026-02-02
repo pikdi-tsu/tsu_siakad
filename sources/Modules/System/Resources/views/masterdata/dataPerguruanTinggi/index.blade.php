@@ -155,7 +155,7 @@
                                             </td>
                                             <th class="text-primary">Tanggal SK Pendirian</th>
                                             <td>
-                                                <span class="showpt">{{$pt==null ? '-' : $pt->tanggal_sk_pendirian}}</span>
+                                                <span class="showpt">{{$pt==null ? '-' : (($pt->tanggal_sk_pendirian) ? tglIndo($pt->tanggal_sk_pendirian) : '')}}</span>
                                                 <input type="date" class="form-control editpt" name="tglskpendirian" value="{{ $pt==null ? null : $pt->tanggal_sk_pendirian }}" id="tglskpendirian" style="display:none;">
                                             </td>
                                         </tr>
@@ -165,14 +165,14 @@
                                         <tr>
                                             <th class="text-primary">Rektor</th>
                                             <td>
-                                                <span class="showpt">{{$pt==null ? '-' : $pt->rektor}}</span>
+                                                <span class="showpt">{{$pt==null ? '-' : $pt->rektor.' - '.namapegawai($pt->rektor)}}</span>
                                                 <select class="form-control select2 editpt" id="rektor" name="rektor"style="display:none;">
 
                                                 </select>
                                             </td>
                                             <th class="text-primary">Wakil Rektor 3</th>
                                             <td>
-                                                <span class="showpt">{{$pt==null ? '-' : $pt->wakil_rektor3}}</span>
+                                                <span class="showpt">{{$pt==null ? '-' : $pt->wakil_rektor3.' - '.namapegawai($pt->wakil_rektor3)}}</span>
                                                 <select class="form-control select2 editpt" id="wr3" name="wr3"style="display:none;">
 
                                                 </select>
@@ -181,14 +181,14 @@
                                         <tr>
                                             <th class="text-primary">Wakil Rektor 1</th>
                                             <td>
-                                                <span class="showpt">{{$pt==null ? '-' : $pt->wakil_rektor1}}</span>
+                                                <span class="showpt">{{$pt==null ? '-' : $pt->wakil_rektor1.' - '.namapegawai($pt->wakil_rektor1)}}</span>
                                                 <select class="form-control select2 editpt" id="wr1" name="wr1"style="display:none;">
 
                                                 </select>
                                             </td>
                                             <th class="text-primary">Wakil Rektor 4</th>
                                             <td>
-                                                <span class="showpt">{{$pt==null ? '-' : $pt->wakil_rektor4}}</span>
+                                                <span class="showpt">{{$pt==null ? '-' : $pt->wakil_rektor4.' - '.namapegawai($pt->wakil_rektor4)}}</span>
                                                 <select class="form-control select2 editpt" id="wr4" name="wr4"style="display:none;">
 
                                                 </select>
@@ -197,7 +197,7 @@
                                         <tr>
                                             <th class="text-primary">Wakil Rektor 2</th>
                                             <td>
-                                                <span class="showpt">{{$pt==null ? '-' : $pt->wakil_rektor2}}</span>
+                                                <span class="showpt">{{$pt==null ? '-' : $pt->wakil_rektor2.' - '.namapegawai($pt->wakil_rektor2)}}</span>
                                                 <select class="form-control select2 editpt" id="wr2" name="wr2"style="display:none;">
 
                                                 </select>
@@ -212,12 +212,12 @@
                                             <th class="text-primary">Lembaga Akreditasi</th>
                                             <td>
                                                 <span class="showpt">{{$pt==null ? '-' : $pt->lembaga_akreditasi}}</span>
-                                                <input type="text" class="form-control editpt" name="lembaga_akreditasi" id="lembaga_akreditasi" style="display:none;">
+                                                <input type="text" class="form-control editpt" value="{{$pt==null ? null : $pt->lembaga_akreditasi}}" name="lembaga_akreditasi" id="lembaga_akreditasi" style="display:none;">
                                             </td>
                                             <th class="text-primary">Tgl SK Akreditasi</th>
                                             <td>
-                                                <span class="showpt">{{$pt==null ? '-' : $pt->tanggal_sk_akreditasi}}</span>
-                                                <input type="date" class="form-control editpt" name="tglskakreditasi" id="tglskakreditasi" style="display:none;">
+                                                <span class="showpt">{{$pt==null ? '-' : (($pt->tanggal_sk_akreditasi) ? tglIndo($pt->tanggal_sk_akreditasi) : '')}}</span>
+                                                <input type="date" class="form-control editpt" value="{{$pt==null ? null : $pt->tanggal_sk_akreditasi}}" name="tglskakreditasi" id="tglskakreditasi" style="display:none;">
                                             </td>
                                         </tr>
                                         <tr>
@@ -239,33 +239,41 @@
                                             </td>
                                             <th class="text-primary">Tgl Berlaku Akreditasi</th>
                                             <td>
-                                                <span class="showpt">{{$pt==null ? '-' : $pt->tanggal_berlaku_akreditasi}}</span>
-                                                <input type="date" class="form-control editpt" name="tglberlakuakreditasi" id="tglberlakuakreditasi" style="display:none;">
+                                                <span class="showpt">{{$pt==null ? '-' : (($pt->tanggal_berlaku_akreditasi) ? tglIndo($pt->tanggal_berlaku_akreditasi) : '')}}</span>
+                                                <input type="date" class="form-control editpt" value="{{$pt==null ? null : $pt->tanggal_berlaku_akreditasi}}" name="tglberlakuakreditasi" id="tglberlakuakreditasi" style="display:none;">
                                             </td>
                                         </tr>
                                         <tr>
                                             <th class="text-primary">Nilai Akreditasi</th>
                                             <td>
                                                 <span class="showpt">{{$pt==null ? '-' : $pt->nilai_akreditasi}}</span>
-                                                <input type="number" class="form-control editpt" min="0" max="999" name="nilai_akreditasi" id="nilai_akreditasi" title="Isian maksimal 3 karakter, isian harus angka" style="display: none;">
+                                                <input type="number" class="form-control editpt" value="{{$pt==null ? null : $pt->nilai_akreditasi}}" min="0" max="999" name="nilai_akreditasi" id="nilai_akreditasi" title="Isian maksimal 3 karakter, isian harus angka" style="display: none;">
                                             </td>
                                             <th class="text-primary">Tgl Berakhir Akreditasi</th>
                                             <td>
-                                                <span class="showpt">{{$pt==null ? '-' : $pt->tanggal_berakhir_akreditasi}}</span>
-                                                <input type="date" class="form-control editpt" name="tglberakhirakreditasi" id="tglberakhirakreditasi" style="display:none;">
+                                                <span class="showpt">{{$pt==null ? '-' : (($pt->tanggal_berakhir_akreditasi) ? tglIndo($pt->tanggal_berakhir_akreditasi) : '')}}</span>
+                                                <input type="date" class="form-control editpt" value="{{$pt==null ? null : $pt->tanggal_berakhir_akreditasi}}" name="tglberakhirakreditasi" id="tglberakhirakreditasi" style="display:none;">
                                             </td>
                                         </tr>
                                         <tr>
                                             <th class="text-primary">No. SK Akreditasi</th>
                                             <td>
                                                 <span class="showpt">{{$pt==null ? '-' : $pt->no_sk_akreditasi}}</span>
-                                                <input type="text" class="form-control editpt" name="nosk_akreditasi" id="nosk_akreditasi" title="Isian maksimal 100 karakter" style="display:none;">
+                                                <input type="text" class="form-control editpt" name="nosk_akreditasi" value="{{$pt==null ? null : $pt->no_sk_akreditasi}}" id="nosk_akreditasi" title="Isian maksimal 100 karakter" style="display:none;">
                                             </td>
                                             <th class="text-primary">File Sertifikasi Akreditasi</th>
                                             <td>
-                                                <span class="showpt text-success">{{$pt==null ? '-' : $pt->file_sertifikat_akreditasi}}</span>
+                                                <span class="showpt">
+                                                    <a href="{{ $file_akred }}" target="_blank" class="text-success">{{$pt==null ? '-' : $pt->file_sertifikat_akreditasi}}</a>
+                                                </span>
                                                 <div class="editpt" style="display: none;">
-                                                    <span class="text-success">Nama File.format</span>
+                                                    <span class="text-success">
+                                                        @if($pt)
+                                                            @if($pt->file_sertifikat_akreditasi)
+                                                                <a href="{{ $file_akred }}" target="_blank" class="text-success">{{$pt->file_sertifikat_akreditasi}}</a>
+                                                            @endif
+                                                        @endif
+                                                    </span>
                                                     <div class="input-group">
                                                         <div class="custom-file">
                                                             <input type="file" class="custom-file-input" id="file_akreditasi" name="file_akreditasi" accept=".pdf,.jpg,.jpeg">
@@ -282,18 +290,18 @@
                                         <tr>
                                             <th class="text-primary">Visi</th>
                                             <td colspan="3">
-                                                <span class="showpt">{{$pt==null ? '-' : $pt->visi}}</span>
+                                                <span class="showpt">{!! ($pt==null) ? '-' : $pt->visi !!}</span>
                                                 <textarea class="summernote editpt" id="visi" name="visi" style="display: none;">
-
+                                                    {!! ($pt==null) ? null : $pt->visi !!}
                                                 </textarea>
                                             </td>
                                         </tr>
                                         <tr>
                                             <th class="text-primary">Misi</th>
                                             <td colspan="3">
-                                                <span class="showpt">{{$pt==null ? '-' : $pt->misi}}</span>
+                                                <span class="showpt">{!! ($pt==null) ? '-' : $pt->misi !!}</span>
                                                 <textarea class="summernote editpt" id="misi" name="misi" style="display: none;">
-
+                                                    {!! ($pt==null) ? null : $pt->misi !!}
                                                 </textarea>
                                             </td>
                                         </tr>
@@ -304,35 +312,35 @@
                                             <th class="text-primary">Alamat</th>
                                             <td colspan="3">
                                                 <span class="showpt">{{$pt==null ? '-' : $pt->alamat}}</span>
-                                                <input type="text" class="form-control editpt" name="alamat" id="alamat" title="Isian maksimal 100 karakter" style="display:none;">
+                                                <input type="text" class="form-control editpt" value="{{$pt==null ? null : $pt->alamat}}" name="alamat" id="alamat" title="Isian maksimal 100 karakter" style="display:none;">
                                             </td>
                                         </tr>
                                         <tr>
                                             <th class="text-primary">Telepon</th>
                                             <td colspan="3">
                                                 <span class="showpt">{{$pt==null ? '-' : $pt->telepon}}</span>
-                                                <input type="text" class="form-control editpt" name="telp" id="telp" title="Isian maksimal 20 karakter" style="display:none;">
+                                                <input type="text" class="form-control editpt" value="{{$pt==null ? null : $pt->telepon}}" name="telp" id="telp" title="Isian maksimal 20 karakter" style="display:none;">
                                             </td>
                                         </tr>
                                         <tr>
                                             <th class="text-primary">Alamat Email</th>
                                             <td colspan="3">
                                                 <span class="showpt">{{$pt==null ? '-' : $pt->alamat_email}}</span>
-                                                <input type="text" class="form-control editpt" name="alamatemail" id="alamatemail" title="Isian maksimal 100 karakter" style="display:none;">
+                                                <input type="text" class="form-control editpt" value="{{$pt==null ? null : $pt->alamat_email}}" name="alamatemail" id="alamatemail" title="Isian maksimal 100 karakter" style="display:none;">
                                             </td>
                                         </tr>
                                         <tr>
                                             <th class="text-primary">Alamat Website</th>
                                             <td colspan="3">
                                                 <span class="showpt">{{$pt==null ? '-' : $pt->alamat_website}}</span>
-                                                <input type="text" class="form-control editpt" name="alamatweb" id="alamatweb" title="Isian maksimal 100 karakter" style="display:none;">
+                                                <input type="text" class="form-control editpt" value="{{$pt==null ? null : $pt->alamat_website}}" name="alamatweb" id="alamatweb" title="Isian maksimal 100 karakter" style="display:none;">
                                             </td>
                                         </tr>
                                         <tr>
                                             <th class="text-primary">Fax</th>
                                             <td colspan="3">
                                                 <span class="showpt">{{$pt==null ? '-' : $pt->fax}}</span>
-                                                <input type="text" class="form-control editpt" name="fax" id="fax" title="Isian maksimal 100 karakter" style="display:none;">
+                                                <input type="text" class="form-control editpt" value="{{$pt==null ? null : $pt->fax}}" name="fax" id="fax" title="Isian maksimal 100 karakter" style="display:none;">
                                             </td>
                                         </tr>
                                     </table>
@@ -508,7 +516,7 @@
                     true,
                     true
                 );
-                $('#rektor').append(option).trigger('change');
+                $('#wr2').append(option).trigger('change');
             }
 
             function initWR3Select2()
@@ -537,7 +545,7 @@
                     true,
                     true
                 );
-                $('#rektor').append(option).trigger('change');
+                $('#wr3').append(option).trigger('change');
             }
 
             function initWR4Select2()
@@ -566,7 +574,7 @@
                     true,
                     true
                 );
-                $('#rektor').append(option).trigger('change');
+                $('#wr4').append(option).trigger('change');
             }
 
             function batal()

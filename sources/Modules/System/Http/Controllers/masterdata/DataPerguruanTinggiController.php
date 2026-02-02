@@ -27,6 +27,8 @@ class DataPerguruanTinggiController extends Controller
         $wr2 = null;
         $wr3 = null;
         $wr4 = null;
+        $linkfileakreditasi = null;
+
         if($pt){
             $cekrektor = PegawaiModel::where('nip',$pt->rektor)->select('nip','nama')->first();
             if($cekrektor){
@@ -36,7 +38,7 @@ class DataPerguruanTinggiController extends Controller
                 );
             }
 
-            $cekwr1 = PegawaiModel::where('nip',$pt->wr1)->select('nip','nama')->first();
+            $cekwr1 = PegawaiModel::where('nip',$pt->wakil_rektor1)->select('nip','nama')->first();
             if($cekwr1){
                 $wr1 = array(
                     'id'   => $cekwr1->nip,
@@ -44,7 +46,7 @@ class DataPerguruanTinggiController extends Controller
                 );
             }
 
-            $cekwr2 = PegawaiModel::where('nip',$pt->wr2)->select('nip','nama')->first();
+            $cekwr2 = PegawaiModel::where('nip',$pt->wakil_rektor2)->select('nip','nama')->first();
             if($cekwr2){
                 $wr2 = array(
                     'id'   => $cekwr2->nip,
@@ -52,7 +54,7 @@ class DataPerguruanTinggiController extends Controller
                 );
             }
 
-            $cekwr3 = PegawaiModel::where('nip',$pt->wr3)->select('nip','nama')->first();
+            $cekwr3 = PegawaiModel::where('nip',$pt->wakil_rektor3)->select('nip','nama')->first();
             if($cekwr3){
                 $wr3 = array(
                     'id'   => $cekwr3->nip,
@@ -60,12 +62,16 @@ class DataPerguruanTinggiController extends Controller
                 );
             }
 
-            $cekwr4 = PegawaiModel::where('nip',$pt->wr4)->select('nip','nama')->first();
+            $cekwr4 = PegawaiModel::where('nip',$pt->wakil_rektor4)->select('nip','nama')->first();
             if($cekwr4){
                 $wr4 = array(
                     'id'   => $cekwr4->nip,
                     'text' => $cekwr4->nip.' - '.$cekrektor->nama
                 );
+            }
+
+            if($pt->file_sertifikat_akreditasi){
+                $linkfileakreditasi = asset('sources/storage/app/public/FILE_AKREDITASI/'.$pt->file_sertifikasi_akreditasi);
             }
         }
         $data = array(
@@ -79,7 +85,8 @@ class DataPerguruanTinggiController extends Controller
             'wr1' => $wr1,
             'wr2' => $wr2,
             'wr3' => $wr3,
-            'wr4' => $wr4
+            'wr4' => $wr4,
+            'file_akred' => $linkfileakreditasi
         );
         return view('system::masterdata.dataPerguruanTinggi.index', $data);
     }
@@ -108,13 +115,20 @@ class DataPerguruanTinggiController extends Controller
         $jenispt = decrypt($post->jenis_pt);
         $naungan = decrypt($post->lembaga_naungan);
 
-
         $filename = null;
         if($post->hasFile('file_akreditasi')){
             $file = $post->file('file_akreditasi');
             $ext = $file->getClientOriginalExtension();
             $filename = 'DOKUMEN_AKREDITASI_TSU_'.date('YmdHis').'.'.$ext;
-            $file->storeAs('FILE_AKREDITASI', $filename,'public');
+            // $file->storeAs('FILE_AKREDITASI', $filename,'public');
+            $destinationPath = base_path('storage/app/public/FILE_AKREDITASI');
+
+            $file->move($destinationPath, $filename);
+        }
+
+        if($post->idpt){
+            $cekfile = Master_DataPerguruanTinggi::where('id',$post->idpt)->select('id','file_sertifikat_akreditasi')->first();
+            $filename = $cekfile->file_sertifikat_akreditasi;
         }
 
         $array = array(
@@ -134,7 +148,7 @@ class DataPerguruanTinggiController extends Controller
             'wakil_rektor3' => $post->wr3 ? $post->wr3 : null,
             'wakil_rektor4' => $post->wr4 ? $post->wr4 : null,
             'lembaga_akreditasi' => $post->lembaga_akreditasi,
-            'peringkat_akreditasi' => $post->peringkat_akreditasi ? $post->peringkat_akreditasi : null,
+            'peringkat_akreditasi' => $post->peringkat_akreditasi ? decrypt($post->peringkat_akreditasi) : null,
             'nilai_akreditasi' => $post->nilai_akreditasi,
             'no_sk_akreditasi' => $post->nosk_akreditasi,
             'tanggal_sk_akreditasi' => $post->tglskakreditasi,
@@ -168,89 +182,5 @@ class DataPerguruanTinggiController extends Controller
         }
 
         return redirect()->back()->with('alert',$alert);
-    }
-
-    public function store(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'kode_unit'   => 'required|string|max:50|unique:siakad_master_data_perguruan_tinggi,kode_unit,' . $request->id,
-            'nama_unit'   => 'required|string|max:200',
-            'nama_singkat' => 'nullable|string|max:50',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'status'  => 'error',
-                'message' => $validator->errors()->first()
-            ]);
-        }
-
-        Master_DataPerguruanTinggi::updateOrCreate(
-            ['id' => $request->id],
-            $request->only([
-                'kode_unit',
-                'nama_unit',
-                'nama_unit_en',
-                'nama_singkat',
-                'jenis_perguruan_tinggi',
-                'lembaga_naungan',
-                'unit_satuan_kerja',
-                'periode_berdiri',
-                'no_sk_pendirian',
-                'tanggal_sk_pendirian',
-                'rektor',
-                'wakil_rektor1',
-                'wakil_rektor2',
-                'wakil_rektor3',
-                'wakil_rektor4',
-                'lembaga_akreditasi',
-                'peringkat_akreditasi',
-                'nilai_akreditasi',
-                'no_sk_akreditasi',
-                'tanggal_sk_akreditasi',
-                'tanggal_berlaku_akreditasi',
-                'tanggal_berakhir_akreditasi',
-                'file_sertifikat_akreditasi',
-                'visi',
-                'misi',
-                'alamat',
-                'telepon',
-                'alamat_email',
-                'alamat_website',
-                'fax'
-            ])
-        );
-
-        return response()->json([
-            'status'  => 'success',
-            'message' => 'Data Perguruan Tinggi berhasil disimpan!'
-        ]);
-    }
-
-    public function edit($id)
-    {
-        $data = Master_DataPerguruanTinggi::find($id);
-
-        return $data
-            ? response()->json(['status' => 'success', 'data' => $data])
-            : response()->json(['status' => 'error', 'message' => 'Data tidak ditemukan']);
-    }
-
-    public function destroy($id)
-    {
-        $data = Master_DataPerguruanTinggi::find($id);
-
-        if ($data) {
-            $data->delete();
-            return response()->json([
-                'status'  => 'success',
-                'message' => 'Data berhasil dihapus!'
-            ]);
-        }
-
-        return response()->json([
-            'status'  => 'error',
-            'message' => 'Gagal menghapus data'
-        ]);
     }
 }
