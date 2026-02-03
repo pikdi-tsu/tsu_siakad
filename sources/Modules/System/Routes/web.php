@@ -66,7 +66,10 @@ use Modules\System\Http\Controllers\masterdata\{
     GolonganPangkatController,
     JabatanFungsionalController,
     JabatanStrukturalController,
-    StatusKeaktifanController
+    StatusKeaktifanController,
+    LembagaNaunganController,
+    PeringkatAkreditasiController,
+    JenisPerguruanTinggiController
 };
 
 /*
@@ -94,46 +97,46 @@ Route::prefix('')->group(function () {
         Route::post('logout', [LoginController::class, 'logout'])->name('logout');
 
         // System Navigation
-        Route::prefix('system')->middleware(['auth'])->name('system.')->group(function() {
+        Route::prefix('system')->middleware(['auth'])->name('system.')->group(function () {
             // User
-            Route::middleware(['permission:system:user:view'])->group(function() {
+            Route::middleware(['permission:system:user:view'])->group(function () {
                 Route::get('users/json', [UserController::class, 'datatable'])->name('user.json');
                 Route::post('user/sync', [UserController::class, 'sync'])->name('user.sync'); // Route Sync
                 Route::resource('user', UserController::class);
             });
 
             // Role
-            Route::middleware(['permission:system:role:view'])->group(function() {
+            Route::middleware(['permission:system:role:view'])->group(function () {
                 Route::get('role/json', [RoleController::class, 'datatable'])->name('role.json');
                 Route::post('role/sync', [RoleController::class, 'sync'])->name('role.sync'); // Route Sync
                 Route::resource('role', RoleController::class)->only(['index', 'edit', 'update']);
             });
 
             // Permissions
-            Route::middleware(['permission:system:permission:view'])->group(function() {
+            Route::middleware(['permission:system:permission:view'])->group(function () {
                 Route::get('permission/json', [PermissionController::class, 'datatable'])->name('permission.json');
                 Route::resource('permission', PermissionController::class)->except(['create', 'edit', 'show']);
             });
 
             // Menu
-            Route::middleware(['permission:system:menu:view'])->group(function() {
+            Route::middleware(['permission:system:menu:view'])->group(function () {
                 Route::get('menu/json', [MenuController::class, 'datatable'])->name('menu.json');
                 Route::resource('menu', MenuController::class);
             });
         });
 
         // Profile & Password
-        Route::prefix('profile')->middleware(['auth'])->name('profile.')->group(function() {
+        Route::prefix('profile')->middleware(['auth'])->name('profile.')->group(function () {
             Route::get('/', [UserProfileController::class, 'index'])->name('index');
             Route::post('/profile/photo', [UserProfileController::class, 'updatePhoto'])->name('save.change-profile');
             Route::put('/profile/password', [UserProfileController::class, 'updatePassword'])->name('update-password');
         });
 
         // Master Data
-        Route::prefix('MasterData')->group(function() {
+        Route::prefix('MasterData')->group(function () {
             Route::prefix('PerguruanTinggi')->group(function () {
                 // Fakultas
-                Route::prefix('Fakultas')->group(function() {
+                Route::prefix('Fakultas')->group(function () {
                     Route::get('/', [FakultasController::class, 'index'])->name('admin.fakultas.show');
                     Route::get('/TabelFakultas', [FakultasController::class, 'table_fakultas'])->name('admin.fakultas.Tabel');
                     Route::post('/Store', [FakultasController::class, 'StoreFakultas'])->name('admin.fakultas.Store');
@@ -142,7 +145,7 @@ Route::prefix('')->group(function () {
                 });
 
                 // Program Studi
-                Route::prefix('ProgramStudi')->group(function() {
+                Route::prefix('ProgramStudi')->group(function () {
                     Route::get('/', [JurusanController::class, 'index'])->name('admin.Jurusan.show');
                     Route::get('/TabelJurusan', [JurusanController::class, 'table_jurusan'])->name('admin.Jurusan.Tabel');
                     Route::post('/Store', [JurusanController::class, 'StoreJurusan'])->name('admin.Jurusan.Store');
@@ -151,7 +154,7 @@ Route::prefix('')->group(function () {
                 });
 
                 // Jenjang Pendidikan Universitas
-                Route::prefix('JenjangPendidikanUniversitas')->group(function() {
+                Route::prefix('JenjangPendidikanUniversitas')->group(function () {
                     Route::get('/', [JenjangController::class, 'index'])->name('admin.Jenjang.show');
                     Route::get('/TabelJenjang', [JenjangController::class, 'table_Pendaftaran'])->name('admin.Jenjang.Tabel');
                     Route::post('/Store', [JenjangController::class, 'StoreJurusan'])->name('admin.Jenjang.Store');
@@ -160,7 +163,7 @@ Route::prefix('')->group(function () {
                 });
 
                 // Sistem Kuliah
-                Route::prefix('SistemKuliah')->group(function() {
+                Route::prefix('SistemKuliah')->group(function () {
                     Route::get('/', [SistemKuliahController::class, 'index'])->name('sistem_kuliah.index');
                     Route::post('/sistem-kuliah/store', [SistemKuliahController::class, 'store'])->name('sistem_kuliah.store');
                     Route::get('/sistem-kuliah/edit/{id}', [SistemKuliahController::class, 'edit'])->name('sistem_kuliah.edit');
@@ -168,7 +171,7 @@ Route::prefix('')->group(function () {
                 });
 
                 // Ruang Kuliah
-                Route::prefix('RuangKuliah')->group(function() {
+                Route::prefix('RuangKuliah')->group(function () {
                     Route::get('/', [RuangKuliahController::class, 'index'])->name('ruang_kuliah.index');
                     Route::post('/ruang-kuliah/store', [RuangKuliahController::class, 'store'])->name('ruang_kuliah.store');
                     Route::get('/ruang-kuliah/edit/{id}', [RuangKuliahController::class, 'edit'])->name('ruang_kuliah.edit');
@@ -176,7 +179,7 @@ Route::prefix('')->group(function () {
                 });
 
                 // Kegiatan Akademik
-                Route::prefix('KegiatanAkademik')->group(function() {
+                Route::prefix('KegiatanAkademik')->group(function () {
                     Route::get('/', [KegiatanAkademikController::class, 'index'])->name('kegiatan_akademik.index');
                     Route::post('/kegiatan-akademik/store', [KegiatanAkademikController::class, 'store'])->name('kegiatan_akademik.store');
                     Route::get('/kegiatan-akademik/edit/{id}', [KegiatanAkademikController::class, 'edit'])->name('kegiatan_akademik.edit');
@@ -184,16 +187,16 @@ Route::prefix('')->group(function () {
                 });
 
                 // Kalender Akademik
-                Route::prefix('KalenderAkademik')->group(function() {
+                Route::prefix('KalenderAkademik')->group(function () {
                     Route::get('/', [KalenderAkademikController::class, 'index'])->name('kalender_akademik.index');
                     Route::post('/kalender-akademik/store', [KalenderAkademikController::class, 'store'])->name('kalender_akademik.store');
                     Route::get('/kalender-akademik/edit/{id}', [KalenderAkademikController::class, 'edit'])->name('kalender_akademik.edit');
                     Route::delete('/kalender-akademik/delete/{id}', [KalenderAkademikController::class, 'destroy'])->name('kalender_akademik.delete');
                 });
             });
-            Route::prefix('Perkuliahan')->group(function() {
+            Route::prefix('Perkuliahan')->group(function () {
                 // Jenis Matakuliah
-                Route::prefix('KalenderAkademik')->group(function() {
+                Route::prefix('KalenderAkademik')->group(function () {
                     Route::get('/', [JenisMataKuliahController::class, 'index'])->name('jenis_matakuliah.index');
                     Route::post('/jenis-matakuliah/store', [JenisMataKuliahController::class, 'store'])->name('jenis_matakuliah.store');
                     Route::get('/jenis-matakuliah/edit/{id}', [JenisMataKuliahController::class, 'edit'])->name('jenis_matakuliah.edit');
@@ -201,7 +204,7 @@ Route::prefix('')->group(function () {
                 });
 
                 // Kelompok Matakuliah
-                Route::prefix('KelompokMataKuliah')->group(function() {
+                Route::prefix('KelompokMataKuliah')->group(function () {
                     Route::get('/', [KelompokMataKuliahController::class, 'index'])->name('kelompok_matakuliah.index');
                     Route::post('/kelompok-matakuliah/store', [KelompokMataKuliahController::class, 'store'])->name('kelompok_matakuliah.store');
                     Route::get('/kelompok-matakuliah/edit/{id}', [KelompokMataKuliahController::class, 'edit'])->name('kelompok_matakuliah.edit');
@@ -209,7 +212,7 @@ Route::prefix('')->group(function () {
                 });
 
                 // Bidang Ilmu
-                Route::prefix('BidangIlmu')->group(function() {
+                Route::prefix('BidangIlmu')->group(function () {
                     Route::get('/', [BidangIlmuController::class, 'index'])->name('bidang_ilmu.index');
                     Route::post('/bidang-ilmu/store', [BidangIlmuController::class, 'store'])->name('bidang_ilmu.store');
                     Route::get('/bidang-ilmu/edit/{id}', [BidangIlmuController::class, 'edit'])->name('bidang_ilmu.edit');
@@ -217,7 +220,7 @@ Route::prefix('')->group(function () {
                 });
 
                 // Unsur Nilai
-                Route::prefix('UnsurNilai')->group(function() {
+                Route::prefix('UnsurNilai')->group(function () {
                     Route::get('/', [UnsurNilaiController::class, 'index'])->name('unsur_nilai.index');
                     Route::post('/unsur-nilai/store', [UnsurNilaiController::class, 'store'])->name('unsur_nilai.store');
                     Route::get('/unsur-nilai/edit/{id}', [UnsurNilaiController::class, 'edit'])->name('unsur_nilai.edit');
@@ -225,7 +228,7 @@ Route::prefix('')->group(function () {
                 });
 
                 // Kelas Perkuliahan
-                Route::prefix('KelasPerkuliahan')->group(function() {
+                Route::prefix('KelasPerkuliahan')->group(function () {
                     Route::get('/', [KelasPerkuliahanController::class, 'index'])->name('kelas_perkuliahan.index');
                     Route::post('/kelas-perkuliahan/store', [KelasPerkuliahanController::class, 'store'])->name('kelas_perkuliahan.store');
                     Route::get('/kelas-perkuliahan/edit/{id}', [KelasPerkuliahanController::class, 'edit'])->name('kelas_perkuliahan.edit');
@@ -233,7 +236,7 @@ Route::prefix('')->group(function () {
                 });
 
                 // Slot Waktu
-                Route::prefix('SlotWaktu')->group(function() {
+                Route::prefix('SlotWaktu')->group(function () {
                     Route::get('/', [SlotWaktuController::class, 'index'])->name('slot_waktu.index');
                     Route::post('/slot-waktu/store', [SlotWaktuController::class, 'store'])->name('slot_waktu.store');
                     Route::get('/slot-waktu/edit/{id}', [SlotWaktuController::class, 'edit'])->name('slot_waktu.edit');
@@ -241,7 +244,7 @@ Route::prefix('')->group(function () {
                 });
 
                 // Status Hadir
-                Route::prefix('StatusHadir')->group(function() {
+                Route::prefix('StatusHadir')->group(function () {
                     Route::get('/', [StatusHadirController::class, 'index'])->name('status_hadir.index');
                     Route::post('/status-hadir/store', [StatusHadirController::class, 'store'])->name('status_hadir.store');
                     Route::get('/status-hadir/edit/{id}', [StatusHadirController::class, 'edit'])->name('status_hadir.edit');
@@ -249,7 +252,7 @@ Route::prefix('')->group(function () {
                 });
 
                 // Jenis Pertemuan
-                Route::prefix('JenisPertemuan')->group(function() {
+                Route::prefix('JenisPertemuan')->group(function () {
                     Route::get('/', [JenisPertemuanController::class, 'index'])->name('jenis_pertemuan.index');
                     Route::post('/jenis-pertemuan/store', [JenisPertemuanController::class, 'store'])->name('jenis_pertemuan.store');
                     Route::get('/jenis-pertemuan/edit/{id}', [JenisPertemuanController::class, 'edit'])->name('jenis_pertemuan.edit');
@@ -257,7 +260,7 @@ Route::prefix('')->group(function () {
                 });
 
                 // Jenis Modul Mata Kuliah
-                Route::prefix('JenisModulMataKuliah')->group(function() {
+                Route::prefix('JenisModulMataKuliah')->group(function () {
                     Route::get('/', [JenisModulMataKuliahController::class, 'index'])->name('jenis_modul_mata_kuliah.index');
                     Route::post('/jenis-modul-mata-kuliah/store', [JenisModulMataKuliahController::class, 'store'])->name('jenis_modul_mata_kuliah.store');
                     Route::get('/jenis-modul-mata-kuliah/edit/{id}', [JenisModulMataKuliahController::class, 'edit'])->name('jenis_modul_mata_kuliah.edit');
@@ -265,7 +268,7 @@ Route::prefix('')->group(function () {
                 });
 
                 // Jenis Kegiatan Pendukung
-                Route::prefix('JenisKegiatanPendukung')->group(function() {
+                Route::prefix('JenisKegiatanPendukung')->group(function () {
                     Route::get('/', [JenisKegiatanPendukungController::class, 'index'])->name('jenis_kegiatan_pendukung.index');
                     Route::post('/jenis-kegiatan-pendukung/store', [JenisKegiatanPendukungController::class, 'store'])->name('jenis_kegiatan_pendukung.store');
                     Route::get('/jenis-kegiatan-pendukung/edit/{id}', [JenisKegiatanPendukungController::class, 'edit'])->name('jenis_kegiatan_pendukung.edit');
@@ -273,9 +276,9 @@ Route::prefix('')->group(function () {
                 });
             });
 
-            Route::prefix('Biodata')->group(function() {
+            Route::prefix('Biodata')->group(function () {
                 // Agama
-                Route::prefix('Agama')->group(function() {
+                Route::prefix('Agama')->group(function () {
                     Route::get('/', [AgamaController::class, 'index'])->name('agama.index');
                     Route::post('/agama/store', [AgamaController::class, 'store'])->name('agama.store');
                     Route::get('/agama/edit/{id}', [AgamaController::class, 'edit'])->name('agama.edit');
@@ -283,7 +286,7 @@ Route::prefix('')->group(function () {
                 });
 
                 // Agama
-                Route::prefix('Agama')->group(function() {
+                Route::prefix('Agama')->group(function () {
                     Route::get('/', [AgamaController::class, 'index'])->name('agama.index');
                     Route::post('/agama/store', [AgamaController::class, 'store'])->name('agama.store');
                     Route::get('/agama/edit/{id}', [AgamaController::class, 'edit'])->name('agama.edit');
@@ -291,7 +294,7 @@ Route::prefix('')->group(function () {
                 });
 
                 // Pekerjaan
-                Route::prefix('Pekerjaan')->group(function() {
+                Route::prefix('Pekerjaan')->group(function () {
                     Route::get('/', [PekerjaanController::class, 'index'])->name('pekerjaan.index');
                     Route::post('/pekerjaan/store', [PekerjaanController::class, 'store'])->name('pekerjaan.store');
                     Route::get('/pekerjaan/edit/{id}', [PekerjaanController::class, 'edit'])->name('pekerjaan.edit');
@@ -299,7 +302,7 @@ Route::prefix('')->group(function () {
                 });
 
                 // Penghasilan
-                Route::prefix('Penghasilan')->group(function() {
+                Route::prefix('Penghasilan')->group(function () {
                     Route::get('/', [PenghasilanController::class, 'index'])->name('penghasilan.index');
                     Route::post('/penghasilan/store', [PenghasilanController::class, 'store'])->name('penghasilan.store');
                     Route::get('/penghasilan/edit/{id}', [PenghasilanController::class, 'edit'])->name('penghasilan.edit');
@@ -307,16 +310,16 @@ Route::prefix('')->group(function () {
                 });
 
                 // Jas Almamater
-                Route::prefix('JasAlmamater')->group(function() {
+                Route::prefix('JasAlmamater')->group(function () {
                     Route::get('/', [JasAlmamaterController::class, 'index'])->name('jas_almamater.index');
                     Route::post('/jas-almamater/store', [JasAlmamaterController::class, 'store'])->name('jas_almamater.store');
                     Route::get('/jas-almamater/edit/{id}', [JasAlmamaterController::class, 'edit'])->name('jas_almamater.edit');
                     Route::delete('/jas-almamater/delete/{id}', [JasAlmamaterController::class, 'destroy'])->name('jas_almamater.delete');
                 });
             });
-            Route::prefix('Mahasiswa')->group(function() {
+            Route::prefix('Mahasiswa')->group(function () {
                 // Status Mahasiswa
-                Route::prefix('StatusMahasiswa')->group(function() {
+                Route::prefix('StatusMahasiswa')->group(function () {
                     Route::get('/', [StatusMahasiswaController::class, 'index'])->name('status_mahasiswa.index');
                     Route::post('/status-mahasiswa/store', [StatusMahasiswaController::class, 'store'])->name('status_mahasiswa.store');
                     Route::get('/status-mahasiswa/edit/{id}', [StatusMahasiswaController::class, 'edit'])->name('status_mahasiswa.edit');
@@ -324,7 +327,7 @@ Route::prefix('')->group(function () {
                 });
 
                 // Jenis Tinggal
-                Route::prefix('JenisTinggal')->group(function() {
+                Route::prefix('JenisTinggal')->group(function () {
                     Route::get('/', [JenisTinggalController::class, 'index'])->name('jenis_tinggal.index');
                     Route::post('/jenis-tinggal/store', [JenisTinggalController::class, 'store'])->name('jenis_tinggal.store');
                     Route::get('/jenis-tinggal/edit/{id}', [JenisTinggalController::class, 'edit'])->name('jenis_tinggal.edit');
@@ -332,7 +335,7 @@ Route::prefix('')->group(function () {
                 });
 
                 // Transportasi
-                Route::prefix('Transportasi')->group(function() {
+                Route::prefix('Transportasi')->group(function () {
                     Route::get('/', [TransportasiController::class, 'index'])->name('transportasi.index');
                     Route::post('/transportasi/store', [TransportasiController::class, 'store'])->name('transportasi.store');
                     Route::get('/transportasi/edit/{id}', [TransportasiController::class, 'edit'])->name('transportasi.edit');
@@ -340,7 +343,7 @@ Route::prefix('')->group(function () {
                 });
 
                 // Kebutuhan Khusus
-                Route::prefix('KebutuhanKhusus')->group(function() {
+                Route::prefix('KebutuhanKhusus')->group(function () {
                     Route::get('/', [KebutuhanKhususController::class, 'index'])->name('kebutuhan_khusus.index');
                     Route::post('/kebutuhan-khusus/store', [KebutuhanKhususController::class, 'store'])->name('kebutuhan_khusus.store');
                     Route::get('/kebutuhan-khusus/edit/{id}', [KebutuhanKhususController::class, 'edit'])->name('kebutuhan_khusus.edit');
@@ -348,9 +351,9 @@ Route::prefix('')->group(function () {
                 });
             });
 
-            Route::prefix('Settings')->group(function() {
+            Route::prefix('Settings')->group(function () {
                 // Kategori Kuesioner Layanan
-                Route::prefix('KategoriKuesionerLayanan')->group(function() {
+                Route::prefix('KategoriKuesionerLayanan')->group(function () {
                     Route::get('/', [KategoriKuesionerLayananController::class, 'index'])->name('kategori_kuesioner_layanan.index');
                     Route::post('/kategori-kuesioner-layanan/store', [KategoriKuesionerLayananController::class, 'store'])->name('kategori_kuesioner_layanan.store');
                     Route::get('/kategori-kuesioner-layanan/edit/{id}', [KategoriKuesionerLayananController::class, 'edit'])->name('kategori_kuesioner_layanan.edit');
@@ -358,13 +361,13 @@ Route::prefix('')->group(function () {
                 });
 
                 // Setting Prodi
-                Route::prefix('SettingProdi')->group(function() {
+                Route::prefix('SettingProdi')->group(function () {
                     Route::get('/', [SettingProdiController::class, 'index'])->name('setting.prodi.index');
                     Route::post('/setting-prodi/update', [SettingProdiController::class, 'update'])->name('setting.prodi.update');
                 });
 
                 // Periode Akademik
-                Route::prefix('PeriodeAkademik')->group(function() {
+                Route::prefix('PeriodeAkademik')->group(function () {
                     Route::get('/', [PeriodeAkademikController::class, 'index'])->name('periode_akademik.index');
                     Route::post('/periode-akademik/store', [PeriodeAkademikController::class, 'store'])->name('periode_akademik.store');
                     Route::get('/periode-akademik/edit/{id}', [PeriodeAkademikController::class, 'edit'])->name('periode_akademik.edit');
@@ -375,31 +378,31 @@ Route::prefix('')->group(function () {
                 });
             });
 
-//            Route::prefix('BatchPendaftaran')->group(function(){
-//                Route::get('/', [BatchPendaftaranController::class, 'index'])->name('admin.BatchPendaftaran.show');
-//                Route::get('/TabelBatch', [BatchPendaftaranController::class, 'TabelBatch'])->name('admin.BatchPendaftaran.Tabel');
-//                Route::post('/Store', [BatchPendaftaranController::class, 'StoreBatch'])->name('admin.BatchPendaftaran.Store');
-//                Route::get('/EditBatch/{params}', [BatchPendaftaranController::class, 'ShowBatch'])->name('admin.BatchPendaftaran.Edit');
-//                Route::get('/Status/{params1}/{params2}', [BatchPendaftaranController::class, 'delete'])->name('admin.BatchPendaftaran.delete');
-//            });
+            //            Route::prefix('BatchPendaftaran')->group(function(){
+            //                Route::get('/', [BatchPendaftaranController::class, 'index'])->name('admin.BatchPendaftaran.show');
+            //                Route::get('/TabelBatch', [BatchPendaftaranController::class, 'TabelBatch'])->name('admin.BatchPendaftaran.Tabel');
+            //                Route::post('/Store', [BatchPendaftaranController::class, 'StoreBatch'])->name('admin.BatchPendaftaran.Store');
+            //                Route::get('/EditBatch/{params}', [BatchPendaftaranController::class, 'ShowBatch'])->name('admin.BatchPendaftaran.Edit');
+            //                Route::get('/Status/{params1}/{params2}', [BatchPendaftaranController::class, 'delete'])->name('admin.BatchPendaftaran.delete');
+            //            });
 
-            Route::prefix('Provinsi')->group(function(){
+            Route::prefix('Provinsi')->group(function () {
                 Route::get('/', [ProvinsiController::class, 'index'])->name('admin.Provinsi.show');
                 Route::get('/TabelProvinsi', [ProvinsiController::class, 'TabelProvinsi'])->name('admin.Provinsi.Tabel');
             });
-            Route::prefix('Kabupaten')->group(function(){
+            Route::prefix('Kabupaten')->group(function () {
                 Route::get('/', [KabupatenController::class, 'index'])->name('admin.Kabupaten.show');
                 Route::get('/TabelKabupaten', [KabupatenController::class, 'TabelKabupaten'])->name('admin.Kabupaten.Tabel');
             });
-            Route::prefix('Kecamatan')->group(function(){
+            Route::prefix('Kecamatan')->group(function () {
                 Route::get('/', [KecamatanController::class, 'index'])->name('admin.Kecamatan.show');
                 Route::get('/TabelKecamatan', [KecamatanController::class, 'TabelKecamatan'])->name('admin.Kecamatan.Tabel');
             });
-            Route::prefix('Kelurahan')->group(function(){
+            Route::prefix('Kelurahan')->group(function () {
                 Route::get('/', [KelurahanController::class, 'index'])->name('admin.Kelurahan.show');
                 Route::get('/TabelKelurahan', [KelurahanController::class, 'TabelKelurahan'])->name('admin.Kelurahan.Tabel');
             });
-            Route::prefix('TarifUKT')->group(function(){
+            Route::prefix('TarifUKT')->group(function () {
                 Route::get('/', [TarifUKTController::class, 'index'])->name('admin.TarifUKT.show');
                 Route::get('/TabelUKT', [TarifUKTController::class, 'TabelUKT'])->name('admin.TarifUKT.Tabel');
                 Route::post('/Store', [TarifUKTController::class, 'StoreUKT'])->name('admin.TarifUKT.Store');
@@ -424,6 +427,41 @@ Route::prefix('')->group(function () {
             Route::get('/edit/{id}', [ProgramStudiController::class, 'edit'])->name('program_studi.edit');
             Route::delete('/delete/{id}', [ProgramStudiController::class, 'destroy'])->name('program_studi.delete');
         });
+
+        // Lembaga Naungan
+        Route::prefix('lembaga-naungan')->group(function () {
+            Route::get('/', [LembagaNaunganController::class, 'index'])->name('lembaga_naungan.index');
+            Route::post('/store', [LembagaNaunganController::class, 'store'])->name('lembaga_naungan.store');
+            Route::get('/edit/{id}', [LembagaNaunganController::class, 'edit'])->name('lembaga_naungan.edit');
+            Route::delete('/delete/{id}', [LembagaNaunganController::class, 'destroy'])->name('lembaga_naungan.delete');
+        });
+
+
+
+        // Jenis Perguruan Tinggi
+        Route::prefix('jenis-perguruan-tinggi')->group(function () {
+            Route::get('/', [JenisPerguruanTinggiController::class, 'index'])->name('jenis_pt.index');
+            Route::post('/store', [JenisPerguruanTinggiController::class, 'store'])->name('jenis_pt.store');
+            Route::get('/edit/{id}', [JenisPerguruanTinggiController::class, 'edit'])->name('jenis_pt.edit');
+            Route::delete('/delete/{id}', [JenisPerguruanTinggiController::class, 'destroy'])->name('jenis_pt.delete');
+        });
+
+
+        // Peringkat Akreditasi
+        Route::prefix('peringkat-akreditasi')->group(function () {
+            Route::get('/', [PeringkatAkreditasiController::class, 'index'])
+                ->name('peringkat_akreditasi.index');
+            Route::post('/store', [PeringkatAkreditasiController::class, 'store'])
+                ->name('peringkat_akreditasi.store');
+            Route::get('/edit/{id}', [PeringkatAkreditasiController::class, 'edit'])
+                ->name('peringkat_akreditasi.edit');
+            Route::delete('/delete/{id}', [PeringkatAkreditasiController::class, 'destroy'])
+                ->name('peringkat_akreditasi.delete');
+        });
+
+
+
+
 
         // Konsentrasi
         Route::prefix('Konsentrasi')->group(function () {
@@ -562,7 +600,7 @@ Route::prefix('')->group(function () {
         });
 
         //Setting
-        Route::prefix('setting')->middleware(['auth'])->name('setting.')->group(function(){
+        Route::prefix('setting')->middleware(['auth'])->name('setting.')->group(function () {
             //User Management
             Route::get('/usermanagement', [SettingController::class, 'userManagement'])->name('show.userManagement');
             Route::get('/tabelPegawai', [SettingController::class, 'table_pegawai'])->name('show.tabelPegawai');
