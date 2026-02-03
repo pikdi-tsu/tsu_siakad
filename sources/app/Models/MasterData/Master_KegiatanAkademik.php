@@ -10,7 +10,6 @@ class Master_KegiatanAkademik extends Model
 {
     use HasFactory, HasUuids;
 
-    protected $table = 'siakad_master_kegiatan_akademik';
     protected $primaryKey = 'id';
     public $incrementing = false;
     protected $keyType = 'string';
@@ -20,4 +19,9 @@ class Master_KegiatanAkademik extends Model
         'nama_kegiatan',
         'warna_background',
     ];
+
+    public function getTable()
+    {
+        return config('app.module.name') . '_master_kegiatan_akademik';
+    }
 }
