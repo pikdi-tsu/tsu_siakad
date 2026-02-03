@@ -71,7 +71,7 @@ class DataPerguruanTinggiController extends Controller
             }
 
             if($pt->file_sertifikat_akreditasi){
-                $linkfileakreditasi = asset('sources/storage/app/public/FILE_AKREDITASI/'.$pt->file_sertifikasi_akreditasi);
+                $linkfileakreditasi = asset('sources/storage/app/public/FILE_AKREDITASI/'.$pt->file_sertifikat_akreditasi);
             }
         }
         $data = array(
@@ -88,6 +88,7 @@ class DataPerguruanTinggiController extends Controller
             'wr4' => $wr4,
             'file_akred' => $linkfileakreditasi
         );
+        // dd($data);
         return view('system::masterdata.dataPerguruanTinggi.index', $data);
     }
 
@@ -124,9 +125,7 @@ class DataPerguruanTinggiController extends Controller
             $destinationPath = base_path('storage/app/public/FILE_AKREDITASI');
 
             $file->move($destinationPath, $filename);
-        }
-
-        if($post->idpt){
+        }else{
             $cekfile = Master_DataPerguruanTinggi::where('id',$post->idpt)->select('id','file_sertifikat_akreditasi')->first();
             $filename = $cekfile->file_sertifikat_akreditasi;
         }
