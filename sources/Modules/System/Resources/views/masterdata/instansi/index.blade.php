@@ -130,6 +130,7 @@
                 }
             });
 
+
             let table = $('#table-instansi').DataTable({
                 processing: true,
                 serverSide: true,
@@ -161,7 +162,10 @@
                         searchable: false,
                         className: 'text-center'
                     }
-                ]
+                ],
+                language: {
+                    processing: '<i class="fa fa-spinner fa-lg fa-spin"></i>'
+                },
             });
 
             $('#btn-tambah').click(function() {
@@ -216,9 +220,13 @@
                         $.ajax({
                             type: 'DELETE',
                             url: "{{ route('instansi.delete', ':id') }}".replace(':id', id),
+                            beforeSend: function(response) {
+                                $('#loading').show()
+                            },
                             success: function(res) {
                                 Swal.fire('Terhapus', res.message, 'success');
                                 table.ajax.reload();
+                                $('#loading').hide()
                             }
                         });
                     }

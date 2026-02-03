@@ -105,9 +105,10 @@ Route::prefix('')->group(function () {
             // Perguruan Tinggi
             Route::prefix('PerguruanTinggi')->name('perguruan_tinggi.')->group(function () {
                 // Data Perguruan Tinggi
-                Route::prefix('DataPerguruanTinggi')->middleware(['permission:system:master_dataperguruantinggi:view'])->group(function () {
+                Route::prefix('DataPerguruanTinggi')->group(function () {
                     Route::get('/', [DataPerguruanTinggiController::class, 'index'])->name('perguruan_tinggi.index');
-                    Route::post('/store', [DataPerguruanTinggiController::class, 'store'])->name('perguruan_tinggi.store');
+                    Route::get('/searchPegawai', [DataPerguruanTinggiController::class, 'search'])->name('perguruan_tinggi.caripegawai');
+                    Route::post('/save', [DataPerguruanTinggiController::class, 'save'])->name('perguruan_tinggi.save');
                     Route::get('/edit/{id}', [DataPerguruanTinggiController::class, 'edit'])->name('perguruan_tinggi.edit');
                     Route::delete('/delete/{id}', [DataPerguruanTinggiController::class, 'destroy'])->name('perguruan_tinggi.delete');
                 });
@@ -364,7 +365,7 @@ Route::prefix('')->group(function () {
                 });
 
                 // Jenis Pertemuan
-                Route::prefix('JenisPertemuan')->middleware(['permission:system:master_jenispertemuan:view'])->group(function() {
+                Route::prefix('JenisPertemuan')->group(function() {
                     Route::get('/', [JenisPertemuanController::class, 'index'])->name('jenis_pertemuan.index');
                     Route::post('/jenis-pertemuan/store', [JenisPertemuanController::class, 'store'])->name('jenis_pertemuan.store');
                     Route::get('/jenis-pertemuan/edit/{id}', [JenisPertemuanController::class, 'edit'])->name('jenis_pertemuan.edit');

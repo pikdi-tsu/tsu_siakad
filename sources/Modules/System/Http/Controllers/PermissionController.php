@@ -21,6 +21,7 @@ class PermissionController extends MiddlewareController
 
     public function index()
     {
+
         return view('system::permission.index', ['title' => 'Manajemen Permission (Hak Akses)']);
     }
 
