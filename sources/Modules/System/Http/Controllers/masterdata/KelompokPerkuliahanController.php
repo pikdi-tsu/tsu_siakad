@@ -3,13 +3,19 @@
 namespace Modules\System\Http\Controllers\masterdata;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\MiddlewareController;
 use App\Models\MasterData\Master_KelompokPerkuliahan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 use Yajra\DataTables\Facades\DataTables;
 
-class KelompokPerkuliahanController extends Controller
+class KelompokPerkuliahanController extends MiddlewareController
 {
+    public function __construct() {
+        $this->registerPermissions('system:master_kelompokperkuliahan');
+    }
+
     public function index(Request $request)
     {
         $data['title'] = 'Master Kelompok Perkuliahan';
@@ -21,12 +27,7 @@ class KelompokPerkuliahanController extends Controller
             return DataTables::of($query)
                 ->addIndexColumn()
                 ->addColumn('action', function ($row) {
-                    $btn  = '<button type="button" data-id="' . $row->id . '" class="btn btn-warning btn-sm btn_edit" title="Edit">';
-                    $btn .= '<i class="fas fa-pencil-alt"></i></button> ';
-                    $btn .= '<button type="button" data-id="' . $row->id . '" class="btn btn-danger btn-sm btn_hapus" title="Hapus">';
-                    $btn .= '<i class="fas fa-trash"></i></button>';
-
-                    return '<div class="text-center">' . $btn . '</div>';
+                    $this->getActionButtons($row, 'system:master_kelompokperkuliahan');
                 })
                 ->rawColumns(['action'])
                 ->make(true);
@@ -37,6 +38,8 @@ class KelompokPerkuliahanController extends Controller
 
     public function store(Request $request)
     {
+        $this->guardStore($request->id, 'system:master_kelompokperkuliahan');
+
         $validator = Validator::make($request->all(), [
             'nama_kelompok_perkuliahan' => 'required|string|max:150',
             'urutan' => 'required|numeric|min:0',
@@ -65,6 +68,8 @@ class KelompokPerkuliahanController extends Controller
 
     public function edit($id)
     {
+        $this->guard('edit', 'system:master_kelompokperkuliahan');
+
         $data = Master_KelompokPerkuliahan::find($id);
 
         return $data
@@ -72,8 +77,26 @@ class KelompokPerkuliahanController extends Controller
             : response()->json(['status' => 'error', 'message' => 'Data tidak ditemukan']);
     }
 
+    public function update(Request $request, $id)
+    {
+        $this->guard('edit', 'system:master_kelompokperkuliahan');
+
+        $masterKelompokPerkuliahan = Master_KelompokPerkuliahan::query()->findOrFail($id);
+        $tablePermission = config('app.module.name');
+
+        $request->validate([
+            'name' => ['required', Rule::unique($tablePermission . '_master_kelompok_perkuliahan', 'name')->ignore($id)->where('guard_name', 'web')]
+        ]);
+
+        $masterKelompokPerkuliahan->update(['name' => $request->name]);
+
+        return back()->with('success', 'Nama Permission berhasil diperbarui!');
+    }
+
     public function destroy($id)
     {
+        $this->guard('delete', 'system:master_kelompokperkuliahan');
+
         $data = Master_KelompokPerkuliahan::find($id);
 
         if ($data) {

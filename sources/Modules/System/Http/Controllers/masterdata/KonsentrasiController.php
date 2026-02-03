@@ -3,13 +3,20 @@
 namespace Modules\System\Http\Controllers\masterdata;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\MiddlewareController;
 use App\Models\MasterData\Master_Konsentrasi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 use Yajra\DataTables\Facades\DataTables;
 
-class KonsentrasiController extends Controller
+class KonsentrasiController extends MiddlewareController
 {
+    public function __construct()
+    {
+        $this->registerPermissions('system:master_konsentrasi');
+    }
+
     public function index(Request $request)
     {
         $data['title'] = "Master Konsentrasi";
@@ -22,12 +29,7 @@ class KonsentrasiController extends Controller
             return DataTables::of($query)
                 ->addIndexColumn()
                 ->addColumn('action', function ($row) {
-                    $btn  = '<button type="button" data-id="' . $row->id . '" class="btn btn-warning btn-sm btn_edit" title="Edit">';
-                    $btn .= '<i class="fas fa-pencil-alt"></i></button> ';
-                    $btn .= '<button type="button" data-id="' . $row->id . '" class="btn btn-danger btn-sm btn_hapus" title="Hapus">';
-                    $btn .= '<i class="fas fa-trash"></i></button>';
-
-                    return '<div class="text-center">' . $btn . '</div>';
+                    $this->getActionButtons($row, 'system:master_konsentrasi');
                 })
                 ->rawColumns(['action'])
                 ->make(true);
@@ -38,6 +40,8 @@ class KonsentrasiController extends Controller
 
     public function store(Request $request)
     {
+        $this->guardStore($request->id, 'system:master_konsentrasi');
+
         $validator = Validator::make($request->all(), [
             'kode'              => 'required|string|max:20|unique:siakad_master_konsentrasi,kode,' . $request->id,
             'nama_konsentrasi'  => 'required|string|max:200',
@@ -68,6 +72,8 @@ class KonsentrasiController extends Controller
 
     public function edit($id)
     {
+        $this->guard('edit', 'system:master_konsentrasi');
+
         $data = Master_Konsentrasi::find($id);
 
         return $data
@@ -75,8 +81,26 @@ class KonsentrasiController extends Controller
             : response()->json(['status' => 'error', 'message' => 'Data tidak ditemukan']);
     }
 
+    public function update(Request $request, $id)
+    {
+        $this->guard('edit', 'system:master_konsentrasi');
+
+        $masterKonsentrasi = Master_Konsentrasi::query()->findOrFail($id);
+        $tablePermission = config('app.module.name');
+
+        $request->validate([
+            'name' => ['required', Rule::unique($tablePermission . '_master_konsentrasi', 'name')->ignore($id)->where('guard_name', 'web')]
+        ]);
+
+        $masterKonsentrasi->update(['name' => $request->name]);
+
+        return back()->with('success', 'Nama Permission berhasil diperbarui!');
+    }
+
     public function destroy($id)
     {
+        $this->guard('delete', 'system:master_konsentrasi');
+
         $data = Master_Konsentrasi::find($id);
 
         if ($data) {

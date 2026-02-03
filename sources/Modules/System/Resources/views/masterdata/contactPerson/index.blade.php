@@ -28,9 +28,15 @@
 
                         <div class="card-header">
                             <h5 class="m-0 d-inline-block">Daftar {{ $menu }}</h5>
-                            <button class="btn btn-success float-right" id="btn-tambah">
-                                <i class="fas fa-plus"></i> Tambah
-                            </button>
+                            @can('system:master_contactperson:create')
+                                <button class="btn btn-success float-right" id="btn-tambah">
+                                    <i class="fas fa-plus"></i> Tambah
+                                </button>
+                            @else
+                                <span class="badge badge-secondary p-2 shadow-sm" style="cursor: not-allowed; opacity: 0.7;" title="Anda tidak memiliki akses ke action ini">
+                                    <i class="fas fa-lock mr-1"></i> Tambah (No Access)
+                                </span>
+                            @endcan
                         </div>
 
                         <div class="card-body">

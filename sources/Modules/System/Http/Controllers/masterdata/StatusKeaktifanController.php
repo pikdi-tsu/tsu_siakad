@@ -3,13 +3,18 @@
 namespace Modules\System\Http\Controllers\masterdata;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\MiddlewareController;
 use App\Models\MasterData\Master_StatusKeaktifan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 use Yajra\DataTables\Facades\DataTables;
 
-class StatusKeaktifanController extends Controller
+class StatusKeaktifanController extends MiddlewareController
 {
+    public function __construct() {
+        $this->registerPermissions('system:master_statuskeaktifan');
+    }
     public function index(Request $request)
     {
         $data['title'] = 'Master Status Keaktifan';
@@ -21,12 +26,7 @@ class StatusKeaktifanController extends Controller
             return DataTables::of($query)
                 ->addIndexColumn()
                 ->addColumn('action', function ($row) {
-                    $btn  = '<button type="button" data-id="' . $row->id . '" class="btn btn-warning btn-sm btn_edit" title="Edit">';
-                    $btn .= '<i class="fas fa-pencil-alt"></i></button> ';
-                    $btn .= '<button type="button" data-id="' . $row->id . '" class="btn btn-danger btn-sm btn_hapus" title="Hapus">';
-                    $btn .= '<i class="fas fa-trash"></i></button>';
-
-                    return '<div class="text-center">' . $btn . '</div>';
+                    $this->getActionButtons($row, 'system:master_statuskeaktifan');
                 })
                 ->rawColumns(['action'])
                 ->make(true);
@@ -37,6 +37,8 @@ class StatusKeaktifanController extends Controller
 
     public function store(Request $request)
     {
+        $this->guardStore($request->id, 'system:master_statuskeaktifan');
+
         $validator = Validator::make($request->all(), [
             'nama_status_keaktifan' => 'required|string|max:150',
             'status_keluar' => 'nullable|string|max:50',
@@ -65,6 +67,8 @@ class StatusKeaktifanController extends Controller
 
     public function edit($id)
     {
+        $this->guard('edit', 'system:master_statuskeaktifan');
+
         $data = Master_StatusKeaktifan::find($id);
 
         return $data
@@ -72,8 +76,26 @@ class StatusKeaktifanController extends Controller
             : response()->json(['status' => 'error', 'message' => 'Data tidak ditemukan']);
     }
 
+    public function update(Request $request, $id)
+    {
+        $this->guard('edit', 'system:master_statuskeaktifan');
+
+        $masterStatusKeaktifan = Master_StatusKeaktifan::query()->findOrFail($id);
+        $tablePermission = config('app.module.name');
+
+        $request->validate([
+            'name' => ['required', Rule::unique($tablePermission . '_master_status_keaktifan', 'name')->ignore($id)->where('guard_name', 'web')]
+        ]);
+
+        $masterStatusKeaktifan->update(['name' => $request->name]);
+
+        return back()->with('success', 'Nama Permission berhasil diperbarui!');
+    }
+
     public function destroy($id)
     {
+        $this->guard('delete', 'system:master_statuskeaktifan');
+
         $data = Master_StatusKeaktifan::find($id);
 
         if ($data) {

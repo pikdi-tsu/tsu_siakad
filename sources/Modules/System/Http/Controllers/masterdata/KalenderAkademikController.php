@@ -4,7 +4,6 @@ namespace Modules\System\Http\Controllers\masterdata;
 
 use App\Http\Controllers\Controller;
 use App\Models\MasterData\Master_KalenderAkademik;
-use App\Models\MasterData\Master_KegiatanAkademik;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -24,7 +23,7 @@ class KalenderAkademikController extends Controller
             '20252' => '2025 Genap',
             '20261' => '2026 Ganjil'
         ];
-        $data['list_kegiatan'] = Master_KegiatanAkademik::all();
+        $data['list_kegiatan'] = Master_KalenderAkademik::all();
 
         if ($request->ajax()) {
             // Eager Load 'kegiatan' biar query ringan
