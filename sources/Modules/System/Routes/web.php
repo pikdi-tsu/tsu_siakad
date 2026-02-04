@@ -66,7 +66,10 @@ use Modules\System\Http\Controllers\masterdata\{
     GolonganPangkatController,
     JabatanFungsionalController,
     JabatanStrukturalController,
-    StatusKeaktifanController
+    StatusKeaktifanController,
+    LembagaNaunganController,
+    PeringkatAkreditasiController,
+    JenisPerguruanTinggiController
 };
 
 /*
@@ -199,6 +202,34 @@ Route::prefix('')->group(function () {
                     Route::post('/store', [LokasiKampusController::class, 'store'])->name('lokasi_kampus.store');
                     Route::get('/edit/{id}', [LokasiKampusController::class, 'edit'])->name('lokasi_kampus.edit');
                     Route::delete('/delete/{id}', [LokasiKampusController::class, 'destroy'])->name('lokasi_kampus.delete');
+                });
+
+                // Lembaga Naungan
+                Route::prefix('lembaga-naungan')->group(function () {
+                    Route::get('/', [LembagaNaunganController::class, 'index'])->name('lembaga_naungan.index');
+                    Route::post('/store', [LembagaNaunganController::class, 'store'])->name('lembaga_naungan.store');
+                    Route::get('/edit/{id}', [LembagaNaunganController::class, 'edit'])->name('lembaga_naungan.edit');
+                    Route::delete('/delete/{id}', [LembagaNaunganController::class, 'destroy'])->name('lembaga_naungan.delete');
+                });
+
+                // Jenis Perguruan Tinggi
+                Route::prefix('jenis-perguruan-tinggi')->group(function () {
+                    Route::get('/', [JenisPerguruanTinggiController::class, 'index'])->name('jenis_pt.index');
+                    Route::post('/store', [JenisPerguruanTinggiController::class, 'store'])->name('jenis_pt.store');
+                    Route::get('/edit/{id}', [JenisPerguruanTinggiController::class, 'edit'])->name('jenis_pt.edit');
+                    Route::delete('/delete/{id}', [JenisPerguruanTinggiController::class, 'destroy'])->name('jenis_pt.delete');
+                });
+
+                // Peringkat Akreditasi
+                Route::prefix('peringkat-akreditasi')->group(function () {
+                    Route::get('/', [PeringkatAkreditasiController::class, 'index'])
+                        ->name('peringkat_akreditasi.index');
+                    Route::post('/store', [PeringkatAkreditasiController::class, 'store'])
+                        ->name('peringkat_akreditasi.store');
+                    Route::get('/edit/{id}', [PeringkatAkreditasiController::class, 'edit'])
+                        ->name('peringkat_akreditasi.edit');
+                    Route::delete('/delete/{id}', [PeringkatAkreditasiController::class, 'destroy'])
+                        ->name('peringkat_akreditasi.delete');
                 });
 
                 // Univ Luar
