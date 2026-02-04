@@ -3,13 +3,18 @@
 namespace Modules\System\Http\Controllers\masterdata;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\MiddlewareController;
 use App\Models\MasterData\Master_JenisSertifikat;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 use Yajra\DataTables\Facades\DataTables;
 
-class JenisSertifikatController extends Controller
+class JenisSertifikatController extends MiddlewareController
 {
+    public function __construct() {
+        $this->registerPermissions('system:master_jenissertifikat');
+    }
     public function index(Request $request)
     {
         $data['title'] = 'Master Jenis Sertifikat';
@@ -21,12 +26,7 @@ class JenisSertifikatController extends Controller
             return DataTables::of($query)
                 ->addIndexColumn()
                 ->addColumn('action', function ($row) {
-                    $btn  = '<button type="button" data-id="' . $row->id . '" class="btn btn-warning btn-sm btn_edit" title="Edit">';
-                    $btn .= '<i class="fas fa-pencil-alt"></i></button> ';
-                    $btn .= '<button type="button" data-id="' . $row->id . '" class="btn btn-danger btn-sm btn_hapus" title="Hapus">';
-                    $btn .= '<i class="fas fa-trash"></i></button>';
-
-                    return '<div class="text-center">' . $btn . '</div>';
+                    $this->getActionButtons($row, 'system:master_jenissertifikat');
                 })
                 ->rawColumns(['action'])
                 ->make(true);
@@ -37,6 +37,8 @@ class JenisSertifikatController extends Controller
 
     public function store(Request $request)
     {
+        $this->guardStore($request->id, 'system:master_jenissertifikat');
+
         $validator = Validator::make($request->all(), [
             'nama_jenis_sertifikat' => 'required|string|max:150',
             'ukom' => 'nullable|string|max:50',
@@ -65,6 +67,8 @@ class JenisSertifikatController extends Controller
 
     public function edit($id)
     {
+        $this->guard('edit', 'system:master_jenissertifikat');
+
         $data = Master_JenisSertifikat::find($id);
 
         return $data
@@ -72,8 +76,26 @@ class JenisSertifikatController extends Controller
             : response()->json(['status' => 'error', 'message' => 'Data tidak ditemukan']);
     }
 
+    public function update(Request $request, $id)
+    {
+        $this->guard('edit', 'system:master_jenissertifikat');
+
+        $masterJenisSertifikat = Master_JenisSertifikat::query()->findOrFail($id);
+        $tablePermission = config('app.module.name');
+
+        $request->validate([
+            'name' => ['required', Rule::unique($tablePermission . '_master_jenis_sertifikat', 'name')->ignore($id)->where('guard_name', 'web')]
+        ]);
+
+        $masterJenisSertifikat->update(['name' => $request->name]);
+
+        return back()->with('success', 'Nama Permission berhasil diperbarui!');
+    }
+
     public function destroy($id)
     {
+        $this->guard('delete', 'system:master_jenissertifikat');
+
         $data = Master_JenisSertifikat::find($id);
 
         if ($data) {

@@ -111,12 +111,21 @@ class MenuController extends MiddlewareController
                 $isSystemCore = Str::contains($row->route, 'dashboard');
 
                 if (!$canEdit && !$canDelete) {
-                    return '';
+                    return '<span class="badge badge-secondary p-2 shadow-sm" style="cursor: not-allowed;" title="Anda tidak memiliki akses ke action ini">
+                                <i class="fas fa-lock mr-1"></i> Locked
+                            </span>';
                 }
 
-                $btnEdit = $canEdit ? '<a href="'.route('system.menu.edit', $row->id).'" class="btn btn-xs btn-warning btn-edit mr-1" title="Edit"><i class="fas fa-pencil-alt"></i></a>' : '';
+                if ($canEdit) {
+                    $btnEdit =  '<a href="'.route('system.menu.edit', $row->id).'" class="btn btn-xs btn-warning btn-edit mr-1" title="Edit">
+                                    <i class="fas fa-pencil-alt"></i>
+                                </a>';
+                } else {
+                    $btnEdit = '<span class="badge badge-secondary p-2 shadow-sm" style="cursor: not-allowed; opacity: 0.6;" title="Edit (No Access)">
+                                    <i class="fas fa-lock"></i>
+                                 </span>';
+                }
 
-                $btnDel = '';
                 if ($canDelete) {
                     if ($isSystemCore) {
                         $btnDel = '<button class="btn btn-xs btn-secondary" disabled title="System Core"><i class="fas fa-lock"></i></button>';
@@ -126,7 +135,12 @@ class MenuController extends MiddlewareController
                                         <button type="submit" class="btn btn-xs btn-danger btn-delete" title="Hapus"><i class="fas fa-trash"></i></button>
                                     </form>';
                     }
+                } else {
+                    $btnDel = '<span class="badge badge-secondary p-2 shadow-sm" style="cursor: not-allowed; opacity: 0.6;" title="No Access: Delete">
+                                    <i class="fas fa-lock"></i>
+                                </span>';
                 }
+
                 return $btnEdit . $btnDel;
             })
             ->setRowClass(function ($d) {
@@ -157,6 +171,8 @@ class MenuController extends MiddlewareController
 
     public function store(Request $request)
     {
+        $this->guardStore($request->id, 'system:menu');
+
         $request->validate([
             'name' => 'required',
             'order' => 'required|integer',
@@ -178,6 +194,8 @@ class MenuController extends MiddlewareController
 
     public function edit($id)
     {
+        $this->guard('edit', 'system:menu');
+
         $menu = MenuSidebar::query()->findOrFail($id);
         $permissions = Permission::query()->orderBy('name')->pluck('name', 'name');
 
@@ -190,6 +208,8 @@ class MenuController extends MiddlewareController
 
     public function update(Request $request, $id)
     {
+        $this->guard('edit', 'system:menu');
+
         $menu = MenuSidebar::query()->findOrFail($id);
 
         $menu->update([
@@ -207,6 +227,8 @@ class MenuController extends MiddlewareController
 
     public function destroy($id)
     {
+        $this->guard('delete', 'system:menu');
+
         $menu = MenuSidebar::withCount('children')->findOrFail($id);
 
         if ($menu->children_count > 0) {

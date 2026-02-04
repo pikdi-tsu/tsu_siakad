@@ -10,12 +10,9 @@ class Master_DataPerguruanTinggi extends Model
 {
     use HasFactory, HasUuids;
 
-
-    protected $table = 'siakad_master_data_perguruan_tinggi';
     protected $primaryKey = 'id';
     public $incrementing = false;
     protected $keyType = 'string';
-
 
     protected $fillable = [
         'kode_unit',
@@ -49,4 +46,9 @@ class Master_DataPerguruanTinggi extends Model
         'alamat_website',
         'fax'
     ];
+
+    public function getTable()
+    {
+        return config('app.module.name') . '_master_data_perguruan_tinggi';
+    }
 }

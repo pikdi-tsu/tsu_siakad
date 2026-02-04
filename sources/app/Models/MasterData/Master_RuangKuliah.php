@@ -10,7 +10,6 @@ class Master_RuangKuliah extends Model
 {
     use HasFactory, HasUuids; // Aktifkan Trait UUID
 
-    protected $table = 'siakad_master_ruang_kuliah';
     protected $primaryKey = 'id';
     public $incrementing = false;
     protected $keyType = 'string';
@@ -28,4 +27,9 @@ class Master_RuangKuliah extends Model
         'is_active' => 'boolean',
         'kapasitas' => 'integer',
     ];
+
+    public function getTable()
+    {
+        return config('app.module.name') . '_master_ruang_kuliah';
+    }
 }

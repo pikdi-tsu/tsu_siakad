@@ -39,6 +39,24 @@
     }
 
     $(document).ready(function() {
+        // 403 alert
+        $(document).ajaxError(function(event, jqxhr, settings, thrownError) {
+            // Cek error 403 (Unauthorized / Permission)
+            if (jqxhr.status === 403) {
+                let response = jqxhr.responseJSON;
+                let msg = response ? response.message : 'Anda tidak memiliki akses untuk aksi ini.';
+
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Akses Ditolak!',
+                    html: msg,
+                    confirmButtonColor: '#d33',
+                    confirmButtonText: 'Tutup',
+                    backdrop: `rgba(0,0,0,0.4) left top no-repeat`
+                });
+            }
+        });
+
         // Sukses Setup
         @if(session('success'))
         Toast.fire({

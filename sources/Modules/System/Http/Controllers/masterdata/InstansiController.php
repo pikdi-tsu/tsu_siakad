@@ -3,13 +3,20 @@
 namespace Modules\System\Http\Controllers\masterdata;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\MiddlewareController;
 use App\Models\MasterData\Master_Instansi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 use Yajra\DataTables\Facades\DataTables;
 
-class InstansiController extends Controller
+class InstansiController extends MiddlewareController
 {
+    public function __construct()
+    {
+        $this->registerPermissions('system:master_instansi');
+    }
+
     public function index(Request $request)
     {
         $data['title'] = "Master Instansi";
@@ -22,12 +29,7 @@ class InstansiController extends Controller
             return DataTables::of($query)
                 ->addIndexColumn()
                 ->addColumn('action', function ($row) {
-                    $btn  = '<button type="button" data-id="' . $row->id . '" class="btn btn-warning btn-sm btn_edit" title="Edit">';
-                    $btn .= '<i class="fas fa-pencil-alt"></i></button> ';
-                    $btn .= '<button type="button" data-id="' . $row->id . '" class="btn btn-danger btn-sm btn_hapus" title="Hapus">';
-                    $btn .= '<i class="fas fa-trash"></i></button>';
-
-                    return '<div class="text-center">' . $btn . '</div>';
+                    $this->getActionButtons($row, 'system:master_instansi');
                 })
                 ->rawColumns(['action'])
                 ->make(true);
@@ -38,6 +40,8 @@ class InstansiController extends Controller
 
     public function store(Request $request)
     {
+        $this->guardStore($request->id, 'system:master_instansi');
+
         $validator = Validator::make($request->all(), [
             'no'            => 'required|string|max:50|unique:siakad_master_instansi,no,' . $request->id,
             'nama_instansi' => 'required|string|max:200',
@@ -70,6 +74,8 @@ class InstansiController extends Controller
 
     public function edit($id)
     {
+        $this->guard('edit', 'system:master_instansi');
+
         $data = Master_Instansi::find($id);
 
         return $data
@@ -77,8 +83,26 @@ class InstansiController extends Controller
             : response()->json(['status' => 'error', 'message' => 'Data tidak ditemukan']);
     }
 
+    public function update(Request $request, $id)
+    {
+        $this->guard('edit', 'system:master_instansi');
+
+        $masterInstansi = Master_Instansi::query()->findOrFail($id);
+        $tablePermission = config('app.module.name');
+
+        $request->validate([
+            'name' => ['required', Rule::unique($tablePermission . '_master_instansi', 'name')->ignore($id)->where('guard_name', 'web')]
+        ]);
+
+        $masterInstansi->update(['name' => $request->name]);
+
+        return back()->with('success', 'Nama Permission berhasil diperbarui!');
+    }
+
     public function destroy($id)
     {
+        $this->guard('delete', 'system:master_instansi');
+
         $data = Master_Instansi::find($id);
 
         if ($data) {
