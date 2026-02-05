@@ -104,7 +104,7 @@ Route::prefix('')->group(function () {
         });
 
         // Master Data
-        Route::prefix('MasterData')->group(function() {
+        Route::prefix('MasterData')->middleware(['auth'])->group(function() {
             // Perguruan Tinggi
             Route::prefix('PerguruanTinggi')->name('perguruan_tinggi.')->group(function () {
                 // Data Perguruan Tinggi
