@@ -65,6 +65,7 @@ class UserSyncService
                 $user->email            = $userData['email'];
                 $user->username         = $userData['username'] ?? $user->username;
                 $user->avatar_url       = $userData['profile_photo_url'] ?? null;
+                $user->unit             = $userData['unit'] ?? null;
                 $user->isactive         = $userData['isactive'] ?? true;
                 $user->last_login_at    = now();
 
