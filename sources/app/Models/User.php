@@ -30,6 +30,7 @@ class User extends Authenticatable
         'email',
         'password',
         'avatar_url',       // Foto Profil URL
+        'unit',
         'isactive',        // Status Aktif (1/0)
         'sso_access_token', // Token OAuth
         'sso_refresh_token',
