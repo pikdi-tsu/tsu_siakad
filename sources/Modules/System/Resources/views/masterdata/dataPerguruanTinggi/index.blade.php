@@ -50,7 +50,7 @@
 
                             {{-- TABLE --}}
                             <div class="table-responsive">
-                                <form action="{{ route('perguruan_tinggi.save') }}" id="form-edit-pt" method="POST" enctype="multipart/form-data">
+                                <form action="{{ route('perguruan_tinggi.perguruan_tinggi.save') }}" id="form-edit-pt" method="POST" enctype="multipart/form-data">
                                     @csrf
                                     <input type="hidden" name="idpt" id="idpt" value="{{ $pt ? $pt->id : null }}">
                                     <table class="table">
@@ -439,7 +439,7 @@
                     placeholder: 'Cari NIP/Nama Rektor',
                     minimumInputLength: 2,
                     ajax: {
-                        url: "{{ route('perguruan_tinggi.caripegawai') }}",
+                        url: "{{ route('perguruan_tinggi.perguruan_tinggi.caripegawai') }}",
                         dataType: 'json',
                         delay: 300,
                         data: params => ({ q: params.term }),
@@ -468,7 +468,7 @@
                     placeholder: 'Cari NIP/Nama Wakil Rektor 1',
                     minimumInputLength: 2,
                     ajax: {
-                        url: "{{ route('perguruan_tinggi.caripegawai') }}",
+                        url: "{{ route('perguruan_tinggi.perguruan_tinggi.caripegawai') }}",
                         dataType: 'json',
                         delay: 300,
                         data: params => ({ q: params.term }),
@@ -497,7 +497,7 @@
                     placeholder: 'Cari NIP/Nama Wakil Rektor 2',
                     minimumInputLength: 2,
                     ajax: {
-                        url: "{{ route('perguruan_tinggi.caripegawai') }}",
+                        url: "{{ route('perguruan_tinggi.perguruan_tinggi.caripegawai') }}",
                         dataType: 'json',
                         delay: 300,
                         data: params => ({ q: params.term }),
@@ -526,7 +526,7 @@
                     placeholder: 'Cari NIP/Nama Wakil Rektor 3',
                     minimumInputLength: 2,
                     ajax: {
-                        url: "{{ route('perguruan_tinggi.caripegawai') }}",
+                        url: "{{ route('perguruan_tinggi.perguruan_tinggi.caripegawai') }}",
                         dataType: 'json',
                         delay: 300,
                         data: params => ({ q: params.term }),
@@ -555,7 +555,7 @@
                     placeholder: 'Cari NIP/Nama Wakil Rektor 4',
                     minimumInputLength: 2,
                     ajax: {
-                        url: "{{ route('perguruan_tinggi.caripegawai') }}",
+                        url: "{{ route('perguruan_tinggi.perguruan_tinggi.caripegawai') }}",
                         dataType: 'json',
                         delay: 300,
                         data: params => ({ q: params.term }),

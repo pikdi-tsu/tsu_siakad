@@ -3,13 +3,20 @@
 namespace Modules\System\Http\Controllers\masterdata;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\MiddlewareController;
 use App\Models\MasterData\Master_ProgramStudi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 use Yajra\DataTables\Facades\DataTables;
 
-class ProgramStudiController extends Controller
+class ProgramStudiController extends MiddlewareController
 {
+    public function __construct()
+    {
+        $this->registerPermissions('system:master_programstudi');
+    }
+
     public function index(Request $request)
     {
         $data['title'] = "Master Program Studi";
@@ -22,12 +29,7 @@ class ProgramStudiController extends Controller
             return DataTables::of($query)
                 ->addIndexColumn()
                 ->addColumn('action', function ($row) {
-                    $btn  = '<button type="button" data-id="' . $row->id . '" class="btn btn-warning btn-sm btn_edit" title="Edit">';
-                    $btn .= '<i class="fas fa-pencil-alt"></i></button> ';
-                    $btn .= '<button type="button" data-id="' . $row->id . '" class="btn btn-danger btn-sm btn_hapus" title="Hapus">';
-                    $btn .= '<i class="fas fa-trash"></i></button>';
-
-                    return '<div class="text-center">' . $btn . '</div>';
+                    $this->getActionButtons($row, 'system:master_programstudi');
                 })
                 ->rawColumns(['action'])
                 ->make(true);
@@ -38,6 +40,8 @@ class ProgramStudiController extends Controller
 
     public function store(Request $request)
     {
+        $this->guardStore($request->id, 'system:master_programstudi');
+
         $validator = Validator::make($request->all(), [
             'kode_prodi'   => 'required|string|max:20|unique:siakad_master_program_studi,kode_prodi,' . $request->id,
             'nama_prodi'   => 'required|string|max:200',
@@ -71,6 +75,8 @@ class ProgramStudiController extends Controller
 
     public function edit($id)
     {
+        $this->guard('edit', 'system:master_programstudi');
+
         $data = Master_ProgramStudi::find($id);
 
         return $data
@@ -78,8 +84,26 @@ class ProgramStudiController extends Controller
             : response()->json(['status' => 'error', 'message' => 'Data tidak ditemukan']);
     }
 
+    public function update(Request $request, $id)
+    {
+        $this->guard('edit', 'system:master_programstudi');
+
+        $masterProgramStudi = Master_ProgramStudi::query()->findOrFail($id);
+        $tablePermission = config('app.module.name');
+
+        $request->validate([
+            'name' => ['required', Rule::unique($tablePermission . '_master_program_studi', 'name')->ignore($id)->where('guard_name', 'web')]
+        ]);
+
+        $masterProgramStudi->update(['name' => $request->name]);
+
+        return back()->with('success', 'Nama Permission berhasil diperbarui!');
+    }
+
     public function destroy($id)
     {
+        $this->guard('delete', 'system:master_programstudi');
+
         $data = Master_ProgramStudi::find($id);
 
         if ($data) {

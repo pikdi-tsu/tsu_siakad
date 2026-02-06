@@ -3,6 +3,10 @@
 namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Support\Facades\View;
+use Spatie\Permission\Exceptions\UnauthorizedException;
+use Symfony\Component\HttpKernel\Exception\HttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -48,8 +52,90 @@ class Handler extends ExceptionHandler
      *
      * @throws \Throwable
      */
-    public function render($request, Throwable $exception)
+    public function render($request, Throwable $e): \Illuminate\Http\Response|\Symfony\Component\HttpFoundation\Response|null
     {
-        return parent::render($request, $exception);
+        // 403 Alert
+        if (($e instanceof HttpException && $e->getStatusCode() === 403) || $e instanceof UnauthorizedException) {
+
+            $defaultMessage = 'Akses Dibatasi! Anda tidak memiliki izin untuk aksi ini.';
+            $message = $defaultMessage;
+
+            // Middleware Spatie (registerPermissions)
+            if ($e instanceof UnauthorizedException) {
+                $requiredPermissions = $e->getRequiredPermissions();
+                $cleanActions = [];
+
+                foreach ($requiredPermissions as $perm) {
+                    $array = explode(':', $perm);
+                    $cleanActions[] = ucfirst(end($array));
+                }
+
+                if (!empty($cleanActions)) {
+                    $message = 'Akses Dibatasi! Anda tidak memiliki izin: ' . implode(', ', $cleanActions);
+                }
+            }
+            // Middleware Manual
+            else if (!empty($e->getMessage())) {
+                $message = $e->getMessage();
+            }
+
+            // RESPON: JSON (AJAX) ATAU REDIRECT BACK (SWEETALERT)
+            if ($request->ajax() || $request->wantsJson() || $request->expectsJson()) {
+                return response()->json(['status' => 'error', 'message' => $message], 403);
+            }
+
+            return redirect()->back()->with('error', $message);
+        }
+
+        // Handle 403 (Akses ditolak)
+//        if ($e instanceof UnauthorizedException) {
+//            if ($request->expectsJson()) {
+//                return response()->json(['message' => 'Anda tidak memiliki hak akses.'], 403);
+//            }
+//            return $this->renderErrorView($e, 403, 'Akses Ditolak', 'Maaf, Anda tidak diizinkan mengakses ke halaman ini.');
+//        }
+
+        // Handle 404 (Halaman tidak ditemukan)
+        if ($e instanceof NotFoundHttpException) {
+            if ($request->expectsJson()) {
+                return response()->json(['message' => 'Halaman tidak ditemukan.'], 404);
+            }
+            return $this->renderErrorView($e, 404, 'Halaman Tidak Ditemukan', 'Halaman yang Anda cari tidak ditemukan atau telah dipindahkan.');
+        }
+
+        // Handle Lain-lain (Manual Abort 403, 503, dll)
+        if ($e instanceof HttpException) {
+            $statusCode = $e->getStatusCode();
+
+            // Kita cuma handle error tampilan kalau view-nya ada
+            if (View::exists('system::errors.index') && $statusCode !== 403) {
+                $title = match($statusCode) {
+                    503 => 'Sedang Pemeliharaan',
+                    500 => 'Terjadi Kesalahan Server',
+                    419 => 'Sesi Kadaluarsa',
+                    429 => 'Terlalu Banyak Permintaan',
+                    default => 'Terjadi Kesalahan',
+                };
+
+                return $this->renderErrorView($e, $statusCode, $title, $e->getMessage());
+            }
+        }
+
+        // Sisanya biarkan Laravel (Termasuk Error 500 Crash Kodingan)
+        return parent::render($request, $e);
+    }
+
+    private function renderErrorView($e, $code, $title, $message = null): ?\Illuminate\Http\Response
+    {
+        if (View::exists('system::errors.index')) {
+            return response()->view('system::errors.index', [
+                'title' => $title,
+                'message' => $message ?: $e->getMessage(),
+                'code' => $code,
+                'exception' => $e
+            ], $code);
+        }
+
+        return null;
     }
 }

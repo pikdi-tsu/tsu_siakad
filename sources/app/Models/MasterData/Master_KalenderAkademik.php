@@ -11,7 +11,6 @@ class Master_KalenderAkademik extends Model
 {
     use HasFactory, HasUuids;
 
-    protected $table = 'siakad_kalender_akademik';
     protected $primaryKey = 'id';
     public $incrementing = false;
     protected $keyType = 'string';
@@ -32,6 +31,11 @@ class Master_KalenderAkademik extends Model
         'is_libur_nasional' => 'boolean',
         'is_libur_akademik' => 'boolean',
     ];
+
+    public function getTable()
+    {
+        return config('app.module.name') . '_kalender_akademik';
+    }
 
     // Relasi ke Master Kegiatan
     public function kegiatan()

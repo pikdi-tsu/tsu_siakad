@@ -98,7 +98,7 @@
             var table = $('#table-transportasi').DataTable({
                 processing: true,
                 serverSide: true,
-                ajax: "{{ route('transportasi.index') }}",
+                ajax: "{{ route('mahasiswa.transportasi.index') }}",
                 columns: [
                     { data: 'DT_RowIndex', orderable: false, searchable: false },
                     { data: 'kode_transportasi', name: 'kode_transportasi' },
@@ -126,7 +126,7 @@
                 var formData = new FormData(this);
                 $.ajax({
                     type: 'POST',
-                    url: "{{ route('transportasi.store') }}",
+                    url: "{{ route('mahasiswa.transportasi.store') }}",
                     data: formData,
                     contentType: false, processData: false,
                     success: function(res) {
@@ -140,7 +140,7 @@
             // 4. EDIT DATA
             $('body').on('click', '.btn_edit', function() {
                 var id = $(this).data('id');
-                $.get("{{ route('transportasi.index') }}" + '/edit/' + id, function(res) {
+                $.get("{{ route('mahasiswa.transportasi.index') }}" + '/edit/' + id, function(res) {
                     if (res.status == 'success') {
                         $('#id').val(res.data.id);
                         $('#kode_transportasi').val(res.data.kode_transportasi);
@@ -163,7 +163,7 @@
                     if (result.isConfirmed) {
                         $.ajax({
                             type: "DELETE",
-                            url: "{{ route('transportasi.index') }}" + '/delete/' + id,
+                            url: "{{ route('mahasiswa.transportasi.index') }}" + '/delete/' + id,
                             success: function(res) {
                                 res.status == 'success' ? Swal.fire('Terhapus', res.message, 'success') : Swal.fire('Gagal', res.message, 'error');
                                 table.ajax.reload();

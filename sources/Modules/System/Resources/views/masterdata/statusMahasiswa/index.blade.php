@@ -126,7 +126,7 @@
             var table = $('#table-status').DataTable({
                 processing: true,
                 serverSide: true,
-                ajax: "{{ route('status_mahasiswa.index') }}",
+                ajax: "{{ route('mahasiswa.status_mahasiswa.index') }}",
                 columns: [
                     { data: 'DT_RowIndex', orderable: false, searchable: false },
                     { data: 'kode_status', name: 'kode_status' },
@@ -163,7 +163,7 @@
 
                 $.ajax({
                     type: 'POST',
-                    url: "{{ route('status_mahasiswa.store') }}",
+                    url: "{{ route('mahasiswa.status_mahasiswa.store') }}",
                     data: formData,
                     contentType: false, processData: false,
                     success: function(res) {
@@ -177,7 +177,7 @@
             // 4. EDIT DATA
             $('body').on('click', '.btn_edit', function() {
                 var id = $(this).data('id');
-                $.get("{{ route('status_mahasiswa.index') }}" + '/edit/' + id, function(res) {
+                $.get("{{ route('mahasiswa.status_mahasiswa.index') }}" + '/edit/' + id, function(res) {
                     if (res.status == 'success') {
                         $('#id').val(res.data.id);
                         $('#kode_status').val(res.data.kode_status);
@@ -205,7 +205,7 @@
                     if (result.isConfirmed) {
                         $.ajax({
                             type: "DELETE",
-                            url: "{{ route('status_mahasiswa.index') }}" + '/delete/' + id,
+                            url: "{{ route('mahasiswa.status_mahasiswa.index') }}" + '/delete/' + id,
                             success: function(res) {
                                 res.status == 'success' ? Swal.fire('Terhapus', res.message, 'success') : Swal.fire('Gagal', res.message, 'error');
                                 table.ajax.reload();

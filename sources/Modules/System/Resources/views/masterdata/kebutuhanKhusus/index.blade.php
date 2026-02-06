@@ -98,7 +98,7 @@
             var table = $('#table-kebutuhan').DataTable({
                 processing: true,
                 serverSide: true,
-                ajax: "{{ route('kebutuhan_khusus.index') }}",
+                ajax: "{{ route('mahasiswa.kebutuhan_khusus.index') }}",
                 columns: [
                     { data: 'DT_RowIndex', orderable: false, searchable: false },
                     { data: 'kode_kebutuhan', name: 'kode_kebutuhan' },
@@ -126,7 +126,7 @@
                 var formData = new FormData(this);
                 $.ajax({
                     type: 'POST',
-                    url: "{{ route('kebutuhan_khusus.store') }}",
+                    url: "{{ route('mahasiswa.kebutuhan_khusus.store') }}",
                     data: formData,
                     contentType: false, processData: false,
                     success: function(res) {
@@ -140,7 +140,7 @@
             // 4. EDIT DATA
             $('body').on('click', '.btn_edit', function() {
                 var id = $(this).data('id');
-                $.get("{{ route('kebutuhan_khusus.index') }}" + '/edit/' + id, function(res) {
+                $.get("{{ route('mahasiswa.kebutuhan_khusus.index') }}" + '/edit/' + id, function(res) {
                     if (res.status == 'success') {
                         $('#id').val(res.data.id);
                         $('#kode_kebutuhan').val(res.data.kode_kebutuhan);
@@ -163,7 +163,7 @@
                     if (result.isConfirmed) {
                         $.ajax({
                             type: "DELETE",
-                            url: "{{ route('kebutuhan_khusus.index') }}" + '/delete/' + id,
+                            url: "{{ route('mahasiswa.kebutuhan_khusus.index') }}" + '/delete/' + id,
                             success: function(res) {
                                 res.status == 'success' ? Swal.fire('Terhapus', res.message, 'success') : Swal.fire('Gagal', res.message, 'error');
                                 table.ajax.reload();
