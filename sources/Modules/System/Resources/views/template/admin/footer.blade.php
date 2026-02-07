@@ -66,6 +66,16 @@
     @endif
 
     bsCustomFileInput.init();
+
+    function notifalert(title,text,type) {
+        Swal.fire({
+            title: title,
+            text: text,
+            icon: type,
+            timer: 1500,
+            showConfirmButton: false
+        });
+    }
 </script>
 @yield('script')
 @include('system::components.alert')

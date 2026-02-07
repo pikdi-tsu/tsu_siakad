@@ -11,11 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('siakad_kalender_akademik', function (Blueprint $table) {
+        $tableName = config('app.module.name', 'siakad');
+
+        Schema::create($tableName . '_master_kalender_akademik', function (Blueprint $table) use ($tableName) {
             $table->uuid('id')->primary();
             // Relasi ke Master Kegiatan (yang barusan kita buat)
             $table->foreignUuid('id_kegiatan')
-                ->constrained('siakad_master_kegiatan_akademik')
+                ->constrained($tableName . '_master_kegiatan_akademik')
                 ->onDelete('cascade'); // Hapus kalender kalau master kegiatannya dihapus
 
             // Periode (Nanti bisa direlasikan ke Master Periode jika sudah ada)
@@ -38,6 +40,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('siakad_kalender_akademik');
+        $tableName = config('app.module.name', 'siakad');
+
+        Schema::dropIfExists($tableName . '_master_kalender_akademik');
     }
 };

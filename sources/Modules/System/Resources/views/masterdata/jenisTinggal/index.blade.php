@@ -98,7 +98,7 @@
             var table = $('#table-tinggal').DataTable({
                 processing: true,
                 serverSide: true,
-                ajax: "{{ route('jenis_tinggal.index') }}",
+                ajax: "{{ route('mahasiswa.jenis_tinggal.index') }}",
                 columns: [
                     { data: 'DT_RowIndex', orderable: false, searchable: false },
                     { data: 'kode_jenis', name: 'kode_jenis' },
@@ -126,7 +126,7 @@
                 var formData = new FormData(this);
                 $.ajax({
                     type: 'POST',
-                    url: "{{ route('jenis_tinggal.store') }}",
+                    url: "{{ route('mahasiswa.jenis_tinggal.store') }}",
                     data: formData,
                     contentType: false, processData: false,
                     success: function(res) {
@@ -140,7 +140,7 @@
             // 4. EDIT DATA
             $('body').on('click', '.btn_edit', function() {
                 var id = $(this).data('id');
-                $.get("{{ route('jenis_tinggal.index') }}" + '/edit/' + id, function(res) {
+                $.get("{{ route('mahasiswa.jenis_tinggal.index') }}" + '/edit/' + id, function(res) {
                     if (res.status == 'success') {
                         $('#id').val(res.data.id);
                         $('#kode_jenis').val(res.data.kode_jenis);
@@ -163,7 +163,7 @@
                     if (result.isConfirmed) {
                         $.ajax({
                             type: "DELETE",
-                            url: "{{ route('jenis_tinggal.index') }}" + '/delete/' + id,
+                            url: "{{ route('mahasiswa.jenis_tinggal.index') }}" + '/delete/' + id,
                             success: function(res) {
                                 res.status == 'success' ? Swal.fire('Terhapus', res.message, 'success') : Swal.fire('Gagal', res.message, 'error');
                                 table.ajax.reload();

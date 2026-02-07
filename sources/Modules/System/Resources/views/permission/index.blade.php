@@ -57,10 +57,10 @@
                                 <i class="fas fa-lock mr-1"></i> Simpan (No Access)
                             </span>
                         @endcan
-                        @can('system:permission:edit')
+{{--                        @can('system:permission:edit')--}}
                             <button type="button" class="btn btn-default btn-reset d-none">Batal Edit</button>
                             <button type="submit" class="btn btn-warning d-none" id="btn-edit">Update</button>
-                        @endcan
+{{--                        @endcan--}}
                     </div>
                 </form>
             </div>
