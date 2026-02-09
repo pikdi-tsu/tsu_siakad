@@ -34,7 +34,8 @@
                                     <i class="fas fa-plus"></i> Tambah
                                 </button>
                             @else
-                                <span class="badge badge-secondary p-2 shadow-sm" style="cursor: not-allowed; opacity: 0.7;" title="Anda tidak memiliki akses ke action ini">
+                                <span class="badge badge-secondary p-2 shadow-sm" style="cursor: not-allowed; opacity: 0.7;"
+                                    title="Anda tidak memiliki akses ke action ini">
                                     <i class="fas fa-lock mr-1"></i> Tambah (No Access)
                                 </span>
                             @endcan
@@ -127,7 +128,7 @@
             let table = $('#table-konsentrasi').DataTable({
                 processing: true,
                 serverSide: true,
-                ajax: "{{ route('konsentrasi.index') }}",
+                ajax: "{{ route('perguruan_tinggi.konsentrasi.index') }}",
                 columns: [{
                         data: 'DT_RowIndex',
                         orderable: false,
@@ -166,7 +167,8 @@
 
             $('#form-konsentrasi').submit(function(e) {
                 e.preventDefault();
-                $.post("{{ route('konsentrasi.store') }}", $(this).serialize(), function(res) {
+                $.post("{{ route('perguruan_tinggi.konsentrasi.store') }}", $(this).serialize(), function(
+                    res) {
                     if (res.status === 'success') {
                         Swal.fire('Berhasil', res.message, 'success');
                         table.ajax.reload();
@@ -180,16 +182,17 @@
 
             $('body').on('click', '.btn_edit', function() {
                 let id = $(this).data('id');
-                $.get("{{ route('konsentrasi.edit', ':id') }}".replace(':id', id), function(res) {
-                    if (res.status === 'success') {
-                        $('#id').val(res.data.id);
-                        $('#kode').val(res.data.kode);
-                        $('#nama_konsentrasi').val(res.data.nama_konsentrasi);
-                        $('#nama_konsentrasi_en').val(res.data.nama_konsentrasi_en);
-                        $('#form-title').html('<i class="fas fa-edit"></i> Edit Konsentrasi');
-                        $('#form-container').slideDown();
-                    }
-                });
+                $.get("{{ route('perguruan_tinggi.konsentrasi.edit', ':id') }}".replace(':id', id),
+                    function(res) {
+                        if (res.status === 'success') {
+                            $('#id').val(res.data.id);
+                            $('#kode').val(res.data.kode);
+                            $('#nama_konsentrasi').val(res.data.nama_konsentrasi);
+                            $('#nama_konsentrasi_en').val(res.data.nama_konsentrasi_en);
+                            $('#form-title').html('<i class="fas fa-edit"></i> Edit Konsentrasi');
+                            $('#form-container').slideDown();
+                        }
+                    });
             });
 
             $('body').on('click', '.btn_hapus', function() {
@@ -204,8 +207,9 @@
                     if (result.isConfirmed) {
                         $.ajax({
                             type: 'DELETE',
-                            url: "{{ route('konsentrasi.delete', ':id') }}".replace(':id',
-                                id),
+                            url: "{{ route('perguruan_tinggi.konsentrasi.delete', ':id') }}"
+                                .replace(':id',
+                                    id),
                             success: function(res) {
                                 Swal.fire('Terhapus', res.message, 'success');
                                 table.ajax.reload();

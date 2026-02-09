@@ -35,7 +35,8 @@
                         <div class="card-body">
 
                             <div id="form-container" style="display: none;" class="mb-4 p-3 border rounded bg-light">
-                                <h5 class="text-primary mb-3" id="form-title"><i class="fas fa-edit"></i> Input Unsur Nilai</h5>
+                                <h5 class="text-primary mb-3" id="form-title"><i class="fas fa-edit"></i> Input Unsur Nilai
+                                </h5>
                                 <form id="form-unsur">
                                     @csrf
                                     <input type="hidden" id="id" name="id">
@@ -44,19 +45,22 @@
                                         <div class="col-md-3">
                                             <div class="form-group">
                                                 <label>Kode <span class="text-danger">*</span></label>
-                                                <input type="text" name="kode_unsur" id="kode_unsur" class="form-control" placeholder="Contoh: 1 / UTS" required>
+                                                <input type="text" name="kode_unsur" id="kode_unsur" class="form-control"
+                                                    placeholder="Contoh: 1 / UTS" required>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>Nama Unsur <span class="text-danger">*</span></label>
-                                                <input type="text" name="nama_unsur" id="nama_unsur" class="form-control" placeholder="Contoh: UJIAN TENGAH SEMESTER" required>
+                                                <input type="text" name="nama_unsur" id="nama_unsur" class="form-control"
+                                                    placeholder="Contoh: UJIAN TENGAH SEMESTER" required>
                                             </div>
                                         </div>
                                         <div class="col-md-3">
                                             <div class="form-group">
                                                 <label>Nama Singkat <span class="text-danger">*</span></label>
-                                                <input type="text" name="nama_singkat" id="nama_singkat" class="form-control" placeholder="Contoh: UTS" required>
+                                                <input type="text" name="nama_singkat" id="nama_singkat"
+                                                    class="form-control" placeholder="Contoh: UTS" required>
                                             </div>
                                         </div>
                                     </div>
@@ -65,19 +69,22 @@
                                         <div class="col-md-4">
                                             <div class="form-group">
                                                 <label>Kelompok Unsur</label>
-                                                <input type="text" name="kelompok_unsur" id="kelompok_unsur" class="form-control" placeholder="Opsional">
+                                                <input type="text" name="kelompok_unsur" id="kelompok_unsur"
+                                                    class="form-control" placeholder="Opsional">
                                             </div>
                                         </div>
                                         <div class="col-md-8">
                                             <div class="form-group">
                                                 <label>Metode Evaluasi</label>
-                                                <input type="text" name="metode_evaluasi" id="metode_evaluasi" class="form-control" placeholder="Contoh: Kognitif/Pengetahuan">
+                                                <input type="text" name="metode_evaluasi" id="metode_evaluasi"
+                                                    class="form-control" placeholder="Contoh: Kognitif/Pengetahuan">
                                             </div>
                                         </div>
                                     </div>
 
                                     <div class="text-right">
-                                        <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Simpan</button>
+                                        <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i>
+                                            Simpan</button>
                                         <button type="button" class="btn btn-secondary" id="btn-cancel">Batal</button>
                                     </div>
                                 </form>
@@ -86,15 +93,15 @@
                             <div class="table-responsive">
                                 <table id="table-unsur" class="table table-bordered table-striped" style="width: 100%;">
                                     <thead style="background-color: #003366; color: white;">
-                                    <tr>
-                                        <th width="5%">No</th>
-                                        <th width="10%">Kode</th>
-                                        <th>Nama Unsur</th>
-                                        <th>Nama Singkat</th>
-                                        <th>Kelompok Unsur</th>
-                                        <th>Metode Evaluasi</th>
-                                        <th width="10%" class="text-center">Aksi</th>
-                                    </tr>
+                                        <tr>
+                                            <th width="5%">No</th>
+                                            <th width="10%">Kode</th>
+                                            <th>Nama Unsur</th>
+                                            <th>Nama Singkat</th>
+                                            <th>Kelompok Unsur</th>
+                                            <th>Metode Evaluasi</th>
+                                            <th width="10%" class="text-center">Aksi</th>
+                                        </tr>
                                     </thead>
                                     <tbody></tbody>
                                 </table>
@@ -111,23 +118,52 @@
 @section('script')
     <script>
         $(document).ready(function() {
-            $.ajaxSetup({ headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') } });
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
 
             // 1. INIT DATATABLE
             var table = $('#table-unsur').DataTable({
                 processing: true,
                 serverSide: true,
-                ajax: "{{ route('unsur_nilai.index') }}",
-                columns: [
-                    { data: 'DT_RowIndex', orderable: false, searchable: false },
-                    { data: 'kode_unsur', name: 'kode_unsur' },
-                    { data: 'nama_unsur', name: 'nama_unsur' },
-                    { data: 'nama_singkat', name: 'nama_singkat' },
-                    { data: 'kelompok_unsur', name: 'kelompok_unsur' },
-                    { data: 'metode_evaluasi', name: 'metode_evaluasi' },
-                    { data: 'action', orderable: false, searchable: false, className: 'text-center' },
+                ajax: "{{ route('perkuliahan.unsur_nilai.index') }}",
+                columns: [{
+                        data: 'DT_RowIndex',
+                        orderable: false,
+                        searchable: false
+                    },
+                    {
+                        data: 'kode_unsur',
+                        name: 'kode_unsur'
+                    },
+                    {
+                        data: 'nama_unsur',
+                        name: 'nama_unsur'
+                    },
+                    {
+                        data: 'nama_singkat',
+                        name: 'nama_singkat'
+                    },
+                    {
+                        data: 'kelompok_unsur',
+                        name: 'kelompok_unsur'
+                    },
+                    {
+                        data: 'metode_evaluasi',
+                        name: 'metode_evaluasi'
+                    },
+                    {
+                        data: 'action',
+                        orderable: false,
+                        searchable: false,
+                        className: 'text-center'
+                    },
                 ],
-                order: [[1, 'asc']]
+                order: [
+                    [1, 'asc']
+                ]
             });
 
             // 2. FORM ACTIONS
@@ -148,21 +184,29 @@
                 var formData = new FormData(this);
                 $.ajax({
                     type: 'POST',
-                    url: "{{ route('unsur_nilai.store') }}",
+                    url: "{{ route('perkuliahan.unsur_nilai.store') }}",
                     data: formData,
-                    contentType: false, processData: false,
+                    contentType: false,
+                    processData: false,
                     success: function(res) {
-                        res.status == 'success' ? Swal.fire('Berhasil', res.message, 'success') : Swal.fire('Gagal', res.message, 'error');
-                        if(res.status == 'success') { table.ajax.reload(); $('#form-container').slideUp(); resetForm(); }
+                        res.status == 'success' ? Swal.fire('Berhasil', res.message,
+                            'success') : Swal.fire('Gagal', res.message, 'error');
+                        if (res.status == 'success') {
+                            table.ajax.reload();
+                            $('#form-container').slideUp();
+                            resetForm();
+                        }
                     },
-                    error: function() { Swal.fire('Error', 'Terjadi kesalahan server.', 'error'); }
+                    error: function() {
+                        Swal.fire('Error', 'Terjadi kesalahan server.', 'error');
+                    }
                 });
             });
 
             // 4. EDIT DATA
             $('body').on('click', '.btn_edit', function() {
                 var id = $(this).data('id');
-                $.get("{{ route('unsur_nilai.index') }}" + '/edit/' + id, function(res) {
+                $.get("{{ route('perkuliahan.unsur_nilai.index') }}" + '/edit/' + id, function(res) {
                     if (res.status == 'success') {
                         $('#id').val(res.data.id);
                         $('#kode_unsur').val(res.data.kode_unsur);
@@ -173,7 +217,9 @@
 
                         $('#form-title').html('<i class="fas fa-edit"></i> Edit Unsur Nilai');
                         $('#form-container').slideDown();
-                        $('html, body').animate({ scrollTop: $('#form-container').offset().top - 100 }, 'slow');
+                        $('html, body').animate({
+                            scrollTop: $('#form-container').offset().top - 100
+                        }, 'slow');
                     }
                 });
             });
@@ -182,15 +228,21 @@
             $('body').on('click', '.btn_hapus', function() {
                 var id = $(this).data('id');
                 Swal.fire({
-                    title: 'Hapus data ini?', icon: 'warning',
-                    showCancelButton: true, confirmButtonColor: '#d33', confirmButtonText: 'Ya, Hapus!'
+                    title: 'Hapus data ini?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    confirmButtonText: 'Ya, Hapus!'
                 }).then((result) => {
                     if (result.isConfirmed) {
                         $.ajax({
                             type: "DELETE",
-                            url: "{{ route('unsur_nilai.index') }}" + '/delete/' + id,
+                            url: "{{ route('perkuliahan.unsur_nilai.index') }}" +
+                                '/delete/' + id,
                             success: function(res) {
-                                res.status == 'success' ? Swal.fire('Terhapus', res.message, 'success') : Swal.fire('Gagal', res.message, 'error');
+                                res.status == 'success' ? Swal.fire('Terhapus', res
+                                    .message, 'success') : Swal.fire('Gagal', res
+                                    .message, 'error');
                                 table.ajax.reload();
                             }
                         });

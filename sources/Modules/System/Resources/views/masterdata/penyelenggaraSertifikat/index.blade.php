@@ -33,7 +33,8 @@
                                     <i class="fas fa-plus"></i> Tambah
                                 </button>
                             @else
-                                <span class="badge badge-secondary p-2 shadow-sm" style="cursor: not-allowed; opacity: 0.7;" title="Anda tidak memiliki akses ke action ini">
+                                <span class="badge badge-secondary p-2 shadow-sm" style="cursor: not-allowed; opacity: 0.7;"
+                                    title="Anda tidak memiliki akses ke action ini">
                                     <i class="fas fa-lock mr-1"></i> Tambah (No Access)
                                 </span>
                             @endcan
@@ -109,7 +110,7 @@
             let table = $('#table-penyelenggara-sertifikat').DataTable({
                 processing: true,
                 serverSide: true,
-                ajax: "{{ route('penyelenggara_sertifikat.index') }}",
+                ajax: "{{ route('perkuliahan.penyelenggara_sertifikat.index') }}",
                 columns: [{
                         data: 'DT_RowIndex',
                         orderable: false,
@@ -140,31 +141,33 @@
 
             $('#form-penyelenggara-sertifikat').submit(function(e) {
                 e.preventDefault();
-                $.post("{{ route('penyelenggara_sertifikat.store') }}", $(this).serialize(), function(res) {
-                    if (res.status === 'success') {
-                        Swal.fire('Berhasil', res.message, 'success');
-                        table.ajax.reload();
-                        resetForm();
-                        $('#form-container').slideUp();
-                    } else {
-                        Swal.fire('Gagal', res.message, 'error');
-                    }
-                });
+                $.post("{{ route('perkuliahan.penyelenggara_sertifikat.store') }}", $(this).serialize(),
+                    function(res) {
+                        if (res.status === 'success') {
+                            Swal.fire('Berhasil', res.message, 'success');
+                            table.ajax.reload();
+                            resetForm();
+                            $('#form-container').slideUp();
+                        } else {
+                            Swal.fire('Gagal', res.message, 'error');
+                        }
+                    });
             });
 
             $('body').on('click', '.btn_edit', function() {
                 let id = $(this).data('id');
-                $.get("{{ route('penyelenggara_sertifikat.edit', ':id') }}".replace(':id', id), function(
-                    res) {
-                    if (res.status === 'success') {
-                        $('#id').val(res.data.id);
-                        $('#nama_penyelenggara_sertifikat').val(res.data
-                            .nama_penyelenggara_sertifikat);
-                        $('#form-title').html(
-                            '<i class="fas fa-edit"></i> Edit Penyelenggara Sertifikat');
-                        $('#form-container').slideDown();
-                    }
-                });
+                $.get("{{ route('perkuliahan.penyelenggara_sertifikat.edit', ':id') }}".replace(':id', id),
+                    function(
+                        res) {
+                        if (res.status === 'success') {
+                            $('#id').val(res.data.id);
+                            $('#nama_penyelenggara_sertifikat').val(res.data
+                                .nama_penyelenggara_sertifikat);
+                            $('#form-title').html(
+                                '<i class="fas fa-edit"></i> Edit Penyelenggara Sertifikat');
+                            $('#form-container').slideDown();
+                        }
+                    });
             });
 
             $('body').on('click', '.btn_hapus', function() {
@@ -179,7 +182,7 @@
                     if (result.isConfirmed) {
                         $.ajax({
                             type: 'DELETE',
-                            url: "{{ route('penyelenggara_sertifikat.delete', ':id') }}"
+                            url: "{{ route('perkuliahan.penyelenggara_sertifikat.delete', ':id') }}"
                                 .replace(':id', id),
                             success: function(res) {
                                 Swal.fire('Terhapus', res.message, 'success');

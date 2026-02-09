@@ -120,7 +120,7 @@
             let table = $('#table-jenis-pt').DataTable({
                 processing: true,
                 serverSide: true,
-                ajax: "{{ route('jenis_pt.index') }}",
+                ajax: "{{ route('perguruan_tinggi.jenis_pt.index') }}",
                 columns: [{
                         data: 'DT_RowIndex',
                         orderable: false,
@@ -172,7 +172,7 @@
 
                 $.ajax({
                     type: 'POST',
-                    url: "{{ route('jenis_pt.store') }}",
+                    url: "{{ route('perguruan_tinggi.jenis_pt.store') }}",
                     data: new FormData(this),
                     contentType: false,
                     processData: false,
@@ -198,7 +198,8 @@
             $('body').on('click', '.btn_edit', function() {
                 let id = $(this).data('id');
 
-                $.get("{{ route('jenis_pt.edit', ':id') }}".replace(':id', id), function(res) {
+                $.get("{{ route('perguruan_tinggi.jenis_pt.edit', ':id') }}".replace(':id', id), function(
+                    res) {
                     if (res.status === 'success') {
                         $('#id').val(res.data.id);
                         $('#jenis_pt').val(res.data.jenis_pt);
@@ -227,7 +228,8 @@
                     if (result.isConfirmed) {
                         $.ajax({
                             type: 'DELETE',
-                            url: "{{ route('jenis_pt.delete', ':id') }}".replace(':id', id),
+                            url: "{{ route('perguruan_tinggi.jenis_pt.delete', ':id') }}"
+                                .replace(':id', id),
                             success: function(res) {
                                 Swal.fire(
                                     res.status === 'success' ? 'Terhapus' : 'Gagal',

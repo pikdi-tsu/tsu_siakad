@@ -35,7 +35,8 @@
                         <div class="card-body">
 
                             <div id="form-container" style="display: none;" class="mb-4 p-3 border rounded bg-light">
-                                <h5 class="text-primary mb-3" id="form-title"><i class="fas fa-edit"></i> Input Sistem Kuliah</h5>
+                                <h5 class="text-primary mb-3" id="form-title"><i class="fas fa-edit"></i> Input Sistem
+                                    Kuliah</h5>
                                 <form id="form-waktu-kuliah">
                                     @csrf
                                     <input type="hidden" id="id" name="id">
@@ -51,7 +52,8 @@
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>Nama Sistem Kuliah (Waktu) <span class="text-danger">*</span></label>
-                                                <input type="text" name="waktu" id="waktu" class="form-control" placeholder="Contoh: PAGI / SORE / KARYAWAN" required>
+                                                <input type="text" name="waktu" id="waktu" class="form-control"
+                                                    placeholder="Contoh: PAGI / SORE / KARYAWAN" required>
                                             </div>
                                         </div>
                                         <div class="col-md-4">
@@ -66,22 +68,24 @@
                                     </div>
 
                                     <div class="text-right">
-                                        <button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane"></i> Simpan</button>
+                                        <button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane"></i>
+                                            Simpan</button>
                                         <button type="button" class="btn btn-secondary" id="btn-cancel">Batal</button>
                                     </div>
                                 </form>
                             </div>
 
                             <div class="table-responsive">
-                                <table id="table-waktu-kuliah" class="table table-bordered table-striped" style="width: 100%;">
+                                <table id="table-waktu-kuliah" class="table table-bordered table-striped"
+                                    style="width: 100%;">
                                     <thead style="background-color: #003366; color: white;">
-                                    <tr>
-                                        <th width="5%">No</th>
-                                        <th width="10%">Kode</th>
-                                        <th>Nama Sistem Kuliah</th>
-                                        <th width="15%" class="text-center">Status</th>
-                                        <th width="15%" class="text-center">Aksi</th>
-                                    </tr>
+                                        <tr>
+                                            <th width="5%">No</th>
+                                            <th width="10%">Kode</th>
+                                            <th>Nama Sistem Kuliah</th>
+                                            <th width="15%" class="text-center">Status</th>
+                                            <th width="15%" class="text-center">Aksi</th>
+                                        </tr>
                                     </thead>
                                     <tbody></tbody>
                                 </table>
@@ -99,28 +103,51 @@
     <script>
         $(document).ready(function() {
             // Setup CSRF Token untuk semua request AJAX
-            $.ajaxSetup({ headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') } });
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
 
             // 1. INIT DATATABLE
             var table = $('#table-waktu-kuliah').DataTable({
                 processing: true,
                 serverSide: true,
                 // Pastikan route ini sesuai dengan Controller yang Anda punya
-                ajax: "{{ route('sistem_kuliah.index') }}",
-                columns: [
-                    { data: 'DT_RowIndex', orderable: false, searchable: false },
-                    { data: 'id', name: 'id' }, // Kode diambil dari ID Auto Increment
-                    { data: 'waktu', name: 'waktu' }, // Sesuai nama kolom DB: 'waktu'
-                    { data: 'isactive', name: 'isactive', className: 'text-center', // Sesuai kolom DB: 'isactive'
+                ajax: "{{ route('perguruan_tinggi.sistem_kuliah.index') }}",
+                columns: [{
+                        data: 'DT_RowIndex',
+                        orderable: false,
+                        searchable: false
+                    },
+                    {
+                        data: 'id',
+                        name: 'id'
+                    }, // Kode diambil dari ID Auto Increment
+                    {
+                        data: 'waktu',
+                        name: 'waktu'
+                    }, // Sesuai nama kolom DB: 'waktu'
+                    {
+                        data: 'isactive',
+                        name: 'isactive',
+                        className: 'text-center', // Sesuai kolom DB: 'isactive'
                         render: function(data) {
-                            return data == '1'
-                                ? '<span class="badge badge-success">Aktif</span>'
-                                : '<span class="badge badge-danger">Non-Aktif</span>';
+                            return data == '1' ?
+                                '<span class="badge badge-success">Aktif</span>' :
+                                '<span class="badge badge-danger">Non-Aktif</span>';
                         }
                     },
-                    { data: 'action', orderable: false, searchable: false, className: 'text-center' },
+                    {
+                        data: 'action',
+                        orderable: false,
+                        searchable: false,
+                        className: 'text-center'
+                    },
                 ],
-                order: [[1, 'asc']]
+                order: [
+                    [1, 'asc']
+                ]
             });
 
             // 2. TOMBOL TAMBAH (Reset Form & Tampilkan)
@@ -144,11 +171,12 @@
                 $.ajax({
                     type: 'POST',
                     // Pastikan route store sesuai
-                    url: "{{ route('sistem_kuliah.store') }}",
+                    url: "{{ route('perguruan_tinggi.sistem_kuliah.store') }}",
                     data: formData,
-                    contentType: false, processData: false,
+                    contentType: false,
+                    processData: false,
                     success: function(res) {
-                        if(res.status == 'success') {
+                        if (res.status == 'success') {
                             Swal.fire('Berhasil', res.message, 'success');
                             table.ajax.reload(); // Refresh Tabel
                             $('#form-container').slideUp(); // Tutup Form
@@ -167,7 +195,7 @@
             $('body').on('click', '.btn_edit', function() {
                 var id = $(this).data('id');
                 // Pastikan route edit sesuai
-                $.get("{{ route('sistem_kuliah.index') }}" + '/edit/' + id, function(res) {
+                $.get("{{ route('perguruan_tinggi.sistem_kuliah.edit') }}" + '/' + id, function(res) {
                     if (res.status == 'success') {
                         $('#id').val(res.data.id);
                         $('#waktu').val(res.data.waktu); // Isi input waktu
@@ -175,7 +203,9 @@
 
                         $('#form-title').html('<i class="fas fa-edit"></i> Edit Sistem Kuliah');
                         $('#form-container').slideDown();
-                        $('html, body').animate({ scrollTop: $('#form-container').offset().top - 100 }, 'slow');
+                        $('html, body').animate({
+                            scrollTop: $('#form-container').offset().top - 100
+                        }, 'slow');
                     }
                 });
             });
@@ -195,9 +225,10 @@
                         $.ajax({
                             type: "DELETE",
                             // Pastikan route delete sesuai
-                            url: "{{ route('sistem_kuliah.index') }}" + '/delete/' + id,
+                            url: "{{ route('perguruan_tinggi.sistem_kuliah.index') }}" +
+                                '/delete/' + id,
                             success: function(res) {
-                                if(res.status == 'success') {
+                                if (res.status == 'success') {
                                     Swal.fire('Terhapus', res.message, 'success');
                                     table.ajax.reload();
                                 } else {

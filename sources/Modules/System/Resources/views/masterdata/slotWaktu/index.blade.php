@@ -32,7 +32,8 @@
                                 <input type="hidden" id="id" name="id">
 
                                 <label class="mr-2 font-weight-bold">Waktu :</label>
-                                <input type="time" name="waktu" id="waktu" class="form-control mr-2" required style="width: 150px;">
+                                <input type="time" name="waktu" id="waktu" class="form-control mr-2" required
+                                    style="width: 150px;">
 
                                 <button type="submit" class="btn btn-success" id="btn-submit">
                                     <i class="fas fa-plus"></i> <span id="btn-text">Tambah</span>
@@ -56,17 +57,21 @@
                         <div class="card-body p-0">
                             <table class="table table-striped table-hover mb-0">
                                 <tbody>
-                                @forelse($pagi as $p)
-                                    <tr>
-                                        <td class="pl-4 font-weight-bold align-middle">{{ $p->waktu_formatted }}</td>
-                                        <td class="text-right pr-3">
-                                            <button class="btn btn-xs btn-primary btn_edit" data-id="{{ $p->id }}"><i class="fas fa-pencil-alt"></i></button>
-                                            <button class="btn btn-xs btn-danger btn_hapus" data-id="{{ $p->id }}"><i class="fas fa-trash"></i></button>
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <tr><td colspan="2" class="text-center text-muted py-3">Belum ada data</td></tr>
-                                @endforelse
+                                    @forelse($pagi as $p)
+                                        <tr>
+                                            <td class="pl-4 font-weight-bold align-middle">{{ $p->waktu_formatted }}</td>
+                                            <td class="text-right pr-3">
+                                                <button class="btn btn-xs btn-primary btn_edit"
+                                                    data-id="{{ $p->id }}"><i class="fas fa-pencil-alt"></i></button>
+                                                <button class="btn btn-xs btn-danger btn_hapus"
+                                                    data-id="{{ $p->id }}"><i class="fas fa-trash"></i></button>
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="2" class="text-center text-muted py-3">Belum ada data</td>
+                                        </tr>
+                                    @endforelse
                                 </tbody>
                             </table>
                         </div>
@@ -81,17 +86,21 @@
                         <div class="card-body p-0">
                             <table class="table table-striped table-hover mb-0">
                                 <tbody>
-                                @forelse($siang as $s)
-                                    <tr>
-                                        <td class="pl-4 font-weight-bold align-middle">{{ $s->waktu_formatted }}</td>
-                                        <td class="text-right pr-3">
-                                            <button class="btn btn-xs btn-primary btn_edit" data-id="{{ $s->id }}"><i class="fas fa-pencil-alt"></i></button>
-                                            <button class="btn btn-xs btn-danger btn_hapus" data-id="{{ $s->id }}"><i class="fas fa-trash"></i></button>
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <tr><td colspan="2" class="text-center text-muted py-3">Belum ada data</td></tr>
-                                @endforelse
+                                    @forelse($siang as $s)
+                                        <tr>
+                                            <td class="pl-4 font-weight-bold align-middle">{{ $s->waktu_formatted }}</td>
+                                            <td class="text-right pr-3">
+                                                <button class="btn btn-xs btn-primary btn_edit"
+                                                    data-id="{{ $s->id }}"><i class="fas fa-pencil-alt"></i></button>
+                                                <button class="btn btn-xs btn-danger btn_hapus"
+                                                    data-id="{{ $s->id }}"><i class="fas fa-trash"></i></button>
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="2" class="text-center text-muted py-3">Belum ada data</td>
+                                        </tr>
+                                    @endforelse
                                 </tbody>
                             </table>
                         </div>
@@ -106,17 +115,22 @@
                         <div class="card-body p-0">
                             <table class="table table-striped table-hover mb-0">
                                 <tbody>
-                                @forelse($malam as $m)
-                                    <tr>
-                                        <td class="pl-4 font-weight-bold align-middle">{{ $m->waktu_formatted }}</td>
-                                        <td class="text-right pr-3">
-                                            <button class="btn btn-xs btn-primary btn_edit" data-id="{{ $m->id }}"><i class="fas fa-pencil-alt"></i></button>
-                                            <button class="btn btn-xs btn-danger btn_hapus" data-id="{{ $m->id }}"><i class="fas fa-trash"></i></button>
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <tr><td colspan="2" class="text-center text-muted py-3">Belum ada data</td></tr>
-                                @endforelse
+                                    @forelse($malam as $m)
+                                        <tr>
+                                            <td class="pl-4 font-weight-bold align-middle">{{ $m->waktu_formatted }}</td>
+                                            <td class="text-right pr-3">
+                                                <button class="btn btn-xs btn-primary btn_edit"
+                                                    data-id="{{ $m->id }}"><i
+                                                        class="fas fa-pencil-alt"></i></button>
+                                                <button class="btn btn-xs btn-danger btn_hapus"
+                                                    data-id="{{ $m->id }}"><i class="fas fa-trash"></i></button>
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="2" class="text-center text-muted py-3">Belum ada data</td>
+                                        </tr>
+                                    @endforelse
                                 </tbody>
                             </table>
                         </div>
@@ -131,7 +145,11 @@
 @section('script')
     <script>
         $(document).ready(function() {
-            $.ajaxSetup({ headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') } });
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
 
             // 1. SUBMIT FORM (CREATE/UPDATE)
             $('#form-waktu').submit(function(e) {
@@ -139,11 +157,12 @@
                 var formData = new FormData(this);
                 $.ajax({
                     type: 'POST',
-                    url: "{{ route('slot_waktu.store') }}",
+                    url: "{{ route('perkuliahan.slot_waktu.store') }}",
                     data: formData,
-                    contentType: false, processData: false,
+                    contentType: false,
+                    processData: false,
                     success: function(res) {
-                        if(res.status == 'success') {
+                        if (res.status == 'success') {
                             Swal.fire({
                                 title: 'Berhasil',
                                 text: res.message,
@@ -151,20 +170,23 @@
                                 timer: 1000,
                                 showConfirmButton: false
                             }).then(() => {
-                                location.reload(); // Reload untuk refresh grouping kolom
+                                location
+                                    .reload(); // Reload untuk refresh grouping kolom
                             });
                         } else {
                             Swal.fire('Gagal', res.message, 'error');
                         }
                     },
-                    error: function() { Swal.fire('Error', 'Terjadi kesalahan server.', 'error'); }
+                    error: function() {
+                        Swal.fire('Error', 'Terjadi kesalahan server.', 'error');
+                    }
                 });
             });
 
             // 2. EDIT DATA
             $('.btn_edit').click(function() {
                 var id = $(this).data('id');
-                $.get("{{ route('slot_waktu.index') }}" + '/edit/' + id, function(res) {
+                $.get("{{ route('perkuliahan.slot_waktu.index') }}" + '/edit/' + id, function(res) {
                     if (res.status == 'success') {
                         $('#id').val(res.data.id);
                         $('#waktu').val(res.data.waktu_input); // Format H:i
@@ -175,7 +197,9 @@
                         $('#btn-reset').show();
 
                         // Focus ke input atas
-                        $('html, body').animate({ scrollTop: 0 }, 'fast');
+                        $('html, body').animate({
+                            scrollTop: 0
+                        }, 'fast');
                         $('#waktu').focus();
                     }
                 });
@@ -205,10 +229,12 @@
                     if (result.isConfirmed) {
                         $.ajax({
                             type: "DELETE",
-                            url: "{{ route('slot_waktu.index') }}" + '/delete/' + id,
+                            url: "{{ route('perkuliahan.slot_waktu.index') }}" +
+                                '/delete/' + id,
                             success: function(res) {
-                                if(res.status == 'success') {
-                                    Swal.fire('Terhapus', res.message, 'success').then(() => location.reload());
+                                if (res.status == 'success') {
+                                    Swal.fire('Terhapus', res.message, 'success').then(
+                                        () => location.reload());
                                 } else {
                                     Swal.fire('Gagal', res.message, 'error');
                                 }
