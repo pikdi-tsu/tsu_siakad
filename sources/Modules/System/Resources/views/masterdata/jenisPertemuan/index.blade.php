@@ -233,7 +233,8 @@
             // 4. EDIT DATA
             $('body').on('click', '.btn_edit', function() {
                 var id = $(this).data('id');
-                $.get("{{ route('perkuliahan.jenis_pertemuan.edit') }}" + '/' + id, function(res) {
+                $.get("{{ route('perkuliahan.jenis_pertemuan.edit', ':id') }}".replace(':id', id), function(
+                    res) {
                     if (res.status == 'success') {
                         $('#id').val(res.data.id);
                         $('#kode_jenis').val(res.data.kode_jenis);
@@ -267,8 +268,8 @@
                     if (result.isConfirmed) {
                         $.ajax({
                             type: "DELETE",
-                            url: "{{ route('perkuliahan.jenis_pertemuan.delete') }}" + '/' +
-                                id,
+                            url: "{{ route('perkuliahan.jenis_pertemuan.delete', ':id') }}"
+                                .replace(':id', id),
                             success: function(res) {
                                 res.status == 'success' ? Swal.fire('Terhapus', res
                                     .message, 'success') : Swal.fire('Gagal', res

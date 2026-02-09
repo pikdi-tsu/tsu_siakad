@@ -195,19 +195,21 @@
             $('body').on('click', '.btn_edit', function() {
                 var id = $(this).data('id');
                 // Pastikan route edit sesuai
-                $.get("{{ route('perguruan_tinggi.sistem_kuliah.edit') }}" + '/' + id, function(res) {
-                    if (res.status == 'success') {
-                        $('#id').val(res.data.id);
-                        $('#waktu').val(res.data.waktu); // Isi input waktu
-                        $('#isactive').val(res.data.isactive); // Isi select isactive
 
-                        $('#form-title').html('<i class="fas fa-edit"></i> Edit Sistem Kuliah');
-                        $('#form-container').slideDown();
-                        $('html, body').animate({
-                            scrollTop: $('#form-container').offset().top - 100
-                        }, 'slow');
-                    }
-                });
+                $.get("{{ route('perguruan_tinggi.sistem_kuliah.edit', ':id') }}".replace(':id', id),
+                    function(res) {
+                        if (res.status == 'success') {
+                            $('#id').val(res.data.id);
+                            $('#waktu').val(res.data.waktu); // Isi input waktu
+                            $('#isactive').val(res.data.isactive); // Isi select isactive
+
+                            $('#form-title').html('<i class="fas fa-edit"></i> Edit Sistem Kuliah');
+                            $('#form-container').slideDown();
+                            $('html, body').animate({
+                                scrollTop: $('#form-container').offset().top - 100
+                            }, 'slow');
+                        }
+                    });
             });
 
             // 6. DELETE DATA
@@ -225,8 +227,8 @@
                         $.ajax({
                             type: "DELETE",
                             // Pastikan route delete sesuai
-                            url: "{{ route('perguruan_tinggi.sistem_kuliah.index') }}" +
-                                '/delete/' + id,
+                            url: "{{ route('perguruan_tinggi.sistem_kuliah.delete', ':id') }}"
+                                .replace(':id', id),
                             success: function(res) {
                                 if (res.status == 'success') {
                                     Swal.fire('Terhapus', res.message, 'success');

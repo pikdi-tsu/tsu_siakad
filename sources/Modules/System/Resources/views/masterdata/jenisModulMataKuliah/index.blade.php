@@ -173,19 +173,21 @@
             // 4. EDIT DATA
             $('body').on('click', '.btn_edit', function() {
                 var id = $(this).data('id');
-                $.get("{{ route('perkuliahan.jenis_modul_mata_kuliah.edit') }}" + '/' + id, function(res) {
-                    if (res.status == 'success') {
-                        $('#id').val(res.data.id);
-                        $('#kode_modul').val(res.data.kode_modul);
-                        $('#nama_modul').val(res.data.nama_modul);
+                $.get("{{ route('perkuliahan.jenis_modul_mata_kuliah.edit', ':id') }}".replace(':id', id),
+                    function(
+                        res) {
+                        if (res.status == 'success') {
+                            $('#id').val(res.data.id);
+                            $('#kode_modul').val(res.data.kode_modul);
+                            $('#nama_modul').val(res.data.nama_modul);
 
-                        $('#form-title').html('<i class="fas fa-edit"></i> Edit Jenis Modul');
-                        $('#form-container').slideDown();
-                        $('html, body').animate({
-                            scrollTop: $('#form-container').offset().top - 100
-                        }, 'slow');
-                    }
-                });
+                            $('#form-title').html('<i class="fas fa-edit"></i> Edit Jenis Modul');
+                            $('#form-container').slideDown();
+                            $('html, body').animate({
+                                scrollTop: $('#form-container').offset().top - 100
+                            }, 'slow');
+                        }
+                    });
             });
 
             // 5. DELETE DATA
@@ -201,8 +203,8 @@
                     if (result.isConfirmed) {
                         $.ajax({
                             type: "DELETE",
-                            url: "{{ route('perkuliahan.jenis_modul_mata_kuliah.delete') }}" +
-                                '/' + id,
+                            url: "{{ route('perkuliahan.jenis_modul_mata_kuliah.delete', ':id') }}"
+                                .replace(':id', id),
                             success: function(res) {
                                 res.status == 'success' ? Swal.fire('Terhapus', res
                                     .message, 'success') : Swal.fire('Gagal', res

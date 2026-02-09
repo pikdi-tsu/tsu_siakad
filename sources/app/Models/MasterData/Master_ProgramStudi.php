@@ -16,6 +16,6 @@ class Master_ProgramStudi extends Model
 
     public function getTable()
     {
-        return config('app.module.name') . '_menu_program_studi';
+        return config('app.module.name') . '_master_program_studi';
     }
 }

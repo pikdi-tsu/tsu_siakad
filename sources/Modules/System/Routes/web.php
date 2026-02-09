@@ -205,7 +205,7 @@ Route::prefix('')->group(function () {
                 });
 
                 // Lembaga Naungan
-                Route::prefix('lembaga-naungan')->group(function () {
+                Route::prefix('LembagaNaungan')->group(function () {
                     Route::get('/', [LembagaNaunganController::class, 'index'])->name('lembaga_naungan.index');
                     Route::post('/store', [LembagaNaunganController::class, 'store'])->name('lembaga_naungan.store');
                     Route::get('/edit/{id}', [LembagaNaunganController::class, 'edit'])->name('lembaga_naungan.edit');
@@ -253,8 +253,8 @@ Route::prefix('')->group(function () {
                     Route::get('/Status/{params1}/{params2}', [FakultasController::class, 'delete'])->name('admin.fakultas.delete');
                 });
 
-                // Program Studi
-                Route::prefix('ProgramStudi')->middleware(['permission:system:master_programstudi:view'])->group(function () {
+                // Program Studi (PMB)
+                Route::prefix('ProgramStudiPMB')->middleware(['permission:system:master_programstudi_pmb:view'])->group(function () {
                     Route::get('/', [JurusanController::class, 'index'])->name('admin.Jurusan.show');
                     Route::get('/TabelJurusan', [JurusanController::class, 'table_jurusan'])->name('admin.Jurusan.Tabel');
                     Route::post('/Store', [JurusanController::class, 'StoreJurusan'])->name('admin.Jurusan.Store');
