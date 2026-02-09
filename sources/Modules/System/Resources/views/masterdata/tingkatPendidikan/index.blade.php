@@ -33,7 +33,8 @@
                                     <i class="fas fa-plus"></i> Tambah
                                 </button>
                             @else
-                                <span class="badge badge-secondary p-2 shadow-sm" style="cursor: not-allowed; opacity: 0.7;" title="Anda tidak memiliki akses ke action ini">
+                                <span class="badge badge-secondary p-2 shadow-sm" style="cursor: not-allowed; opacity: 0.7;"
+                                    title="Anda tidak memiliki akses ke action ini">
                                     <i class="fas fa-lock mr-1"></i> Tambah (No Access)
                                 </span>
                             @endcan
@@ -159,7 +160,7 @@
             let table = $('#table-tingkat-pendidikan').DataTable({
                 processing: true,
                 serverSide: true,
-                ajax: "{{ route('tingkat_pendidikan.index') }}",
+                ajax: "{{ route('perguruan_tinggi.tingkat_pendidikan.index') }}",
                 columns: [{
                         data: 'DT_RowIndex',
                         orderable: false,
@@ -214,35 +215,37 @@
 
             $('#form-tingkat-pendidikan').submit(function(e) {
                 e.preventDefault();
-                $.post("{{ route('tingkat_pendidikan.store') }}", $(this).serialize(), function(res) {
-                    if (res.status === 'success') {
-                        Swal.fire('Berhasil', res.message, 'success');
-                        table.ajax.reload();
-                        resetForm();
-                        $('#form-container').slideUp();
-                    } else {
-                        Swal.fire('Gagal', res.message, 'error');
-                    }
-                });
+                $.post("{{ route('perguruan_tinggi.tingkat_pendidikan.store') }}", $(this).serialize(),
+                    function(res) {
+                        if (res.status === 'success') {
+                            Swal.fire('Berhasil', res.message, 'success');
+                            table.ajax.reload();
+                            resetForm();
+                            $('#form-container').slideUp();
+                        } else {
+                            Swal.fire('Gagal', res.message, 'error');
+                        }
+                    });
             });
 
             $('body').on('click', '.btn_edit', function() {
                 let id = $(this).data('id');
-                $.get("{{ route('tingkat_pendidikan.edit', ':id') }}".replace(':id', id), function(res) {
-                    if (res.status === 'success') {
-                        $('#id').val(res.data.id);
-                        $('#jenjang').val(res.data.jenjang);
-                        $('#nama_jenjang_pendidikan').val(res.data.nama_jenjang_pendidikan);
-                        $('#nama_jenjang_pendidikan_en').val(res.data.nama_jenjang_pendidikan_en);
-                        $('#urutan_jenjang_pendidikan').val(res.data.urutan_jenjang_pendidikan);
-                        $('#perguruan_tinggi').val(res.data.perguruan_tinggi);
-                        $('#pasca_sarjana').val(res.data.pasca_sarjana);
-                        $('#jenjang_rpl').val(res.data.jenjang_rpl);
-                        $('#form-title').html(
-                            '<i class="fas fa-edit"></i> Edit Tingkat Pendidikan');
-                        $('#form-container').slideDown();
-                    }
-                });
+                $.get("{{ route('perguruan_tinggi.tingkat_pendidikan.edit', ':id') }}".replace(':id', id),
+                    function(res) {
+                        if (res.status === 'success') {
+                            $('#id').val(res.data.id);
+                            $('#jenjang').val(res.data.jenjang);
+                            $('#nama_jenjang_pendidikan').val(res.data.nama_jenjang_pendidikan);
+                            $('#nama_jenjang_pendidikan_en').val(res.data.nama_jenjang_pendidikan_en);
+                            $('#urutan_jenjang_pendidikan').val(res.data.urutan_jenjang_pendidikan);
+                            $('#perguruan_tinggi').val(res.data.perguruan_tinggi);
+                            $('#pasca_sarjana').val(res.data.pasca_sarjana);
+                            $('#jenjang_rpl').val(res.data.jenjang_rpl);
+                            $('#form-title').html(
+                                '<i class="fas fa-edit"></i> Edit Tingkat Pendidikan');
+                            $('#form-container').slideDown();
+                        }
+                    });
             });
 
             $('body').on('click', '.btn_hapus', function() {
@@ -257,8 +260,9 @@
                     if (result.isConfirmed) {
                         $.ajax({
                             type: 'DELETE',
-                            url: "{{ route('tingkat_pendidikan.delete', ':id') }}".replace(
-                                ':id', id),
+                            url: "{{ route('perguruan_tinggi.tingkat_pendidikan.delete', ':id') }}"
+                                .replace(
+                                    ':id', id),
                             success: function(res) {
                                 Swal.fire('Terhapus', res.message, 'success');
                                 table.ajax.reload();

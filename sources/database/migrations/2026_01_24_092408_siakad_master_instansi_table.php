@@ -15,7 +15,7 @@ return new class extends Migration
             $table->uuid('id')->primary();
 
             // Identitas instansi
-            $table->string('kode_instansi', 30)->unique();
+            $table->string('no', 30)->unique();
             $table->string('nama_instansi', 200);
 
             // Alamat & kontak

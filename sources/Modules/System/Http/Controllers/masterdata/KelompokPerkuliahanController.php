@@ -33,7 +33,7 @@ class KelompokPerkuliahanController extends MiddlewareController
                 ->make(true);
         }
 
-        return view('system::masterdata.kelompok_perkuliahan.index', $data);
+        return view('system::masterdata.kelompokPerkuliahan.index', $data);
     }
 
     public function store(Request $request)

@@ -35,7 +35,7 @@ class TingkatPendidikanUniversitasController extends MiddlewareController
                 ->make(true);
         }
 
-        return view('system::masterdata.tingkat_pendidikan_universitas.index', $data);
+        return view('system::masterdata.tingkatPendidikanUniversitas.index', $data);
     }
 
     public function store(Request $request)

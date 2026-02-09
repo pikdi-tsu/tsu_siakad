@@ -33,7 +33,7 @@ class LokasiKampusController extends MiddlewareController
                 ->make(true);
         }
 
-        return view('system::masterdata.lokasi_kampus.index', $data);
+        return view('system::masterdata.lokasiKampus.index', $data);
     }
 
     public function store(Request $request)

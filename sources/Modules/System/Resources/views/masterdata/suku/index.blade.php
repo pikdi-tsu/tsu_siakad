@@ -116,7 +116,7 @@
             let table = $('#table-suku').DataTable({
                 processing: true,
                 serverSide: true,
-                ajax: "{{ route('suku.index') }}",
+                ajax: "{{ route('biodata.suku.index') }}",
                 columns: [{
                         data: 'DT_RowIndex',
                         orderable: false,
@@ -153,7 +153,7 @@
 
                 $.ajax({
                     type: 'POST',
-                    url: "{{ route('suku.store') }}",
+                    url: "{{ route('biodata.suku.store') }}",
                     data: $(this).serialize(),
                     success: function(res) {
                         if (res.status === 'success') {
@@ -172,7 +172,7 @@
             $('body').on('click', '.btn_edit', function() {
                 let id = $(this).data('id');
 
-                $.get("{{ route('suku.edit', ':id') }}".replace(':id', id), function(res) {
+                $.get("{{ route('biodata.suku.edit', ':id') }}".replace(':id', id), function(res) {
                     if (res.status === 'success') {
                         $('#id').val(res.data.id);
                         $('#nama_suku').val(res.data.nama_suku);
@@ -196,7 +196,8 @@
                     if (result.isConfirmed) {
                         $.ajax({
                             type: 'DELETE',
-                            url: "{{ route('suku.delete', ':id') }}".replace(':id', id),
+                            url: "{{ route('biodata.suku.delete', ':id') }}".replace(':id',
+                                id),
                             success: function(res) {
                                 Swal.fire('Terhapus', res.message, 'success');
                                 table.ajax.reload();

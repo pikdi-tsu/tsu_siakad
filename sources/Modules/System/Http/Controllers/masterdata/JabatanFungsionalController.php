@@ -33,7 +33,7 @@ class JabatanFungsionalController extends MiddlewareController
                 ->make(true);
         }
 
-        return view('system::masterdata.jabatan_fungsional.index', $data);
+        return view('system::masterdata.jabatanFungsional.index', $data);
     }
 
     public function store(Request $request)

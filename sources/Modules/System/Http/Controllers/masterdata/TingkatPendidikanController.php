@@ -34,7 +34,7 @@ class TingkatPendidikanController extends MiddlewareController
                 ->make(true);
         }
 
-        return view('system::masterdata.tingkat_pendidikan.index', $data);
+        return view('system::masterdata.tingkatPendidikan.index', $data);
     }
 
     public function store(Request $request)

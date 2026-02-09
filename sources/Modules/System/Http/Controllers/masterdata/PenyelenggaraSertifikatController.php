@@ -33,7 +33,7 @@ class PenyelenggaraSertifikatController extends MiddlewareController
                 ->make(true);
         }
 
-        return view('system::masterdata.penyelenggara_sertifikat.index', $data);
+        return view('system::masterdata.penyelenggaraSertifikat.index', $data);
     }
 
     public function store(Request $request)

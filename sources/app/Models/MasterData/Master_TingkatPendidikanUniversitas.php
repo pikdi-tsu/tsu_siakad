@@ -12,6 +12,9 @@ class Master_TingkatPendidikanUniversitas extends Model
 
 
     protected $table = 'siakad_master_tingkat_pendidikan_universitas';
+    protected $primaryKey = 'id';
+    public $incrementing = false;
+    protected $keyType = 'string';
 
 
     protected $fillable = ['jenjang', 'masa_studi', 'max_cuti', 'max_studi'];

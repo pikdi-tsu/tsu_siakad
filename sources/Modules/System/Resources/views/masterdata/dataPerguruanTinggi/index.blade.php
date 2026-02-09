@@ -2,8 +2,6 @@
 @section('title', $title)
 
 @section('content')
-
-    {{-- HEADER --}}
     <div class="content-header">
         <div class="container-fluid">
             <div class="row mb-2">
@@ -12,11 +10,8 @@
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item">
-                            <a href="{{ route('dashboard') }}">Dashboard</a>
-                        </li>
-                        <li class="breadcrumb-item">Data Pelengkap</li>
-                        <li class="breadcrumb-item">Biodata</li>
+                        <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
+                        <li class="breadcrumb-item">Master Data</li>
                         <li class="breadcrumb-item active">{{ $menu }}</li>
                     </ol>
                 </div>
@@ -24,7 +19,6 @@
         </div>
     </div>
 
-    {{-- CONTENT --}}
     <div class="content">
         <div class="container-fluid">
             <div class="row">
@@ -37,7 +31,8 @@
                             <button class="btn btn-warning btn-sm float-right" id="btn-batal" style="display: none;">
                                 <i class="fas fa-refresh"></i> Batal
                             </button>
-                            <button class="btn btn-success btn-sm float-right" id="btn-simpan" style="margin-right: 5px;display: none;">
+                            <button class="btn btn-success btn-sm float-right" id="btn-simpan"
+                                style="margin-right: 5px;display: none;">
                                 <i class="fa-solid fa-floppy-disk"></i> Simpan
                             </button>
                             <button class="btn btn-warning btn-sm float-right" id="btn-edit">
@@ -50,73 +45,99 @@
 
                             {{-- TABLE --}}
                             <div class="table-responsive">
-                                <form action="{{ route('perguruan_tinggi.perguruan_tinggi.save') }}" id="form-edit-pt" method="POST" enctype="multipart/form-data">
+                                <form action="{{ route('perguruan_tinggi.perguruan_tinggi.save') }}" id="form-edit-pt"
+                                    method="POST" enctype="multipart/form-data">
                                     @csrf
                                     <input type="hidden" name="idpt" id="idpt" value="{{ $pt ? $pt->id : null }}">
                                     <table class="table">
                                         <tr>
-                                            <th class="text-primary">Kode Unit<span class="editpt" style="display: none;"><code>*</code></span></th>
+                                            <th class="text-primary">Kode Unit<span class="editpt"
+                                                    style="display: none;"><code>*</code></span></th>
                                             <td>
-                                                <span class="showpt">{{$pt==null ? '-' : $pt->kode_unit}}</span>
-                                                <input type="text" class="form-control editpt" name="kodeunit" id="kodeunit" style="display:none;" value="{{ $pt==null ? null : $pt->kode_unit }}" title="Isian Maksimal 10 Karakter">
+                                                <span class="showpt">{{ $pt == null ? '-' : $pt->kode_unit }}</span>
+                                                <input type="text" class="form-control editpt" name="kodeunit"
+                                                    id="kodeunit" style="display:none;"
+                                                    value="{{ $pt == null ? null : $pt->kode_unit }}"
+                                                    title="Isian Maksimal 10 Karakter">
                                             </td>
-                                            <th class="text-primary">Lembaga Naungan<span class="editpt" style="display: none;"><code>*</code></span></th>
+                                            <th class="text-primary">Lembaga Naungan<span class="editpt"
+                                                    style="display: none;"><code>*</code></span></th>
                                             <td>
-                                                <span class="showpt">{{$pt==null ? '-' : $pt->lembaga_naungan}}</span>
-                                                <select class="form-control select2 editpt" id="lembaga_naungan" name="lembaga_naungan" style="display: none;">
-                                                    <option value="" selected disabled>-- Pilih Lembaga Naungan --</option>
+                                                <span class="showpt">{{ $pt == null ? '-' : $pt->lembaga_naungan }}</span>
+                                                <select class="form-control select2 editpt" id="lembaga_naungan"
+                                                    name="lembaga_naungan" style="display: none;">
+                                                    <option value="" selected disabled>-- Pilih Lembaga Naungan --
+                                                    </option>
                                                     @foreach ($lembaga as $p)
                                                         @php
                                                             $select1 = '';
-                                                            if($pt){
-                                                                $select1 = $p->id==$pt->lembaga_naungan ? 'selected' : '';
+                                                            if ($pt) {
+                                                                $select1 =
+                                                                    $p->id == $pt->lembaga_naungan ? 'selected' : '';
                                                             }
                                                         @endphp
-                                                        <option value="{{encrypt($p->id)}}"{{$select1}}>{{$p->nama_lembaga}}</option>
+                                                        <option value="{{ encrypt($p->id) }}"{{ $select1 }}>
+                                                            {{ $p->nama_lembaga }}</option>
                                                     @endforeach
                                                 </select>
                                             </td>
                                         </tr>
                                         <tr>
-                                            <th class="text-primary">Nama Unit<span class="editpt" style="display: none;"><code>*</code></span></th>
+                                            <th class="text-primary">Nama Unit<span class="editpt"
+                                                    style="display: none;"><code>*</code></span></th>
                                             <td>
-                                                <span class="showpt">{{$pt==null ? '-' : $pt->nama_unit}}</span>
-                                                <input type="text" class="form-control editpt" name="namaunit" id="namaunit" value="{{ $pt==null ? null : $pt->nama_unit }}" style="display:none;" title="Isian Maksimal 100 Karakter">
+                                                <span class="showpt">{{ $pt == null ? '-' : $pt->nama_unit }}</span>
+                                                <input type="text" class="form-control editpt" name="namaunit"
+                                                    id="namaunit" value="{{ $pt == null ? null : $pt->nama_unit }}"
+                                                    style="display:none;" title="Isian Maksimal 100 Karakter">
                                             </td>
                                             <th class="text-primary">Unit/Satuan Kerja</th>
                                             <td>
-                                                <span class="showpt">{{$pt==null ? '-' : $pt->unit_satuan_kerja}}</span>
-                                                <select class="form-control select2 editpt" id="unitsatuankerja" name="unitsatuankerja" style="display: none;">
-                                                    <option value="" selected disabled>-- Pilih Unit Satuan Kerja --</option>
+                                                <span class="showpt">{{ $pt == null ? '-' : $pt->unit_satuan_kerja }}</span>
+                                                <select class="form-control select2 editpt" id="unitsatuankerja"
+                                                    name="unitsatuankerja" style="display: none;">
+                                                    <option value="" selected disabled>-- Pilih Unit Satuan Kerja --
+                                                    </option>
                                                     @php
                                                         $select4 = '';
-                                                        if($pt){
-                                                            $select4 = $pt->unit_satuan_kerja=='Universitas Tiga Serangkai' ? 'selected' : '';
+                                                        if ($pt) {
+                                                            $select4 =
+                                                                $pt->unit_satuan_kerja == 'Universitas Tiga Serangkai'
+                                                                    ? 'selected'
+                                                                    : '';
                                                         }
                                                     @endphp
-                                                    <option value="Universitas Tiga Serangkai" {{$select4}}>Universitas Tiga Serangkai</option>
+                                                    <option value="Universitas Tiga Serangkai" {{ $select4 }}>
+                                                        Universitas Tiga Serangkai</option>
                                                 </select>
                                             </td>
                                         </tr>
                                         <tr>
-                                            <th class="text-primary">Nama Unit (EN)<span class="editpt" style="display: none;"><code>*</code></span></th>
+                                            <th class="text-primary">Nama Unit (EN)<span class="editpt"
+                                                    style="display: none;"><code>*</code></span></th>
                                             <td>
-                                                <span class="showpt">{{$pt==null ? '-' : $pt->nama_unit_en}}</span>
-                                                <input type="text" class="form-control editpt" name="namaunit_en" id="namaunit_en" value="{{ $pt==null ? null : $pt->nama_unit_en }}" style="display:none;" title="Isian Maksimal 50 Karakter">
+                                                <span class="showpt">{{ $pt == null ? '-' : $pt->nama_unit_en }}</span>
+                                                <input type="text" class="form-control editpt" name="namaunit_en"
+                                                    id="namaunit_en" value="{{ $pt == null ? null : $pt->nama_unit_en }}"
+                                                    style="display:none;" title="Isian Maksimal 50 Karakter">
                                             </td>
                                             <th class="text-primary">Periode Berdiri</th>
                                             <td>
-                                                <span class="showpt">{{$pt==null ? '-' : $pt->periode_berdiri}}</span>
-                                                <select class="form-control select2 editpt" id="periode_berdiri" name="periode_berdiri" style="display: none;">
-                                                    <option value="" selected disabled>-- Pilih Periode Berdiri --</option>
+                                                <span class="showpt">{{ $pt == null ? '-' : $pt->periode_berdiri }}</span>
+                                                <select class="form-control select2 editpt" id="periode_berdiri"
+                                                    name="periode_berdiri" style="display: none;">
+                                                    <option value="" selected disabled>-- Pilih Periode Berdiri --
+                                                    </option>
                                                     @php
                                                         $select5 = '';
                                                         $select6 = '';
-                                                        if($pt){
-                                                            $select5 = $pt->periode_berdiri=='2024 Genap' ? 'selected' : '';
+                                                        if ($pt) {
+                                                            $select5 =
+                                                                $pt->periode_berdiri == '2024 Genap' ? 'selected' : '';
                                                         }
-                                                        if($pt){
-                                                            $select6 = $pt->periode_berdiri=='2024 Ganjil' ? 'selected' : '';
+                                                        if ($pt) {
+                                                            $select6 =
+                                                                $pt->periode_berdiri == '2024 Ganjil' ? 'selected' : '';
                                                         }
                                                     @endphp
                                                     <option value="2024 Genap" {{ $select5 }}>2024 Genap</option>
@@ -125,31 +146,45 @@
                                             </td>
                                         </tr>
                                         <tr>
-                                            <th class="text-primary">Nama Singkat<span class="editpt" style="display: none;"><code>*</code></span></th>
+                                            <th class="text-primary">Nama Singkat<span class="editpt"
+                                                    style="display: none;"><code>*</code></span></th>
                                             <td>
-                                                <span class="showpt">{{$pt==null ? '-' : $pt->nama_singkat}}</span>
-                                                <input type="text" class="form-control editpt" name="namasingkat" value="{{ $pt==null ? null : $pt->nama_singkat }}" id="namasingkat" style="display:none;" title="Isian Maksimal 50 Karakter">
+                                                <span class="showpt">{{ $pt == null ? '-' : $pt->nama_singkat }}</span>
+                                                <input type="text" class="form-control editpt" name="namasingkat"
+                                                    value="{{ $pt == null ? null : $pt->nama_singkat }}" id="namasingkat"
+                                                    style="display:none;" title="Isian Maksimal 50 Karakter">
                                             </td>
                                             <th class="text-primary">No. SK Pendirian</th>
                                             <td>
-                                                <span class="showpt">{{$pt==null ? '-' : $pt->no_sk_pendirian}}</span>
-                                                <input type="text" class="form-control editpt" name="noskpendirian" id="noskpendirian" value="{{ $pt==null ? null : $pt->no_sk_pendirian }}" style="display:none;" title="Isian Maksimal 100 Karakter">
+                                                <span class="showpt">{{ $pt == null ? '-' : $pt->no_sk_pendirian }}</span>
+                                                <input type="text" class="form-control editpt" name="noskpendirian"
+                                                    id="noskpendirian"
+                                                    value="{{ $pt == null ? null : $pt->no_sk_pendirian }}"
+                                                    style="display:none;" title="Isian Maksimal 100 Karakter">
                                             </td>
                                         </tr>
                                         <tr>
-                                            <th class="text-primary">Jenis Perguruan Tinggi<span class="editpt" style="display: none;"><code>*</code></span></th>
+                                            <th class="text-primary">Jenis Perguruan Tinggi<span class="editpt"
+                                                    style="display: none;"><code>*</code></span></th>
                                             <td>
-                                                <span class="showpt">{{$pt==null ? '-' : $pt->jenis_perguruan_tinggi}}</span>
-                                                <select class="form-control select2 editpt" id="jenis_pt" name="jenis_pt" style="display: none;">
-                                                    <option value="" selected disabled>-- Pilih Jenis Perguruan Tinggi --</option>
+                                                <span
+                                                    class="showpt">{{ $pt == null ? '-' : $pt->jenis_perguruan_tinggi }}</span>
+                                                <select class="form-control select2 editpt" id="jenis_pt"
+                                                    name="jenis_pt" style="display: none;">
+                                                    <option value="" selected disabled>-- Pilih Jenis Perguruan
+                                                        Tinggi --</option>
                                                     @foreach ($jenispt as $p)
                                                         @php
                                                             $select2 = '';
-                                                            if($pt){
-                                                                $select2 = $p->id==$pt->jenis_perguruan_tinggi ? 'selected' : '';
+                                                            if ($pt) {
+                                                                $select2 =
+                                                                    $p->id == $pt->jenis_perguruan_tinggi
+                                                                        ? 'selected'
+                                                                        : '';
                                                             }
                                                         @endphp
-                                                        <option value="{{encrypt($p->id)}}"{{$select2}}>{{$p->jenis_pt}}</option>
+                                                        <option value="{{ encrypt($p->id) }}"{{ $select2 }}>
+                                                            {{ $p->jenis_pt }}</option>
                                                     @endforeach
                                                 </select>
                                             </td>
@@ -160,7 +195,8 @@
                                             </td>
                                         </tr>
                                         <tr>
-                                            <th class="text-success" colspan="4" style="font-size: 20px;">Pejabat Universitas Tiga Serangkai</th>
+                                            <th class="text-success" colspan="4" style="font-size: 20px;">Pejabat
+                                                Universitas Tiga Serangkai</th>
                                         </tr>
                                         <tr>
                                             <th class="text-primary">Rektor</th>
@@ -206,7 +242,8 @@
                                             <td></td>
                                         </tr>
                                         <tr>
-                                            <th class="text-success" colspan="4" style="font-size: 20px;">Akreditasi Universitas Tiga Serangkai</th>
+                                            <th class="text-success" colspan="4" style="font-size: 20px;">Akreditasi
+                                                Universitas Tiga Serangkai</th>
                                         </tr>
                                         <tr>
                                             <th class="text-primary">Lembaga Akreditasi</th>
@@ -223,17 +260,24 @@
                                         <tr>
                                             <th class="text-primary">Peringkat Akreditasi</th>
                                             <td>
-                                                <span class="showpt">{{$pt==null ? '-' : $pt->peringkat_akreditasi}}</span>
-                                                <select class="form-control select2 editpt" id="peringkat_akreditasi" name="peringkat_akreditasi" style="display: none;">
-                                                    <option value="" selected disabled>-- Pilih Peringkat Akreditasi --</option>
+                                                <span
+                                                    class="showpt">{{ $pt == null ? '-' : $pt->peringkat_akreditasi }}</span>
+                                                <select class="form-control select2 editpt" id="peringkat_akreditasi"
+                                                    name="peringkat_akreditasi" style="display: none;">
+                                                    <option value="" selected disabled>-- Pilih Peringkat Akreditasi
+                                                        --</option>
                                                     @foreach ($peringkatAK as $p)
                                                         @php
                                                             $select3 = '';
-                                                            if($pt){
-                                                                $select3 = $p->id==$pt->peringkat_akreditasi ? 'selected' : '';
+                                                            if ($pt) {
+                                                                $select3 =
+                                                                    $p->id == $pt->peringkat_akreditasi
+                                                                        ? 'selected'
+                                                                        : '';
                                                             }
                                                         @endphp
-                                                        <option value="{{encrypt($p->id)}}"{{$select3}}>{{$p->peringkat_akreditasi}}</option>
+                                                        <option value="{{ encrypt($p->id) }}"{{ $select3 }}>
+                                                            {{ $p->peringkat_akreditasi }}</option>
                                                     @endforeach
                                                 </select>
                                             </td>
@@ -276,8 +320,11 @@
                                                     </span>
                                                     <div class="input-group">
                                                         <div class="custom-file">
-                                                            <input type="file" class="custom-file-input" id="file_akreditasi" name="file_akreditasi" accept=".pdf,.jpg,.jpeg">
-                                                            <label class="custom-file-label" for="file_akreditasi">Choose file</label>
+                                                            <input type="file" class="custom-file-input"
+                                                                id="file_akreditasi" name="file_akreditasi"
+                                                                accept=".pdf,.jpg,.jpeg">
+                                                            <label class="custom-file-label" for="file_akreditasi">Choose
+                                                                file</label>
                                                         </div>
                                                     </div>
                                                     <span class="text-primary">jpg,jpeg,pdf (maxsize: 2 MB)</span>
@@ -285,7 +332,8 @@
                                             </td>
                                         </tr>
                                         <tr>
-                                            <th class="text-success" colspan="4" style="font-size: 20px;">Informasi Universitas Tiga Serangkai</th>
+                                            <th class="text-success" colspan="4" style="font-size: 20px;">Informasi
+                                                Universitas Tiga Serangkai</th>
                                         </tr>
                                         <tr>
                                             <th class="text-primary">Visi</th>
@@ -306,7 +354,8 @@
                                             </td>
                                         </tr>
                                         <tr>
-                                            <th class="text-success" colspan="4" style="font-size: 20px;">Kontak Universitas Tiga Serangkai</th>
+                                            <th class="text-success" colspan="4" style="font-size: 20px;">Kontak
+                                                Universitas Tiga Serangkai</th>
                                         </tr>
                                         <tr>
                                             <th class="text-primary">Alamat</th>
@@ -347,168 +396,185 @@
                                 </form>
                             </div>
 
+                            <div class="row mt-2">
+                                <div class="col-md-4"><label>Website</label><input disabled name="website" id="website"
+                                        class="form-control form-input"></div>
+                            </div>
+
+                            <hr>
+
+                            <div class="text-right d-none" id="form-action">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save"></i> Simpan
+                                </button>
+                                <button type="button" class="btn btn-secondary" id="btn-cancel">Batal</button>
+                            </div>
+
+                            </form>
                         </div>
                     </div>
+
                 </div>
             </div>
-        </div>
-    </div>
+        @endsection
+        @section('script')
+            <script>
+                $(document).ready(function() {
 
-@endsection
-
-@section('script')
-    <script>
-        $(document).ready(function() {
-
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-            });
-
-            let selectedRektor = @json($rektor);
-            let selectedWR1 = @json($wr1);
-            let selectedWR2 = @json($wr2);
-            let selectedWR3 = @json($wr3);
-            let selectedWR4 = @json($wr4);
-            // notifalert('success','Berhasil save','success')
-
-            // $('#loading').show()
-
-            loadEvent()
-
-            function loadEvent()
-            {
-                edit()
-                batal()
-                save()
-            }
-
-            function edit()
-            {
-                $('#btn-edit').click(function (e) {
-                    e.preventDefault();
-                    $('#btn-batal').show()
-                    $('#btn-simpan').show()
-                    $(this).hide()
-                    $('.editpt').show()
-                    $('.showpt').hide()
-
-                    initSelect2Statis()
-
-                    initRektorSelect2();
-                    setSelectedRektor()
-
-                    initWR1Select2();
-                    setSelectedWR1()
-
-                    initWR2Select2();
-                    setSelectedWR2()
-
-                    initWR3Select2();
-                    setSelectedWR3()
-
-                    initWR4Select2();
-                    setSelectedWR4()
-
-                    $('.summernote').each(function () {
-                        if (!$(this).next('.note-editor').length) {
-                            $(this).summernote({ height: 200 });
+                    $.ajaxSetup({
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                         }
                     });
-                });
 
-            }
+                    let selectedRektor = @json($rektor);
+                    let selectedWR1 = @json($wr1);
+                    let selectedWR2 = @json($wr2);
+                    let selectedWR3 = @json($wr3);
+                    let selectedWR4 = @json($wr4);
+                    // notifalert('success','Berhasil save','success')
 
-            function initSelect2Statis()
-            {
-                $('.select2').not('#rektor').each(function () {
-                    if (!$(this).hasClass('select2-hidden-accessible')) {
-                        $(this).select2({
-                            width: '100%'
-                            // minimumResultsForSearch: 0 // 🔥 paksa ada search
+                    // $('#loading').show()
+
+                    loadEvent()
+
+                    function loadEvent() {
+                        edit()
+                        batal()
+                        save()
+                    }
+
+                    function edit() {
+                        $('#btn-edit').click(function(e) {
+                            e.preventDefault();
+                            $('#btn-batal').show()
+                            $('#btn-simpan').show()
+                            $(this).hide()
+                            $('.editpt').show()
+                            $('.showpt').hide()
+
+                            initSelect2Statis()
+
+                            initRektorSelect2();
+                            setSelectedRektor()
+
+                            initWR1Select2();
+                            setSelectedWR1()
+
+                            initWR2Select2();
+                            setSelectedWR2()
+
+                            initWR3Select2();
+                            setSelectedWR3()
+
+                            initWR4Select2();
+                            setSelectedWR4()
+
+                            $('.summernote').each(function() {
+                                if (!$(this).next('.note-editor').length) {
+                                    $(this).summernote({
+                                        height: 200
+                                    });
+                                }
+                            });
+                        });
+
+                    }
+
+                    function initSelect2Statis() {
+                        $('.select2').not('#rektor').each(function() {
+                            if (!$(this).hasClass('select2-hidden-accessible')) {
+                                $(this).select2({
+                                    width: '100%'
+                                    // minimumResultsForSearch: 0 // 🔥 paksa ada search
+                                });
+                            }
                         });
                     }
-                });
-            }
 
-            function initRektorSelect2()
-            {
-                $('#rektor').select2({
-                    width: '100%',
-                    placeholder: 'Cari NIP/Nama Rektor',
-                    minimumInputLength: 2,
-                    ajax: {
-                        url: "{{ route('perguruan_tinggi.perguruan_tinggi.caripegawai') }}",
-                        dataType: 'json',
-                        delay: 300,
-                        data: params => ({ q: params.term }),
-                        processResults: data => ({ results: data })
+                    function initRektorSelect2() {
+                        $('#rektor').select2({
+                            width: '100%',
+                            placeholder: 'Cari NIP/Nama Rektor',
+                            minimumInputLength: 2,
+                            ajax: {
+                                url: "{{ route('perguruan_tinggi.perguruan_tinggi.caripegawai') }}",
+                                dataType: 'json',
+                                delay: 300,
+                                data: params => ({
+                                    q: params.term
+                                }),
+                                processResults: data => ({
+                                    results: data
+                                })
+                            }
+                        });
                     }
-                });
-            }
 
-            function setSelectedRektor()
-            {
-                if (!selectedRektor) return;
+                    function setSelectedRektor() {
+                        if (!selectedRektor) return;
 
-                let option = new Option(
-                    selectedRektor.text,
-                    selectedRektor.id,
-                    true,
-                    true
-                );
-                $('#rektor').append(option).trigger('change');
-            }
-
-            function initWR1Select2()
-            {
-                $('#wr1').select2({
-                    width: '100%',
-                    placeholder: 'Cari NIP/Nama Wakil Rektor 1',
-                    minimumInputLength: 2,
-                    ajax: {
-                        url: "{{ route('perguruan_tinggi.perguruan_tinggi.caripegawai') }}",
-                        dataType: 'json',
-                        delay: 300,
-                        data: params => ({ q: params.term }),
-                        processResults: data => ({ results: data })
+                        let option = new Option(
+                            selectedRektor.text,
+                            selectedRektor.id,
+                            true,
+                            true
+                        );
+                        $('#rektor').append(option).trigger('change');
                     }
-                });
-            }
 
-            function setSelectedWR1()
-            {
-                if (!selectedWR1) return;
-
-                let option = new Option(
-                    selectedWR1.text,
-                    selectedWR1.id,
-                    true,
-                    true
-                );
-                $('#wr1').append(option).trigger('change');
-            }
-
-            function initWR2Select2()
-            {
-                $('#wr2').select2({
-                    width: '100%',
-                    placeholder: 'Cari NIP/Nama Wakil Rektor 2',
-                    minimumInputLength: 2,
-                    ajax: {
-                        url: "{{ route('perguruan_tinggi.perguruan_tinggi.caripegawai') }}",
-                        dataType: 'json',
-                        delay: 300,
-                        data: params => ({ q: params.term }),
-                        processResults: data => ({ results: data })
+                    function initWR1Select2() {
+                        $('#wr1').select2({
+                            width: '100%',
+                            placeholder: 'Cari NIP/Nama Wakil Rektor 1',
+                            minimumInputLength: 2,
+                            ajax: {
+                                url: "{{ route('perguruan_tinggi.perguruan_tinggi.caripegawai') }}",
+                                dataType: 'json',
+                                delay: 300,
+                                data: params => ({
+                                    q: params.term
+                                }),
+                                processResults: data => ({
+                                    results: data
+                                })
+                            }
+                        });
                     }
-                });
-            }
 
-            function setSelectedWR2()
-            {
-                if (!selectedWR2) return;
+                    function setSelectedWR1() {
+                        if (!selectedWR1) return;
+
+                        let option = new Option(
+                            selectedWR1.text,
+                            selectedWR1.id,
+                            true,
+                            true
+                        );
+                        $('#wr1').append(option).trigger('change');
+                    }
+
+                    function initWR2Select2() {
+                        $('#wr2').select2({
+                            width: '100%',
+                            placeholder: 'Cari NIP/Nama Wakil Rektor 2',
+                            minimumInputLength: 2,
+                            ajax: {
+                                url: "{{ route('perguruan_tinggi.perguruan_tinggi.caripegawai') }}",
+                                dataType: 'json',
+                                delay: 300,
+                                data: params => ({
+                                    q: params.term
+                                }),
+                                processResults: data => ({
+                                    results: data
+                                })
+                            }
+                        });
+                    }
+
+                    function setSelectedWR2() {
+                        if (!selectedWR2) return;
 
                 let option = new Option(
                     selectedWR2.text,
@@ -519,25 +585,27 @@
                 $('#wr2').append(option).trigger('change');
             }
 
-            function initWR3Select2()
-            {
-                $('#wr3').select2({
-                    width: '100%',
-                    placeholder: 'Cari NIP/Nama Wakil Rektor 3',
-                    minimumInputLength: 2,
-                    ajax: {
-                        url: "{{ route('perguruan_tinggi.perguruan_tinggi.caripegawai') }}",
-                        dataType: 'json',
-                        delay: 300,
-                        data: params => ({ q: params.term }),
-                        processResults: data => ({ results: data })
+                    function initWR3Select2() {
+                        $('#wr3').select2({
+                            width: '100%',
+                            placeholder: 'Cari NIP/Nama Wakil Rektor 3',
+                            minimumInputLength: 2,
+                            ajax: {
+                                url: "{{ route('perguruan_tinggi.perguruan_tinggi.caripegawai') }}",
+                                dataType: 'json',
+                                delay: 300,
+                                data: params => ({
+                                    q: params.term
+                                }),
+                                processResults: data => ({
+                                    results: data
+                                })
+                            }
+                        });
                     }
-                });
-            }
 
-            function setSelectedWR3()
-            {
-                if (!selectedWR3) return;
+                    function setSelectedWR3() {
+                        if (!selectedWR3) return;
 
                 let option = new Option(
                     selectedWR3.text,
@@ -548,25 +616,27 @@
                 $('#wr3').append(option).trigger('change');
             }
 
-            function initWR4Select2()
-            {
-                $('#wr4').select2({
-                    width: '100%',
-                    placeholder: 'Cari NIP/Nama Wakil Rektor 4',
-                    minimumInputLength: 2,
-                    ajax: {
-                        url: "{{ route('perguruan_tinggi.perguruan_tinggi.caripegawai') }}",
-                        dataType: 'json',
-                        delay: 300,
-                        data: params => ({ q: params.term }),
-                        processResults: data => ({ results: data })
+                    function initWR4Select2() {
+                        $('#wr4').select2({
+                            width: '100%',
+                            placeholder: 'Cari NIP/Nama Wakil Rektor 4',
+                            minimumInputLength: 2,
+                            ajax: {
+                                url: "{{ route('perguruan_tinggi.perguruan_tinggi.caripegawai') }}",
+                                dataType: 'json',
+                                delay: 300,
+                                data: params => ({
+                                    q: params.term
+                                }),
+                                processResults: data => ({
+                                    results: data
+                                })
+                            }
+                        });
                     }
-                });
-            }
 
-            function setSelectedWR4()
-            {
-                if (!selectedWR4) return;
+                    function setSelectedWR4() {
+                        if (!selectedWR4) return;
 
                 let option = new Option(
                     selectedWR4.text,
@@ -577,121 +647,118 @@
                 $('#wr4').append(option).trigger('change');
             }
 
-            function batal()
-            {
-                $('#btn-batal').click(function (e) {
-                    e.preventDefault();
-                    $('.select2').each(function () {
-                        if ($(this).hasClass('select2-hidden-accessible')) {
-                            $(this).select2('destroy');
+                    function batal() {
+                        $('#btn-batal').click(function(e) {
+                            e.preventDefault();
+                            $('.select2').each(function() {
+                                if ($(this).hasClass('select2-hidden-accessible')) {
+                                    $(this).select2('destroy');
+                                }
+                            });
+                            if ($('#rektor').hasClass('select2-hidden-accessible')) {
+                                $('#rektor').val(null).trigger('change');
+                                $('#rektor option').not(':first').remove();
+                                $('#rektor').select2('destroy');
+                            }
+                            if ($('#wr1').hasClass('select2-hidden-accessible')) {
+                                $('#wr1').val(null).trigger('change');
+                                $('#wr1 option').not(':first').remove();
+                                $('#wr1').select2('destroy');
+                            }
+                            if ($('#wr2').hasClass('select2-hidden-accessible')) {
+                                $('#wr2').val(null).trigger('change');
+                                $('#wr2 option').not(':first').remove();
+                                $('#wr2').select2('destroy');
+                            }
+                            if ($('#wr3').hasClass('select2-hidden-accessible')) {
+                                $('#wr3').val(null).trigger('change');
+                                $('#wr3 option').not(':first').remove();
+                                $('#wr3').select2('destroy');
+                            }
+                            if ($('#wr4').hasClass('select2-hidden-accessible')) {
+                                $('#wr4').val(null).trigger('change');
+                                $('#wr4 option').not(':first').remove();
+                                $('#wr4').select2('destroy');
+                            }
+                            $('.summernote').each(function() {
+                                if ($(this).next('.note-editor').length) {
+                                    $(this).summernote('destroy');
+                                }
+                            });
+                            $('.editpt').hide()
+                            $('.showpt').show()
+                            $(this).hide()
+                            $('#btn-simpan').hide()
+                            $('#btn-edit').show()
+                        });
+                    }
+
+                    function validasi() {
+                        let kodeunit = $('#kodeunit').val()
+                        let namaunit = $('#namaunit').val()
+                        let namauniten = $('#namaunit_en').val()
+                        let namasingkat = $('#namasingkat').val()
+                        let jenispt = $('#jenis_pt').val()
+                        let naungan = $('#lembaga_naungan').val()
+                        let fileku = $('#file_akreditasi').prop('files')[0];
+
+                        let notif = '';
+                        let fileSize = 0
+                        if (fileku) {
+                            fileSize = fileku.size
                         }
-                    });
-                    if ($('#rektor').hasClass('select2-hidden-accessible')) {
-                        $('#rektor').val(null).trigger('change');
-                        $('#rektor option').not(':first').remove();
-                        $('#rektor').select2('destroy');
-                    }
-                    if ($('#wr1').hasClass('select2-hidden-accessible')) {
-                        $('#wr1').val(null).trigger('change');
-                        $('#wr1 option').not(':first').remove();
-                        $('#wr1').select2('destroy');
-                    }
-                    if ($('#wr2').hasClass('select2-hidden-accessible')) {
-                        $('#wr2').val(null).trigger('change');
-                        $('#wr2 option').not(':first').remove();
-                        $('#wr2').select2('destroy');
-                    }
-                    if ($('#wr3').hasClass('select2-hidden-accessible')) {
-                        $('#wr3').val(null).trigger('change');
-                        $('#wr3 option').not(':first').remove();
-                        $('#wr3').select2('destroy');
-                    }
-                    if ($('#wr4').hasClass('select2-hidden-accessible')) {
-                        $('#wr4').val(null).trigger('change');
-                        $('#wr4 option').not(':first').remove();
-                        $('#wr4').select2('destroy');
-                    }
-                    $('.summernote').each(function () {
-                        if ($(this).next('.note-editor').length) {
-                            $(this).summernote('destroy');
+                        if (kodeunit == '' || kodeunit == null) {
+                            notif = 'Kode Unit Harus diisi !';
+                        } else if (namaunit == '' || namaunit == null) {
+                            notif = 'Nama Unit Harus diisi !';
+                        } else if (namauniten == '' || namauniten == null) {
+                            notif = 'Nama Unit (EN) Harus diisi !';
+                        } else if (namasingkat == '' || namasingkat == null) {
+                            notif = 'Nama Singkat Harus diisi !';
+                        } else if (jenispt == '' || jenispt == null) {
+                            notif = 'Jenis Perguruan Tinggi Harus diisi !';
+                        } else if (naungan == '' || naungan == null) {
+                            notif = 'Lembaga Naungan Harus diisi !';
+                        } else if (fileSize > 2 * 1024 * 1024) {
+                            notif = 'Ukuran File Sertifikasi Akreditasi tidak boleh lebih dari 2MB !'
+                        } else {
+                            notif = 'ok';
                         }
-                    });
-                    $('.editpt').hide()
-                    $('.showpt').show()
-                    $(this).hide()
-                    $('#btn-simpan').hide()
-                    $('#btn-edit').show()
-                });
-            }
 
-            function validasi()
-            {
-                let kodeunit    = $('#kodeunit').val()
-                let namaunit    = $('#namaunit').val()
-                let namauniten  = $('#namaunit_en').val()
-                let namasingkat = $('#namasingkat').val()
-                let jenispt     = $('#jenis_pt').val()
-                let naungan     = $('#lembaga_naungan').val()
-                let fileku       = $('#file_akreditasi').prop('files')[0];
+                        return notif;
 
-                let notif = '';
-                let fileSize = 0
-                if(fileku){
-                    fileSize = fileku.size
-                }
-                if(kodeunit==''||kodeunit==null){
-                    notif = 'Kode Unit Harus diisi !';
-                }else if(namaunit==''||namaunit==null){
-                    notif = 'Nama Unit Harus diisi !';
-                }else if(namauniten==''||namauniten==null){
-                    notif = 'Nama Unit (EN) Harus diisi !';
-                }else if(namasingkat==''||namasingkat==null){
-                    notif = 'Nama Singkat Harus diisi !';
-                }else if(jenispt==''||jenispt==null){
-                    notif = 'Jenis Perguruan Tinggi Harus diisi !';
-                }else if(naungan==''||naungan==null){
-                    notif = 'Lembaga Naungan Harus diisi !';
-                }else if(fileSize > 2 * 1024 * 1024){
-                    notif = 'Ukuran File Sertifikasi Akreditasi tidak boleh lebih dari 2MB !'
-                }else{
-                    notif = 'ok';
-                }
+                    }
 
-                return notif;
-
-            }
-
-            function save()
-            {
-                $('#btn-simpan').click(function (e) {
-                    e.preventDefault();
-                    let validasiku = validasi()
-                    if(validasiku!='ok'){
-                        notifalert('Information',validasiku,'warning')
-                    }else{
-                        Swal.fire({
-                            title: "Information",
-                            text: "Apakah Data Perguruan Tinggi Sudah Benar ?",
-                            icon: "question",
-                            showConfirmButton: true,
-                            showCancelButton: true,
-                        }).then((result) => {
-                            if(result.value){
-                                $(this).prop('disabled',true)
-                                $('#loading').show()
-                                $('#form-edit-pt').submit();
-                            }else{
-                                return false;
+                    function save() {
+                        $('#btn-simpan').click(function(e) {
+                            e.preventDefault();
+                            let validasiku = validasi()
+                            if (validasiku != 'ok') {
+                                notifalert('Information', validasiku, 'warning')
+                            } else {
+                                Swal.fire({
+                                    title: "Information",
+                                    text: "Apakah Data Perguruan Tinggi Sudah Benar ?",
+                                    icon: "question",
+                                    showConfirmButton: true,
+                                    showCancelButton: true,
+                                }).then((result) => {
+                                    if (result.value) {
+                                        $(this).prop('disabled', true)
+                                        $('#loading').show()
+                                        $('#form-edit-pt').submit();
+                                    } else {
+                                        return false;
+                                    }
+                                });
                             }
                         });
                     }
+
+                    function resetForm() {
+                        $('#form-perguruan-tinggi')[0].reset();
+                    }
+
                 });
-            }
-
-            function resetForm() {
-                $('#form-perguruan-tinggi')[0].reset();
-            }
-
-        });
-    </script>
-@endsection
+            </script>
+        @endsection
