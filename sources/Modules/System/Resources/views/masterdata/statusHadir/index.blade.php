@@ -63,7 +63,7 @@
                                                 <div class="row">
                                                     <div class="col-md-4">
                                                         <div class="form-group clearfix">
-                                                            <div class="icheck-success d-inline">
+                                                            <div class="icheck-primary d-inline">
                                                                 <input type="checkbox" id="is_hitung_hadir"
                                                                     name="is_hitung_hadir">
                                                                 <label for="is_hitung_hadir"
@@ -282,8 +282,8 @@
                     $('#id').val('');
                     // Reset checkbox ke default
                     $('#is_hitung_hadir').prop('checked', false);
-                    $('#is_untuk_dosen').prop('checked', true);
-                    $('#is_untuk_mahasiswa').prop('checked', true);
+                    $('#is_untuk_dosen').prop('checked', false);
+                    $('#is_untuk_mahasiswa').prop('checked', false);
 
                     $('#form-title').html('<i class="fas fa-plus"></i> Input Status Hadir');
                 }

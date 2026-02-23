@@ -33,14 +33,14 @@ class StatusMahasiswaController extends Controller
                     return $this->renderBooleanIcon($row->is_sks);
                 })
                 ->addColumn('action', function ($row) {
-                    $btn = '<button type="button" data-id="'.$row->id.'" class="btn btn-warning btn-sm btn_edit" title="Edit"><i class="fas fa-pencil-alt"></i></button>';
+                    $btn = '<button type="button" data-id="' . $row->id . '" class="btn btn-warning btn-sm btn_edit" title="Edit"><i class="fas fa-pencil-alt"></i></button>';
 
                     // Proteksi: Tombol Hapus hilang jika data Sistem (A, C, L, dll)
                     if (!$row->is_system) {
-                        $btn .= ' <button type="button" data-id="'.$row->id.'" class="btn btn-danger btn-sm btn_hapus" title="Hapus"><i class="fas fa-trash"></i></button>';
+                        $btn .= ' <button type="button" data-id="' . $row->id . '" class="btn btn-danger btn-sm btn_hapus" title="Hapus"><i class="fas fa-trash"></i></button>';
                     }
 
-                    return '<div class="text-center">'.$btn.'</div>';
+                    return '<div class="text-center">' . $btn . '</div>';
                 })
                 ->rawColumns(['is_pengajuan_mhs', 'is_aktif', 'is_sks', 'action'])
                 ->make(true);
@@ -74,9 +74,9 @@ class StatusMahasiswaController extends Controller
                 'kode_status'      => strtoupper($request->kode_status),
                 'nama_status'      => $request->nama_status,
                 // Handle Checkbox
-                'is_pengajuan_mhs' => $request->has('is_pengajuan_mhs') ? 1 : 0,
-                'is_aktif'         => $request->has('is_aktif') ? 1 : 0,
-                'is_sks'           => $request->has('is_sks') ? 1 : 0,
+                'is_pengajuan_mhs' => $request->boolean('is_pengajuan_mhs'),
+                'is_aktif'         => $request->boolean('is_aktif'),
+                'is_sks'           => $request->boolean('is_sks'),
                 // Default data baru bukan system
                 'is_system'        => 0
             ]

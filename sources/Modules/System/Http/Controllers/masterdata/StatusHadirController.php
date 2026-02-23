@@ -33,9 +33,9 @@ class StatusHadirController extends Controller
                     return $this->renderBooleanIcon($row->is_untuk_mahasiswa);
                 })
                 ->addColumn('action', function ($row) {
-                    $btn = '<button type="button" data-id="'.$row->id.'" class="btn btn-warning btn-sm btn_edit" title="Edit"><i class="fas fa-pencil-alt"></i></button>';
-                    $btn .= ' <button type="button" data-id="'.$row->id.'" class="btn btn-danger btn-sm btn_hapus" title="Hapus"><i class="fas fa-trash"></i></button>';
-                    return '<div class="text-center">'.$btn.'</div>';
+                    $btn = '<button type="button" data-id="' . $row->id . '" class="btn btn-warning btn-sm btn_edit" title="Edit"><i class="fas fa-pencil-alt"></i></button>';
+                    $btn .= ' <button type="button" data-id="' . $row->id . '" class="btn btn-danger btn-sm btn_hapus" title="Hapus"><i class="fas fa-trash"></i></button>';
+                    return '<div class="text-center">' . $btn . '</div>';
                 })
                 ->rawColumns(['is_hitung_hadir', 'is_untuk_dosen', 'is_untuk_mahasiswa', 'action'])
                 ->make(true);
@@ -70,9 +70,13 @@ class StatusHadirController extends Controller
                 'kode_status'        => $request->kode_status,
                 'nama_status'        => $request->nama_status,
                 // Handle Checkbox (dikirim string "on" atau null)
-                'is_hitung_hadir'    => $request->has('is_hitung_hadir') ? 1 : 0,
-                'is_untuk_dosen'     => $request->has('is_untuk_dosen') ? 1 : 0,
-                'is_untuk_mahasiswa' => $request->has('is_untuk_mahasiswa') ? 1 : 0,
+                // 'is_hitung_hadir'    => $request->has('is_hitung_hadir') ? 1 : 0,
+                // 'is_untuk_dosen'     => $request->has('is_untuk_dosen') ? 1 : 0,
+                // 'is_untuk_mahasiswa' => $request->has('is_untuk_mahasiswa') ? 1 : 0,
+                'is_hitung_hadir'    => $request->boolean('is_hitung_hadir'),
+                'is_untuk_dosen'     => $request->boolean('is_untuk_dosen'),
+                'is_untuk_mahasiswa' => $request->boolean('is_untuk_mahasiswa'),
+
             ]
         );
 

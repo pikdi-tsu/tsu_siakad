@@ -78,7 +78,7 @@
                                         </div>
                                         <div class="col-md-3">
                                             <div class="form-group clearfix">
-                                                <div class="icheck-success d-inline">
+                                                <div class="icheck-primary d-inline">
                                                     <input type="checkbox" id="is_hitung_presensi" name="is_hitung_presensi"
                                                         checked>
                                                     <label for="is_hitung_presensi" style="font-weight: normal;">Masuk
@@ -285,7 +285,7 @@
                 $('#form-jenis')[0].reset();
                 $('#id').val('');
                 // Default Checkbox
-                $('#is_hitung_presensi').prop('checked', true);
+                $('#is_hitung_presensi').prop('checked', false);
                 $('#is_ujian').prop('checked', false);
 
                 $('#form-title').html('<i class="fas fa-plus"></i> Input Jenis Pertemuan');

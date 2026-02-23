@@ -205,25 +205,28 @@
             // 5. EDIT DATA
             $('body').on('click', '.btn_edit', function() {
                 var id = $(this).data('id');
-                $.get("{{ route('perguruan_tinggi.kegiatan_akademik.index') }}" + '/edit/' + id, function(
-                    res) {
-                    if (res.status == 'success') {
-                        $('#id').val(res.data.id);
-                        $('#kode_kegiatan').val(res.data.kode_kegiatan);
-                        $('#nama_kegiatan').val(res.data.nama_kegiatan);
+                $.get("{{ route('perguruan_tinggi.kegiatan_akademik.edit', ':id') }}"
+                    .replace(':id', id),
+                    function(res) {
 
-                        // Set Warna
-                        let warna = res.data.warna_background || '#ffffff';
-                        $('#warna_background').val(warna);
-                        $('#color_picker').val(warna);
+                        if (res.status == 'success') {
+                            $('#id').val(res.data.id);
+                            $('#kode_kegiatan').val(res.data.kode_kegiatan);
+                            $('#nama_kegiatan').val(res.data.nama_kegiatan);
 
-                        $('#form-title').html('<i class="fas fa-edit"></i> Edit Kegiatan');
-                        $('#form-container').slideDown();
-                        $('html, body').animate({
-                            scrollTop: $('#form-container').offset().top - 100
-                        }, 'slow');
-                    }
-                });
+                            // Set Warna
+                            let warna = res.data.warna_background || '#ffffff';
+                            $('#warna_background').val(warna);
+                            $('#color_picker').val(warna);
+
+                            $('#form-title').html(
+                                '<i class="fas fa-edit"></i> Edit Kegiatan');
+                            $('#form-container').slideDown();
+                            $('html, body').animate({
+                                scrollTop: $('#form-container').offset().top - 100
+                            }, 'slow');
+                        }
+                    });
             });
 
             // 6. DELETE DATA
@@ -239,11 +242,13 @@
                     if (result.isConfirmed) {
                         $.ajax({
                             type: "DELETE",
-                            url: "{{ route('perguruan_tinggi.kegiatan_akademik.index') }}" +
-                                '/delete/' + id,
+                            url: "{{ route('perguruan_tinggi.kegiatan_akademik.delete', ':id') }}"
+                                .replace(':id', id),
                             success: function(res) {
-                                res.status == 'success' ? Swal.fire('Terhapus', res
-                                    .message, 'success') : Swal.fire('Gagal', res
+                                res.status == 'success' ? Swal.fire(
+                                    'Terhapus', res
+                                    .message, 'success') : Swal.fire(
+                                    'Gagal', res
                                     .message, 'error');
                                 table.ajax.reload();
                             }

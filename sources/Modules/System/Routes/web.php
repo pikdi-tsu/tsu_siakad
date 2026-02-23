@@ -71,6 +71,7 @@ use Modules\System\Http\Controllers\masterdata\{
     PeringkatAkreditasiController,
     JenisPerguruanTinggiController
 };
+use Modules\System\Http\Controllers\masterdata\KurikulumController;
 
 /*
 |--------------------------------------------------------------------------
@@ -339,6 +340,14 @@ Route::prefix('')->group(function () {
 
             // Perkuliahan
             Route::prefix('Perkuliahan')->name('perkuliahan.')->group(function () {
+                // Kurikulum
+                Route::prefix('Kurikulum')->middleware(['permission:system:master_kurikulum:view'])->group(function () {
+                    Route::get('/', [KurikulumController::class, 'index'])->name('kurikulum.index');
+                    Route::post('/kurikulum/store', [KurikulumController::class, 'store'])->name('kurikulum.store');
+                    Route::get('/kurikulum/edit/{id}', [KurikulumController::class, 'edit'])->name('kurikulum.edit');
+                    Route::delete('/kurikulum/delete/{id}', [KurikulumController::class, 'destroy'])->name('kurikulum.delete');
+                });
+
                 // Jenis Matakuliah
                 Route::prefix('JenisMataKuliah')->middleware(['permission:system:master_jenismatakuliah:view'])->group(function () {
                     Route::get('/', [JenisMataKuliahController::class, 'index'])->name('jenis_matakuliah.index');

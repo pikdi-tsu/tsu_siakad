@@ -62,11 +62,11 @@
                                                 <label>Jenjang <span class="text-danger">*</span></label>
                                                 <select class="form-control" name="jenjang" id="jenjang" required>
                                                     <option value="">-- Pilih Jenjang --</option>
-                                                    <option value="D3">D3</option>
-                                                    <option value="D4">D4</option>
-                                                    <option value="S1">S1</option>
-                                                    <option value="S2">S2</option>
-                                                    <option value="S3">S3</option>
+                                                    <option value="D3 - Diploma 3">D3 - Diploma 3</option>
+                                                    <option value="D4 - Diploma 4">D4 - Diploma 4</option>
+                                                    <option value="S1 - Strata 1">S1 - Strata 1</option>
+                                                    <option value="S2 - Strata 2">S2 - Strata 2</option>
+                                                    <option value="S3 - Strata 3">S3 - Strata 3</option>
                                                     <option value="Profesi">Profesi</option>
                                                     <option value="Spesialis">Spesialis</option>
                                                 </select>
@@ -77,7 +77,7 @@
                                             <div class="form-group">
                                                 <label>Masa Studi <span class="text-danger">*</span></label>
                                                 <input type="number" class="form-control" name="masa_studi" id="masa_studi"
-                                                    placeholder="Dalam tahun (contoh: 4)" required>
+                                                    placeholder="Dalam semester (contoh: 4)" required>
                                             </div>
                                         </div>
 
@@ -85,7 +85,7 @@
                                             <div class="form-group">
                                                 <label>Max Cuti</label>
                                                 <input type="number" class="form-control" name="max_cuti" id="max_cuti"
-                                                    placeholder="Dalam tahun (contoh: 1)">
+                                                    placeholder="Dalam semester (contoh: 1)">
                                             </div>
                                         </div>
                                     </div>
@@ -95,7 +95,7 @@
                                             <div class="form-group">
                                                 <label>Max Studi</label>
                                                 <input type="number" class="form-control" name="max_studi" id="max_studi"
-                                                    placeholder="Dalam tahun (contoh: 7)">
+                                                    placeholder="Dalam semester (contoh: 7)">
                                             </div>
                                         </div>
                                     </div>
@@ -120,9 +120,9 @@
                                         <tr>
                                             <th width="5%">No</th>
                                             <th>Jenjang</th>
-                                            <th>Masa Studi</th>
-                                            <th>Max Cuti</th>
-                                            <th>Max Studi</th>
+                                            <th>Masa Studi (smt)</th>
+                                            <th>Max Cuti (smt)</th>
+                                            <th>Max Studi (smt)</th>
                                             <th width="15%" class="text-center">Aksi</th>
                                         </tr>
                                     </thead>
