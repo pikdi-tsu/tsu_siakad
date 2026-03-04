@@ -2,12 +2,13 @@
 
 namespace Modules\System\Http\Controllers\masterdata;
 
-use App\Http\Controllers\Controller;
-use App\Models\MasterData\Master_KalenderAkademik;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use App\Http\Controllers\Controller;
+use Illuminate\Http\RedirectResponse;
 use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Support\Facades\Validator;
+use App\Models\MasterData\Master_KalenderAkademik;
 
 class KalenderAkademikController extends Controller
 {
@@ -27,7 +28,7 @@ class KalenderAkademikController extends Controller
 
         if ($request->ajax()) {
             // Eager Load 'kegiatan' biar query ringan
-            $query = Master_KalenderAkademik::with('kegiatan')->select('siakad_kalender_akademik.*');
+            $query = Master_KalenderAkademik::with('kegiatan')->select('siakad_master_kalender_akademik.*');
 
             // --- LOGIC FILTER ---
             if ($request->periode) {
@@ -62,9 +63,9 @@ class KalenderAkademikController extends Controller
                     return implode(' ', $badges);
                 })
                 ->addColumn('action', function ($row) {
-                    $btn = '<button type="button" data-id="'.$row->id.'" class="btn btn-warning btn-sm btn_edit" title="Edit"><i class="fas fa-pencil-alt"></i></button>';
-                    $btn .= ' <button type="button" data-id="'.$row->id.'" class="btn btn-danger btn-sm btn_hapus" title="Hapus"><i class="fas fa-trash"></i></button>';
-                    return '<div class="text-center">'.$btn.'</div>';
+                    $btn = '<button type="button" data-id="' . $row->id . '" class="btn btn-warning btn-sm btn_edit" title="Edit"><i class="fas fa-pencil-alt"></i></button>';
+                    $btn .= ' <button type="button" data-id="' . $row->id . '" class="btn btn-danger btn-sm btn_hapus" title="Hapus"><i class="fas fa-trash"></i></button>';
+                    return '<div class="text-center">' . $btn . '</div>';
                 })
                 ->rawColumns(['status_libur', 'action'])
                 ->make(true);
@@ -87,7 +88,7 @@ class KalenderAkademikController extends Controller
             return response()->json(['status' => 'error', 'message' => $validator->errors()->first()]);
         }
 
-        KalenderAkademik::updateOrCreate(
+        Master_KalenderAkademik::updateOrCreate(
             ['id' => $request->id],
             [
                 'id_periode'        => $request->id_periode,
@@ -106,7 +107,7 @@ class KalenderAkademikController extends Controller
 
     public function edit($id)
     {
-        $data = KalenderAkademik::find($id);
+        $data = Master_KalenderAkademik::find($id);
         return $data
             ? response()->json(['status' => 'success', 'data' => $data])
             : response()->json(['status' => 'error', 'message' => 'Data tidak ditemukan']);
@@ -114,7 +115,7 @@ class KalenderAkademikController extends Controller
 
     public function destroy($id)
     {
-        $data = KalenderAkademik::find($id);
+        $data = Master_KalenderAkademik::find($id);
         if ($data) {
             $data->delete();
             return response()->json(['status' => 'success', 'message' => 'Data berhasil dihapus!']);

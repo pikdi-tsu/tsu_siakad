@@ -23,10 +23,10 @@ class JenisModulMataKuliahController extends Controller
             return DataTables::of($query)
                 ->addIndexColumn()
                 ->addColumn('action', function ($row) {
-                    $btn = '<button type="button" data-id="'.$row->id.'" class="btn btn-warning btn-sm btn_edit" title="Edit"><i class="fas fa-pencil-alt"></i></button>';
+                    $btn = '<button type="button" data-id="' . $row->id . '" class="btn btn-warning btn-sm btn_edit" title="Edit"><i class="fas fa-pencil-alt"></i></button>';
                     // Tombol Hapus disertakan (bisa dihapus jika mau persis screenshot)
-                    $btn .= ' <button type="button" data-id="'.$row->id.'" class="btn btn-danger btn-sm btn_hapus" title="Hapus"><i class="fas fa-trash"></i></button>';
-                    return '<div class="text-center">'.$btn.'</div>';
+                    $btn .= ' <button type="button" data-id="' . $row->id . '" class="btn btn-danger btn-sm btn_hapus" title="Hapus"><i class="fas fa-trash"></i></button>';
+                    return '<div class="text-center">' . $btn . '</div>';
                 })
                 ->rawColumns(['action'])
                 ->make(true);
@@ -38,7 +38,7 @@ class JenisModulMataKuliahController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'kode_modul' => 'required|max:10|unique:siakad_master_jenis_modul,kode_modul,' . $request->id,
+            'kode_modul' => 'required|max:10|unique:siakad_master_jenis_modul_mata_kuliah,kode_modul,' . $request->id,
             'nama_modul' => 'required|string|max:255',
         ]);
 

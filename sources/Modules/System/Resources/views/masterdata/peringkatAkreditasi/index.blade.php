@@ -110,7 +110,7 @@
             let table = $('#table-peringkat-akreditasi').DataTable({
                 processing: true,
                 serverSide: true,
-                ajax: "{{ route('peringkat_akreditasi.index') }}",
+                ajax: "{{ route('perguruan_tinggi.peringkat_akreditasi.index') }}",
                 columns: [{
                         data: 'DT_RowIndex',
                         orderable: false,
@@ -153,7 +153,7 @@
 
                 $.ajax({
                     type: 'POST',
-                    url: "{{ route('peringkat_akreditasi.store') }}",
+                    url: "{{ route('peperingkat_akreditasi.store') }}",
                     data: new FormData(this),
                     contentType: false,
                     processData: false,
@@ -176,17 +176,18 @@
             $('body').on('click', '.btn_edit', function() {
                 let id = $(this).data('id');
 
-                $.get("{{ route('peringkat_akreditasi.edit', ':id') }}".replace(':id', id), function(res) {
-                    if (res.status === 'success') {
-                        $('#id').val(res.data.id);
-                        $('#peringkat_akreditasi').val(res.data.peringkat_akreditasi);
-                        $('#isactive').val(res.data.isactive);
+                $.get("{{ route('perguruan_tinggi.peringkat_akreditasi.edit', ':id') }}".replace(':id', id),
+                    function(res) {
+                        if (res.status === 'success') {
+                            $('#id').val(res.data.id);
+                            $('#peringkat_akreditasi').val(res.data.peringkat_akreditasi);
+                            $('#isactive').val(res.data.isactive);
 
-                        $('#form-title').html(
-                            '<i class="fas fa-edit"></i> Edit Peringkat Akreditasi');
-                        $('#form-container').slideDown();
-                    }
-                });
+                            $('#form-title').html(
+                                '<i class="fas fa-edit"></i> Edit Peringkat Akreditasi');
+                            $('#form-container').slideDown();
+                        }
+                    });
             });
 
             $('body').on('click', '.btn_hapus', function() {
@@ -201,7 +202,7 @@
                     if (result.isConfirmed) {
                         $.ajax({
                             type: 'DELETE',
-                            url: "{{ route('peringkat_akreditasi.delete', ':id') }}"
+                            url: "{{ route('perguruan_tinggi.peringkat_akreditasi.delete', ':id') }}"
                                 .replace(':id', id),
                             success: function(res) {
                                 Swal.fire(

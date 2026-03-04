@@ -34,7 +34,7 @@ class Master_KalenderAkademik extends Model
 
     public function getTable()
     {
-        return config('app.module.name') . '_kalender_akademik';
+        return config('app.module.name') . '_master_kalender_akademik';
     }
 
     // Relasi ke Master Kegiatan

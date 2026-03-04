@@ -28,13 +28,14 @@ class TingkatPendidikanController extends MiddlewareController
             return DataTables::of($query)
                 ->addIndexColumn()
                 ->addColumn('action', function ($row) {
-                    $this->getActionButtons($row, 'system:master_tingkatpendidikan');
+                    $btn = '<button type="button" data-id="' . $row->id . '" class="btn btn-warning btn-sm btn_edit" title="Edit"><i class="fas fa-pencil-alt"></i></button>';
+                    $btn .= ' <button type="button" data-id="' . $row->id . '" class="btn btn-danger btn-sm btn_hapus" title="Hapus"><i class="fas fa-trash"></i></button>';
+                    return '<div class="text-center">' . $btn . '</div>';
                 })
-                ->rawColumns(['action'])
                 ->make(true);
         }
 
-        return view('system::masterdata.tingkat_pendidikan.index', $data);
+        return view('system::masterdata.tingkatPendidikan.index', $data);
     }
 
     public function store(Request $request)

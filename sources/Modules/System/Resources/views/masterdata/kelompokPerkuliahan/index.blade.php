@@ -33,7 +33,8 @@
                                     <i class="fas fa-plus"></i> Tambah
                                 </button>
                             @else
-                                <span class="badge badge-secondary p-2 shadow-sm" style="cursor: not-allowed; opacity: 0.7;" title="Anda tidak memiliki akses ke action ini">
+                                <span class="badge badge-secondary p-2 shadow-sm" style="cursor: not-allowed; opacity: 0.7;"
+                                    title="Anda tidak memiliki akses ke action ini">
                                     <i class="fas fa-lock mr-1"></i> Tambah (No Access)
                                 </span>
                             @endcan
@@ -115,7 +116,7 @@
             let table = $('#table-kelompok-perkuliahan').DataTable({
                 processing: true,
                 serverSide: true,
-                ajax: "{{ route('kelompok_perkuliahan.index') }}",
+                ajax: "{{ route('perkuliahan.kelompok_perkuliahan.index') }}",
                 columns: [{
                         data: 'DT_RowIndex',
                         orderable: false,
@@ -150,30 +151,32 @@
 
             $('#form-kelompok-perkuliahan').submit(function(e) {
                 e.preventDefault();
-                $.post("{{ route('kelompok_perkuliahan.store') }}", $(this).serialize(), function(res) {
-                    if (res.status === 'success') {
-                        Swal.fire('Berhasil', res.message, 'success');
-                        table.ajax.reload();
-                        resetForm();
-                        $('#form-container').slideUp();
-                    } else {
-                        Swal.fire('Gagal', res.message, 'error');
-                    }
-                });
+                $.post("{{ route('perkuliahan.kelompok_perkuliahan.store') }}", $(this).serialize(),
+                    function(res) {
+                        if (res.status === 'success') {
+                            Swal.fire('Berhasil', res.message, 'success');
+                            table.ajax.reload();
+                            resetForm();
+                            $('#form-container').slideUp();
+                        } else {
+                            Swal.fire('Gagal', res.message, 'error');
+                        }
+                    });
             });
 
             $('body').on('click', '.btn_edit', function() {
                 let id = $(this).data('id');
-                $.get("{{ route('kelompok_perkuliahan.edit', ':id') }}".replace(':id', id), function(res) {
-                    if (res.status === 'success') {
-                        $('#id').val(res.data.id);
-                        $('#nama_kelompok_perkuliahan').val(res.data.nama_kelompok_perkuliahan);
-                        $('#urutan').val(res.data.urutan);
-                        $('#form-title').html(
-                            '<i class="fas fa-edit"></i> Edit Kelompok Perkuliahan');
-                        $('#form-container').slideDown();
-                    }
-                });
+                $.get("{{ route('perkuliahan.kelompok_perkuliahan.edit', ':id') }}".replace(':id', id),
+                    function(res) {
+                        if (res.status === 'success') {
+                            $('#id').val(res.data.id);
+                            $('#nama_kelompok_perkuliahan').val(res.data.nama_kelompok_perkuliahan);
+                            $('#urutan').val(res.data.urutan);
+                            $('#form-title').html(
+                                '<i class="fas fa-edit"></i> Edit Kelompok Perkuliahan');
+                            $('#form-container').slideDown();
+                        }
+                    });
             });
 
             $('body').on('click', '.btn_hapus', function() {
@@ -188,7 +191,7 @@
                     if (result.isConfirmed) {
                         $.ajax({
                             type: 'DELETE',
-                            url: "{{ route('kelompok_perkuliahan.delete', ':id') }}"
+                            url: "{{ route('perkuliahan.kelompok_perkuliahan.delete', ':id') }}"
                                 .replace(':id', id),
                             success: function(res) {
                                 Swal.fire('Terhapus', res.message, 'success');

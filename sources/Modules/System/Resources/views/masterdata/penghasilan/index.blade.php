@@ -35,7 +35,8 @@
                         <div class="card-body">
 
                             <div id="form-container" style="display: none;" class="mb-4 p-3 border rounded bg-light">
-                                <h5 class="text-primary mb-3" id="form-title"><i class="fas fa-edit"></i> Input Penghasilan</h5>
+                                <h5 class="text-primary mb-3" id="form-title"><i class="fas fa-edit"></i> Input Penghasilan
+                                </h5>
                                 <form id="form-penghasilan">
                                     @csrf
                                     <input type="hidden" id="id" name="id">
@@ -44,38 +45,43 @@
                                         <div class="col-md-3">
                                             <div class="form-group">
                                                 <label>Kode <span class="text-danger">*</span></label>
-                                                <input type="text" name="kode_penghasilan" id="kode_penghasilan" class="form-control" placeholder="Contoh: 1" required>
+                                                <input type="text" name="kode_penghasilan" id="kode_penghasilan"
+                                                    class="form-control" placeholder="Contoh: 1" required>
                                             </div>
                                         </div>
                                         <div class="col-md-7">
                                             <div class="form-group">
                                                 <label>Nama Penghasilan <span class="text-danger">*</span></label>
-                                                <input type="text" name="nama_penghasilan" id="nama_penghasilan" class="form-control" placeholder="Contoh: 1 Juta - 2 Juta" required>
+                                                <input type="text" name="nama_penghasilan" id="nama_penghasilan"
+                                                    class="form-control" placeholder="Contoh: 1 Juta - 2 Juta" required>
                                             </div>
                                         </div>
                                         <div class="col-md-2 d-flex align-items-center pt-3">
                                             <div class="form-group w-100">
-                                                <button type="submit" class="btn btn-primary btn-block"><i class="fas fa-save"></i> Simpan</button>
+                                                <button type="submit" class="btn btn-primary btn-block"><i
+                                                        class="fas fa-save"></i> Simpan</button>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="row">
                                         <div class="col-md-12 text-right">
-                                            <button type="button" class="btn btn-secondary btn-sm" id="btn-cancel">Batal / Tutup Form</button>
+                                            <button type="button" class="btn btn-secondary btn-sm" id="btn-cancel">Batal /
+                                                Tutup Form</button>
                                         </div>
                                     </div>
                                 </form>
                             </div>
 
                             <div class="table-responsive">
-                                <table id="table-penghasilan" class="table table-bordered table-striped" style="width: 100%;">
+                                <table id="table-penghasilan" class="table table-bordered table-striped"
+                                    style="width: 100%;">
                                     <thead style="background-color: #003366; color: white;">
-                                    <tr>
-                                        <th width="5%">No</th>
-                                        <th width="15%">Kode</th>
-                                        <th>Nama Penghasilan</th>
-                                        <th width="15%" class="text-center">Aksi</th>
-                                    </tr>
+                                        <tr>
+                                            <th width="5%">No</th>
+                                            <th width="15%">Kode</th>
+                                            <th>Nama Penghasilan</th>
+                                            <th width="15%" class="text-center">Aksi</th>
+                                        </tr>
                                     </thead>
                                     <tbody></tbody>
                                 </table>
@@ -92,20 +98,40 @@
 @section('script')
     <script>
         $(document).ready(function() {
-            $.ajaxSetup({ headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') } });
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
 
             // 1. INIT DATATABLE
             var table = $('#table-penghasilan').DataTable({
                 processing: true,
                 serverSide: true,
-                ajax: "{{ route('penghasilan.index') }}",
-                columns: [
-                    { data: 'DT_RowIndex', orderable: false, searchable: false },
-                    { data: 'kode_penghasilan', name: 'kode_penghasilan' },
-                    { data: 'nama_penghasilan', name: 'nama_penghasilan' },
-                    { data: 'action', orderable: false, searchable: false, className: 'text-center' },
+                ajax: "{{ route('biodata.penghasilan.index') }}",
+                columns: [{
+                        data: 'DT_RowIndex',
+                        orderable: false,
+                        searchable: false
+                    },
+                    {
+                        data: 'kode_penghasilan',
+                        name: 'kode_penghasilan'
+                    },
+                    {
+                        data: 'nama_penghasilan',
+                        name: 'nama_penghasilan'
+                    },
+                    {
+                        data: 'action',
+                        orderable: false,
+                        searchable: false,
+                        className: 'text-center'
+                    },
                 ],
-                order: [[1, 'asc']]
+                order: [
+                    [1, 'asc']
+                ]
             });
 
             // 2. FORM ACTIONS
@@ -126,21 +152,29 @@
                 var formData = new FormData(this);
                 $.ajax({
                     type: 'POST',
-                    url: "{{ route('penghasilan.store') }}",
+                    url: "{{ route('biodata.penghasilan.store') }}",
                     data: formData,
-                    contentType: false, processData: false,
+                    contentType: false,
+                    processData: false,
                     success: function(res) {
-                        res.status == 'success' ? Swal.fire('Berhasil', res.message, 'success') : Swal.fire('Gagal', res.message, 'error');
-                        if(res.status == 'success') { table.ajax.reload(); $('#form-container').slideUp(); resetForm(); }
+                        res.status == 'success' ? Swal.fire('Berhasil', res.message,
+                            'success') : Swal.fire('Gagal', res.message, 'error');
+                        if (res.status == 'success') {
+                            table.ajax.reload();
+                            $('#form-container').slideUp();
+                            resetForm();
+                        }
                     },
-                    error: function() { Swal.fire('Error', 'Terjadi kesalahan server.', 'error'); }
+                    error: function() {
+                        Swal.fire('Error', 'Terjadi kesalahan server.', 'error');
+                    }
                 });
             });
 
             // 4. EDIT DATA
             $('body').on('click', '.btn_edit', function() {
                 var id = $(this).data('id');
-                $.get("{{ route('penghasilan.index') }}" + '/edit/' + id, function(res) {
+                $.get("{{ route('biodata.penghasilan.index') }}" + '/edit/' + id, function(res) {
                     if (res.status == 'success') {
                         $('#id').val(res.data.id);
                         $('#kode_penghasilan').val(res.data.kode_penghasilan);
@@ -148,7 +182,9 @@
 
                         $('#form-title').html('<i class="fas fa-edit"></i> Edit Penghasilan');
                         $('#form-container').slideDown();
-                        $('html, body').animate({ scrollTop: $('#form-container').offset().top - 100 }, 'slow');
+                        $('html, body').animate({
+                            scrollTop: $('#form-container').offset().top - 100
+                        }, 'slow');
                     }
                 });
             });
@@ -157,15 +193,21 @@
             $('body').on('click', '.btn_hapus', function() {
                 var id = $(this).data('id');
                 Swal.fire({
-                    title: 'Hapus data ini?', icon: 'warning',
-                    showCancelButton: true, confirmButtonColor: '#d33', confirmButtonText: 'Ya, Hapus!'
+                    title: 'Hapus data ini?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    confirmButtonText: 'Ya, Hapus!'
                 }).then((result) => {
                     if (result.isConfirmed) {
                         $.ajax({
                             type: "DELETE",
-                            url: "{{ route('penghasilan.index') }}" + '/delete/' + id,
+                            url: "{{ route('biodata.penghasilan.index') }}" + '/delete/' +
+                                id,
                             success: function(res) {
-                                res.status == 'success' ? Swal.fire('Terhapus', res.message, 'success') : Swal.fire('Gagal', res.message, 'error');
+                                res.status == 'success' ? Swal.fire('Terhapus', res
+                                    .message, 'success') : Swal.fire('Gagal', res
+                                    .message, 'error');
                                 table.ajax.reload();
                             }
                         });

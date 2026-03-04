@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('siakad_master_tingkat_pendidikan_universitas', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
 
             // Jenjang pendidikan sesuai PDDIKTI
             $table->enum('jenjang', ['D3', 'D4', 'S1', 'S2', 'S3', 'Profesi', 'Spesialis'])->unique();

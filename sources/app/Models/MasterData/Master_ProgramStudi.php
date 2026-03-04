@@ -3,6 +3,8 @@
 namespace App\Models\MasterData;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Master_ProgramStudi extends Model
 {
@@ -14,6 +16,6 @@ class Master_ProgramStudi extends Model
 
     public function getTable()
     {
-        return config('app.module.name') . '_menu_program_studi';
+        return config('app.module.name') . '_master_program_studi';
     }
 }

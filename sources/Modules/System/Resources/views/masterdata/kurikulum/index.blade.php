@@ -11,7 +11,7 @@
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
                         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
-                        <li class="breadcrumb-item">Data Pelengkap</li>
+                        <li class="breadcrumb-item">Master Data</li>
                         <li class="breadcrumb-item active">{{ $menu }}</li>
                     </ol>
                 </div>
@@ -23,7 +23,6 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-12">
-
                     <div class="card card-primary card-outline">
                         <div class="card-header">
                             <h5 class="m-0 d-inline-block">Daftar {{ $menu }}</h5>
@@ -35,59 +34,67 @@
                         <div class="card-body">
 
                             {{-- FORM --}}
-                            <div id="form-container" style="display:none" class="mb-4 p-3 border rounded bg-light">
-
+                            <div id="form-container" style="display:none;" class="mb-4 p-3 border rounded bg-light">
                                 <h5 class="text-primary mb-3" id="form-title">
-                                    <i class="fas fa-plus"></i> Input Jenis Perguruan Tinggi
+                                    <i class="fas fa-plus"></i> Input Kurikulum
                                 </h5>
 
-                                <form id="form-jenis-pt">
+                                <form id="form-kurikulum">
                                     @csrf
                                     <input type="hidden" name="id" id="id">
 
                                     <div class="row">
-                                        <div class="col-md-6">
+                                        <div class="col-md-4">
                                             <div class="form-group">
-                                                <label>Jenis Perguruan Tinggi <span class="text-danger">*</span></label>
-                                                <input type="text" name="jenis_pt" id="jenis_pt" class="form-control"
-                                                    placeholder="Contoh: Universitas" required>
+                                                <label>Nama Kurikulum <span class="text-danger">*</span></label>
+                                                <input type="text" name="nama_kurikulum" id="nama_kurikulum"
+                                                    class="form-control" required>
                                             </div>
                                         </div>
 
-                                        <div class="col-md-3">
+                                        <div class="col-md-4">
                                             <div class="form-group">
-                                                <label>Status</label>
+                                                <label>Status <span class="text-danger">*</span></label>
                                                 <select name="isactive" id="isactive" class="form-control">
                                                     <option value="1">Aktif</option>
                                                     <option value="0">Nonaktif</option>
                                                 </select>
                                             </div>
                                         </div>
-                                    </div>
 
-                                    <div class="row mt-3">
-                                        <div class="col-md-10 text-right">
-                                            <button type="button" class="btn btn-secondary btn-sm" id="btn-cancel">
-                                                Batal
-                                            </button>
-                                        </div>
-                                        <div class="col-md-2">
-                                            <button type="submit" class="btn btn-primary btn-block">
+                                        <div class="col-md-4 d-flex align-items-end">
+                                            <button class="btn btn-primary btn-block">
                                                 <i class="fas fa-save"></i> Simpan
                                             </button>
                                         </div>
+                                    </div>
+
+                                    <div class="row mt-2">
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <label>Deskripsi</label>
+                                                <textarea name="deskripsi" id="deskripsi" rows="2" class="form-control"></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="text-right">
+                                        <button type="button" class="btn btn-secondary btn-sm" id="btn-cancel">
+                                            Tutup Form
+                                        </button>
                                     </div>
                                 </form>
                             </div>
 
                             {{-- TABLE --}}
                             <div class="table-responsive">
-                                <table id="table-jenis-pt" class="table table-bordered table-striped">
-                                    <thead style="background:#003366;color:white">
+                                <table id="table-kurikulum" class="table table-bordered table-striped w-100">
+                                    <thead style="background:#003366;color:white;">
                                         <tr>
                                             <th width="5%">No</th>
-                                            <th>Jenis Perguruan Tinggi</th>
-                                            <th width="15%">Status</th>
+                                            <th>Nama Kurikulum</th>
+                                            <th width="25%">Deskripsi</th>
+                                            <th width="10%">Status</th>
                                             <th width="15%" class="text-center">Aksi</th>
                                         </tr>
                                     </thead>
@@ -97,16 +104,16 @@
 
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>
     </div>
 @endsection
 
+
 @section('script')
     <script>
-        $(function() {
+        $(document).ready(function() {
 
             $.ajaxSetup({
                 headers: {
@@ -114,26 +121,25 @@
                 }
             });
 
-            // =====================
             // DATATABLE
-            // =====================
-            let table = $('#table-jenis-pt').DataTable({
+            var table = $('#table-kurikulum').DataTable({
                 processing: true,
                 serverSide: true,
-                ajax: "{{ route('perguruan_tinggi.jenis_pt.index') }}",
+                ajax: "{{ route('perkuliahan.kurikulum.index') }}",
                 columns: [{
                         data: 'DT_RowIndex',
                         orderable: false,
                         searchable: false
                     },
                     {
-                        data: 'jenis_pt',
-                        name: 'jenis_pt'
+                        data: 'nama_kurikulum'
+                    },
+                    {
+                        data: 'deskripsi'
                     },
                     {
                         data: 'isactive',
-                        orderable: false,
-                        searchable: false
+                        className: 'text-center'
                     },
                     {
                         data: 'action',
@@ -147,108 +153,107 @@
                 ]
             });
 
-            // =====================
-            // TAMBAH
-            // =====================
+
+            // SHOW FORM
             $('#btn-tambah').click(function() {
                 resetForm();
                 $('#form-container').slideDown();
-                $('#jenis_pt').focus();
+                $('#nama_kurikulum').focus();
             });
 
-            // =====================
-            // BATAL
-            // =====================
             $('#btn-cancel').click(function() {
-                resetForm();
                 $('#form-container').slideUp();
+                resetForm();
             });
 
-            // =====================
-            // SIMPAN
-            // =====================
-            $('#form-jenis-pt').submit(function(e) {
+
+            // SUBMIT
+            $('#form-kurikulum').submit(function(e) {
                 e.preventDefault();
 
                 $.ajax({
                     type: 'POST',
-                    url: "{{ route('perguruan_tinggi.jenis_pt.store') }}",
+                    url: "{{ route('perkuliahan.kurikulum.store') }}",
                     data: new FormData(this),
                     contentType: false,
                     processData: false,
                     success: function(res) {
-                        Swal.fire(
-                            res.status === 'success' ? 'Berhasil' : 'Gagal',
-                            res.message,
-                            res.status
-                        );
-
-                        if (res.status === 'success') {
+                        if (res.status == 'success') {
+                            Swal.fire('Berhasil', res.message, 'success');
                             table.ajax.reload();
                             $('#form-container').slideUp();
                             resetForm();
+                        } else {
+                            Swal.fire('Gagal', res.message, 'error');
                         }
+                    },
+                    error: function() {
+                        Swal.fire('Error', 'Server error', 'error');
                     }
                 });
             });
 
-            // =====================
+
             // EDIT
-            // =====================
             $('body').on('click', '.btn_edit', function() {
-                let id = $(this).data('id');
+                var id = $(this).data('id');
 
-                $.get("{{ route('perguruan_tinggi.jenis_pt.edit', ':id') }}".replace(':id', id), function(
-                    res) {
-                    if (res.status === 'success') {
-                        $('#id').val(res.data.id);
-                        $('#jenis_pt').val(res.data.jenis_pt);
-                        $('#isactive').val(res.data.isactive);
+                $.get("{{ route('perkuliahan.kurikulum.edit', ':id') }}".replace(':id', id),
+                    function(res) {
+                        if (res.status == 'success') {
+                            $('#id').val(res.data.id);
+                            $('#nama_kurikulum').val(res.data.nama_kurikulum);
+                            $('#deskripsi').val(res.data.deskripsi);
+                            $('#isactive').val(res.data.isactive);
 
-                        $('#form-title').html(
-                            '<i class="fas fa-edit"></i> Edit Jenis Perguruan Tinggi'
-                        );
-                        $('#form-container').slideDown();
-                    }
-                });
+                            $('#form-title').html(
+                                '<i class="fas fa-edit"></i> Edit Kurikulum');
+                            $('#form-container').slideDown();
+
+                            $('html,body').animate({
+                                scrollTop: $('#form-container').offset().top - 100
+                            }, 'slow');
+                        }
+                    });
             });
 
-            // =====================
-            // HAPUS
-            // =====================
+
+            // DELETE
             $('body').on('click', '.btn_hapus', function() {
-                let id = $(this).data('id');
+                var id = $(this).data('id');
 
                 Swal.fire({
                     title: 'Hapus data ini?',
                     icon: 'warning',
                     showCancelButton: true,
-                    confirmButtonText: 'Ya, Hapus!'
+                    confirmButtonColor: '#d33',
+                    confirmButtonText: 'Ya Hapus'
                 }).then((result) => {
                     if (result.isConfirmed) {
                         $.ajax({
                             type: 'DELETE',
-                            url: "{{ route('perguruan_tinggi.jenis_pt.delete', ':id') }}"
+                            url: "{{ route('perkuliahan.kurikulum.delete', ':id') }}"
                                 .replace(':id', id),
                             success: function(res) {
-                                Swal.fire(
-                                    res.status === 'success' ? 'Terhapus' : 'Gagal',
-                                    res.message,
-                                    res.status
-                                );
-                                table.ajax.reload();
+                                if (res.status == 'success') {
+                                    Swal.fire('Terhapus', res.message,
+                                        'success');
+                                    table.ajax.reload();
+                                } else {
+                                    Swal.fire('Gagal', res.message,
+                                        'error');
+                                }
                             }
                         });
                     }
                 });
             });
 
+
             function resetForm() {
-                $('#form-jenis-pt')[0].reset();
+                $('#form-kurikulum')[0].reset();
                 $('#id').val('');
-                $('#form-title').html(
-                    '<i class="fas fa-plus"></i> Input Jenis Perguruan Tinggi'
-                );
+                $('#form-title').html('<i class="fas fa-plus"></i> Input Kurikulum');
             }
 
         });

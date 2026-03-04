@@ -33,7 +33,8 @@
                                     <i class="fas fa-plus"></i> Tambah
                                 </button>
                             @else
-                                <span class="badge badge-secondary p-2 shadow-sm" style="cursor: not-allowed; opacity: 0.7;" title="Anda tidak memiliki akses ke action ini">
+                                <span class="badge badge-secondary p-2 shadow-sm" style="cursor: not-allowed; opacity: 0.7;"
+                                    title="Anda tidak memiliki akses ke action ini">
                                     <i class="fas fa-lock mr-1"></i> Tambah (No Access)
                                 </span>
                             @endcan
@@ -107,7 +108,7 @@
             let table = $('#table-group-mk').DataTable({
                 processing: true,
                 serverSide: true,
-                ajax: "{{ route('group_mk.index') }}",
+                ajax: "{{ route('perkuliahan.group_mk.index') }}",
                 columns: [{
                         data: 'DT_RowIndex',
                         orderable: false,
@@ -138,7 +139,7 @@
 
             $('#form-group-mk').submit(function(e) {
                 e.preventDefault();
-                $.post("{{ route('group_mk.store') }}", $(this).serialize(), function(res) {
+                $.post("{{ route('perkuliahan.group_mk.store') }}", $(this).serialize(), function(res) {
                     if (res.status === 'success') {
                         Swal.fire('Berhasil', res.message, 'success');
                         table.ajax.reload();
@@ -152,7 +153,7 @@
 
             $('body').on('click', '.btn_edit', function() {
                 let id = $(this).data('id');
-                $.get("{{ route('group_mk.edit', ':id') }}".replace(':id', id), function(res) {
+                $.get("{{ route('perkuliahan.group_mk.edit', ':id') }}".replace(':id', id), function(res) {
                     if (res.status === 'success') {
                         $('#id').val(res.data.id);
                         $('#nama_group_mk').val(res.data.nama_group_mk);
@@ -174,7 +175,8 @@
                     if (result.isConfirmed) {
                         $.ajax({
                             type: 'DELETE',
-                            url: "{{ route('group_mk.delete', ':id') }}".replace(':id', id),
+                            url: "{{ route('perkuliahan.group_mk.delete', ':id') }}"
+                                .replace(':id', id),
                             success: function(res) {
                                 Swal.fire('Terhapus', res.message, 'success');
                                 table.ajax.reload();

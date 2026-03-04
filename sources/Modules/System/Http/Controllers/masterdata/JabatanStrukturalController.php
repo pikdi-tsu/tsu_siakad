@@ -12,7 +12,8 @@ use Yajra\DataTables\Facades\DataTables;
 
 class JabatanStrukturalController extends MiddlewareController
 {
-    public function __construct() {
+    public function __construct()
+    {
         $this->registerPermissions('system:master_jabatanstruktural');
     }
     public function index(Request $request)
@@ -32,7 +33,7 @@ class JabatanStrukturalController extends MiddlewareController
                 ->make(true);
         }
 
-        return view('system::masterdata.jabatan_struktural.index', $data);
+        return view('system::masterdata.jabatanStruktural.index', $data);
     }
 
     public function store(Request $request)
