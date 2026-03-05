@@ -37,42 +37,71 @@ class MiddlewareController extends BaseController
      * @param string $editClass     Class untuk selector JS Edit
      * @param string $deleteClass   Class untuk selector JS Delete
      */
-    protected function getActionButtons(object $row, string $permissionKey, string $editClass = 'btn_edit', string $deleteClass = 'btn_hapus')
+    protected function getActionButtons(object $row, string $permissionKey, array $options = [], string $editClass = 'btn-edit', string $deleteClass = 'btn-delete')
     {
+        $defaultOptions = [
+            'edit_class'   => 'btn-edit',   // Class selector jQuery
+            'delete_class' => 'btn-delete',
+            'edit_url'     => null,         // URL action form edit
+            'delete_url'   => null,         // URL action form delete
+            'can_edit'     => null,         // (Bool) Override manual permission edit
+            'can_delete'   => null,         // (Bool) Override manual permission delete
+            'use_modal'    => true,
+        ];
+
+        $opt = array_merge($defaultOptions, $options);
+
         // Cek Permission User
-        $canEdit   = auth()->user()->can($permissionKey . ':edit');
-        $canDelete = auth()->user()->can($permissionKey . ':delete');
+        $canEdit   = is_null($opt['can_edit'])
+            ? auth()->user()->can($permissionKey . ':edit')
+            : $opt['can_edit'];
+        $canDelete = is_null($opt['can_delete'])
+            ? auth()->user()->can($permissionKey . ':delete')
+            : $opt['can_delete'];
 
         if (!$canEdit && !$canDelete) {
             return '<div class="text-center">
-                        <span class="badge badge-secondary p-1 shadow-sm" style="cursor: not-allowed; opacity:0.7" title="Akses Dibatasi">
-                            <i class="fas fa-lock mr-1"></i> Locked
-                        </span>
-                    </div>';
+                    <span class="badge badge-secondary p-1 shadow-sm" style="cursor: not-allowed; opacity:0.7" title="Akses Dibatasi">
+                        <i class="fas fa-lock mr-1"></i> Locked
+                    </span>
+                </div>';
         }
 
-        $btn = '<div class="text-center">';
+        $btn = '<div class="text-center" style="white-space:nowrap">';
 
         // Edit
         if ($canEdit) {
-            $btn .= '<button type="button" data-id="' . $row->id . '" class="btn btn-warning btn-sm ' . $editClass . ' mr-1" title="Edit">
+            // Validasi URL
+            $url = $opt['edit_url'] ?? '#';
+
+            if ($opt['use_modal'] === false) {
+                // Link Pindah Halaman (Tag <a>)
+                $btn .= '<a href="' . $url . '" class="btn btn-warning btn-sm mr-1" title="Edit Data">
+                        <i class="fas fa-pencil-alt"></i>
+                     </a>';
+            } else {
+                // Modal AJAX (Tag <button>)
+                $btn .= '<button type="button"
+                            data-id="' . $row->id . '"
+                            data-url="' . $url . '"
+                            class="btn btn-warning btn-sm ' . $opt['edit_class'] . ' mr-1"
+                            title="Edit Data">
                         <i class="fas fa-pencil-alt"></i>
                      </button>';
+            }
         } else {
-            $btn .= '<button type="button" class="btn btn-secondary btn-sm mr-1" disabled style="cursor:not-allowed; opacity:0.6" title="No Access">
-                        <i class="fas fa-lock"></i>
-                     </button>';
+            $btn .= '<button type="button" class="btn btn-secondary btn-sm mr-1" disabled style="opacity:0.6"><i class="fas fa-lock"></i></button>';
         }
 
         // Delete
         if ($canDelete) {
-            $btn .= '<button type="button" data-id="' . $row->id . '" class="btn btn-danger btn-sm ' . $deleteClass . '" title="Hapus">
-                        <i class="fas fa-trash"></i>
-                     </button>';
+            $actionUrl = $opt['delete_url'] ?? '#';
+            $btn .= '<form action="' . $actionUrl . '" method="POST" style="display:inline;" class="form-delete">
+                    ' . csrf_field() . ' ' . method_field('DELETE') . '
+                    <button type="submit" class="btn btn-danger btn-sm ' . $opt['delete_class'] . '" title="Hapus"><i class="fas fa-trash"></i></button>
+                </form>';
         } else {
-            $btn .= '<button type="button" class="btn btn-secondary btn-sm" disabled style="cursor:not-allowed; opacity:0.6" title="No Access">
-                        <i class="fas fa-lock"></i>
-                     </button>';
+            $btn .= '<button type="button" class="btn btn-secondary btn-sm" disabled style="opacity:0.6"><i class="fas fa-lock"></i></button>';
         }
 
         $btn .= '</div>';

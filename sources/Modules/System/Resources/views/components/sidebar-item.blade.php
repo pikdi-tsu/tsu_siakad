@@ -9,12 +9,24 @@
         return;
     }
 
+    // 🔥 LOGIC NEO FEEDER GATEKEEPER (BARU) 🔥
+    // Jika ini menu 'Neo Feeder' DAN user belum login -> HENTIKAN RENDER
+    // Pastikan nama menu sesuai persis dengan di Database ('Neo Feeder')
+    if ($menu->name === 'Neo Feeder') {
+        return;
+    }
+
     // Filter Children
     $visibleChildren = $menu->children->filter(function ($child) {
         return empty($child->permission_name) || auth()->user()->can($child->permission_name);
     });
 
     $hasChildren = $visibleChildren->isNotEmpty();
+
+    // Logic Parent Menu
+    if (!$hasChildren && (empty($menu->route) || $menu->route === '#')) {
+        return;
+    }
 
     // Cek Status Aktif
     $isActive = $menu->isActive();

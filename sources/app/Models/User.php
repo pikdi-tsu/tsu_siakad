@@ -68,7 +68,7 @@ class User extends Authenticatable
     }
 
     // Relasi ke Profil Dosen/Tendik
-    public function dosen()
+    public function dosenTendik()
     {
         return $this->hasOne(DataDosenTendik::class, 'user_id');
     }
@@ -85,7 +85,7 @@ class User extends Authenticatable
     /**
      * Cek apakah User ini Dosen atau Tendik
      */
-    public function isDosen()
+    public function isDosenTendik()
     {
         return $this->hasRole(['dosen', 'tendik', 'admin_prodi', 'dekan']);
     }
@@ -100,8 +100,8 @@ class User extends Authenticatable
             return $this->mahasiswa;
         }
 
-        if ($this->isDosen()) {
-            return $this->dosen;
+        if ($this->isDosenTendik()) {
+            return $this->dosenTendik;
         }
         return null;
     }

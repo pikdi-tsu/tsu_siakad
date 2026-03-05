@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\NeoFeederAuthController;
+use App\Http\Controllers\NeoFeederMahasiswasController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SsoController;
 use App\Http\Controllers\EmergencyLoginController;
@@ -86,15 +88,38 @@ use Modules\System\Http\Controllers\masterdata\{
 Route::prefix('')->group(function () {
     Route::get('/', [HomeController::class, 'index'])->name('indexing')->middleware('web', 'guest');
     Route::middleware(['web'])->group(function () {
-        Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
-        Route::get('login', [LoginController::class, 'index'])->name('login')->middleware('guest');
-        Route::post('login', [LoginController::class, 'login'])->name('login.action');
-        Route::get('login/sso', [SsoController::class, 'redirect'])->name('sso.login');
-        Route::get('login/sso/callback', [SsoController::class, 'callback'])->name('sso.callback');
-        Route::get('emergency-login', [EmergencyLoginController::class, 'login'])->name('emergency-login');
-        Route::get('rescue-login', [EmergencyLoginController::class, 'showRescueForm'])->name('rescue');
-        Route::post('rescue-login', [EmergencyLoginController::class, 'processRescueLogin'])->name('rescue.post');
-        Route::post('logout', [LoginController::class, 'logout'])->name('logout');
+        // Dashboard
+        Route::prefix('dashboard')->group(function() {
+            Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+        });
+
+        // Auth
+        Route::prefix('login')->group(function() {
+            // Login PIKDI
+            Route::get('/', [LoginController::class, 'index'])->name('login')->middleware('guest');
+            Route::post('/', [LoginController::class, 'login'])->name('login.action');
+
+            // Login SSO User
+            Route::get('/sso', [SsoController::class, 'redirect'])->name('sso.login');
+            Route::get('/sso/callback', [SsoController::class, 'callback'])->name('sso.callback');
+        });
+
+        // Auth Emergency Login
+        Route::prefix('emergency-login')->group(function() {
+            Route::get('/', [EmergencyLoginController::class, 'login'])->name('emergency-login');
+        });
+
+        // Auth Rescue Login
+        Route::prefix('rescue-login')->group(function() {
+            Route::get('/', [EmergencyLoginController::class, 'showRescueForm'])->name('rescue');
+            Route::post('/', [EmergencyLoginController::class, 'processRescueLogin'])->name('rescue.post');
+        });
+
+        // Logout
+        Route::prefix('logout')->group(function() {
+            Route::post('/', [LoginController::class, 'logout'])->name('logout');
+//            Route::post('/neofeeder', [NeoFeederAuthController::class, 'logout'])->name('neofeeder.logout');
+        });
 
         // Profile & Password
         Route::prefix('profile')->middleware(['auth'])->name('profile.')->group(function() {
@@ -542,27 +567,27 @@ Route::prefix('')->group(function () {
 
                 // Provinsi
                 Route::prefix('Provinsi')->middleware(['permission:system:master_provinsi:view'])->group(function(){
-                    Route::get('/', [ProvinsiController::class, 'index'])->name('admin.Provinsi.show');
+                    Route::get('/', [ProvinsiController::class, 'index'])->name('provinsi.index');
                     Route::get('/TabelProvinsi', [ProvinsiController::class, 'TabelProvinsi'])->name('admin.Provinsi.Tabel');
                 });
 
                 // ====================================== Route Semesntara ===================================
                 // Kabupaten
                 Route::prefix('Kabupaten')->middleware(['permission:system:master_kabupaten:view'])->group(function(){
-                    Route::get('/', [KabupatenController::class, 'index'])->name('admin.Kabupaten.show');
+                    Route::get('/', [KabupatenController::class, 'index'])->name('kabupaten.index');
                     Route::get('/TabelKabupaten', [KabupatenController::class, 'TabelKabupaten'])->name('admin.Kabupaten.Tabel');
                 });
                 // ===========================================================================================
 
                 // kecamatan
                 Route::prefix('Kecamatan')->middleware(['permission:system:master_kecamatan:view'])->group(function(){
-                    Route::get('/', [KecamatanController::class, 'index'])->name('admin.Kecamatan.show');
+                    Route::get('/', [KecamatanController::class, 'index'])->name('kecamatan.index');
                     Route::get('/TabelKecamatan', [KecamatanController::class, 'TabelKecamatan'])->name('admin.Kecamatan.Tabel');
                 });
 
                 //Kelurahan
                 Route::prefix('Kelurahan')->middleware(['permission:system:master_kelurahan:view'])->group(function(){
-                    Route::get('/', [KelurahanController::class, 'index'])->name('admin.Kelurahan.show');
+                    Route::get('/', [KelurahanController::class, 'index'])->name('kelurahan.index');
                     Route::get('/TabelKelurahan', [KelurahanController::class, 'TabelKelurahan'])->name('admin.Kelurahan.Tabel');
                 });
             });
@@ -596,6 +621,43 @@ Route::prefix('')->group(function () {
             });
         });
 
+        // Neo Feeder
+        Route::prefix('neo-feeder')->middleware(['auth'])->name('neo_feeder.')->group(function() {
+            // Neo Feeder Auth
+            Route::get('/login', [NeoFeederAuthController::class, 'showLoginForm'])->name('login');
+            Route::post('/login', [NeoFeederAuthController::class, 'login'])->name('login.post');
+            Route::post('/logout', [NeoFeederAuthController::class, 'logout'])->name('logout');
+
+            // Landing Page Feeder
+            Route::get('/home', [NeoFeederAuthController::class, 'dashboard'])->name('dashboard');
+
+
+            // Neo Feeder Mahasiswa
+            Route::prefix('mahasiswa')->name('mahasiswa.')->group(function () {
+                Route::get('/', [NeoFeederMahasiswasController::class, 'index'])->name('index');
+                Route::prefix('json')->name('json.')->group(function () {
+                    Route::get('/lokal', [NeoFeederMahasiswasController::class, 'jsonLokal'])->name('lokal');
+                    Route::get('/sync', [NeoFeederMahasiswasController::class, 'jsonSync'])->name('sync');
+                    Route::get('/feeder', [NeoFeederMahasiswasController::class, 'jsonFeeder'])->name('feeder');
+                });
+
+                // Sync Total Data (Start) & Eksekusi Per Batch (Looping)
+                Route::prefix('sync')->name('sync.')->group(function () {
+                    Route::post('init', [NeoFeederMahasiswasController::class, 'syncInit'])->name('init');
+                    Route::post('exec', [NeoFeederMahasiswasController::class, 'syncExec'])->name('exec');
+
+                });
+
+                // Push Data Sync ke Neo Feeder (Start) & Eksekusi Per Batch (Looping)
+                Route::prefix('push')->name('push.')->group(function () {
+                    Route::post('init', [NeoFeederMahasiswasController::class, 'pushInit'])->name('init');
+                    Route::post('exec', [NeoFeederMahasiswasController::class, 'pushExec'])->name('exec');
+                });
+
+                Route::delete('/{id}', [NeoFeederMahasiswasController::class, 'destroy'])->name('destroy');
+            });
+        });
+
         // System Navigation
         Route::prefix('system')->middleware(['auth'])->name('system.')->group(function() {
             // User
@@ -609,7 +671,7 @@ Route::prefix('')->group(function () {
             Route::middleware(['permission:system:role:view'])->group(function() {
                 Route::get('role/json', [RoleController::class, 'datatable'])->name('role.json');
                 Route::post('role/sync', [RoleController::class, 'sync'])->name('role.sync'); // Route Sync
-                Route::resource('role', RoleController::class)->only(['index', 'edit', 'update']);
+                Route::resource('role', RoleController::class);
             });
 
             // Permissions
