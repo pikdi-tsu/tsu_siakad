@@ -11,17 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('siakad_master_instansi', function (Blueprint $table) {
+        Schema::create('siakad_master_kurikulum', function (Blueprint $table) {
             $table->uuid('id')->primary();
-
-            // Identitas instansi
-            $table->string('no', 30)->unique();
-            $table->string('nama_instansi', 200);
-
-            // Alamat & kontak
-            $table->text('alamat');
-            $table->string('no_telepon', 30)->nullable();
-
+            $table->string('nama_kurikulum', 150);
+            $table->text('deskripsi')->nullable();
+            $table->enum('isactive', [1, 0])->default(1);
+            $table->string('created_by', 100)->nullable();
+            $table->string('updated_by', 100)->nullable();
             $table->timestamps();
         });
     }
@@ -31,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('siakad_master_instansi');
+        Schema::dropIfExists('siakad_master_kurikulum');
     }
 };

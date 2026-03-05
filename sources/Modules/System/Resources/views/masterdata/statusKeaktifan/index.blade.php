@@ -33,7 +33,8 @@
                                     <i class="fas fa-plus"></i> Tambah
                                 </button>
                             @else
-                                <span class="badge badge-secondary p-2 shadow-sm" style="cursor: not-allowed; opacity: 0.7;" title="Anda tidak memiliki akses ke action ini">
+                                <span class="badge badge-secondary p-2 shadow-sm" style="cursor: not-allowed; opacity: 0.7;"
+                                    title="Anda tidak memiliki akses ke action ini">
                                     <i class="fas fa-lock mr-1"></i> Tambah (No Access)
                                 </span>
                             @endcan
@@ -116,7 +117,7 @@
             let table = $('#table-status-keaktifan').DataTable({
                 processing: true,
                 serverSide: true,
-                ajax: "{{ route('status_keaktifan.index') }}",
+                ajax: "{{ route('pegawai.status_keaktifan.index') }}",
                 columns: [{
                         data: 'DT_RowIndex',
                         orderable: false,
@@ -151,7 +152,7 @@
 
             $('#form-status-keaktifan').submit(function(e) {
                 e.preventDefault();
-                $.post("{{ route('status_keaktifan.store') }}", $(this).serialize(), function(res) {
+                $.post("{{ route('pegawai.status_keaktifan.store') }}", $(this).serialize(), function(res) {
                     if (res.status === 'success') {
                         Swal.fire('Berhasil', res.message, 'success');
                         table.ajax.reload();
@@ -165,7 +166,8 @@
 
             $('body').on('click', '.btn_edit', function() {
                 let id = $(this).data('id');
-                $.get("{{ route('status_keaktifan.edit', ':id') }}".replace(':id', id), function(res) {
+                $.get("{{ route('pegawai.status_keaktifan.edit', ':id') }}".replace(':id', id), function(
+                    res) {
                     if (res.status === 'success') {
                         $('#id').val(res.data.id);
                         $('#nama_status_keaktifan').val(res.data.nama_status_keaktifan);
@@ -188,8 +190,9 @@
                     if (result.isConfirmed) {
                         $.ajax({
                             type: 'DELETE',
-                            url: "{{ route('status_keaktifan.delete', ':id') }}".replace(
-                                ':id', id),
+                            url: "{{ route('pegawai.status_keaktifan.delete', ':id') }}"
+                                .replace(
+                                    ':id', id),
                             success: function(res) {
                                 Swal.fire('Terhapus', res.message, 'success');
                                 table.ajax.reload();

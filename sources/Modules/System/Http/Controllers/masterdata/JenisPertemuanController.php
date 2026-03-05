@@ -30,9 +30,9 @@ class JenisPertemuanController extends Controller
                     return $this->renderBooleanIcon($row->is_ujian);
                 })
                 ->addColumn('action', function ($row) {
-                    $btn = '<button type="button" data-id="'.$row->id.'" class="btn btn-warning btn-sm btn_edit" title="Edit"><i class="fas fa-pencil-alt"></i></button>';
-                    $btn .= ' <button type="button" data-id="'.$row->id.'" class="btn btn-danger btn-sm btn_hapus" title="Hapus"><i class="fas fa-trash"></i></button>';
-                    return '<div class="text-center">'.$btn.'</div>';
+                    $btn = '<button type="button" data-id="' . $row->id . '" class="btn btn-warning btn-sm btn_edit" title="Edit"><i class="fas fa-pencil-alt"></i></button>';
+                    $btn .= ' <button type="button" data-id="' . $row->id . '" class="btn btn-danger btn-sm btn_hapus" title="Hapus"><i class="fas fa-trash"></i></button>';
+                    return '<div class="text-center">' . $btn . '</div>';
                 })
                 ->rawColumns(['is_hitung_presensi', 'is_ujian', 'action'])
                 ->make(true);
@@ -69,8 +69,8 @@ class JenisPertemuanController extends Controller
                 'nama_singkat'   => $request->nama_singkat,
                 'kelompok_jenis' => $request->kelompok_jenis,
                 // Handle Checkbox
-                'is_hitung_presensi' => $request->has('is_hitung_presensi') ? 1 : 0,
-                'is_ujian'           => $request->has('is_ujian') ? 1 : 0,
+                'is_hitung_presensi' => $request->boolean('is_hitung_presensi'),
+                'is_ujian'           => $request->boolean('is_ujian'),
             ]
         );
 
