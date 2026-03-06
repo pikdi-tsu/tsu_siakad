@@ -11,33 +11,46 @@ class Master_PeriodeAkademik extends Model
 {
     use HasFactory, HasUuids;
 
-    protected $table = 'siakad_master_periode_akademik';
+    protected $table = 'siakad_periode_akademik';
     protected $primaryKey = 'id';
     public $incrementing = false;
     protected $keyType = 'string';
 
     protected $fillable = [
+        'id_tahunajaran',
+        'semester',
         'kode_periode',
         'nama_periode',
-        'tgl_awal_kuliah', 'tgl_akhir_kuliah',
-        'tgl_awal_uts', 'tgl_akhir_uts',
-        'tgl_awal_uas', 'tgl_akhir_uas',
-        'is_active',
+        'tgl_awal_kuliah',
+        'tgl_akhir_kuliah',
+        'nama_singkat',
+        'tgl_awal_uts',
+        'tgl_akhir_uts',
+        'tgl_awal_uas',
+        'tgl_akhir_uas',
+        'ketua_ujian',
+        'jumlah_pertemuan',
+        'minimal_presensi',
+        'aktif',
     ];
 
-    protected $casts = [
-        'is_active' => 'boolean',
-        'tgl_awal_kuliah' => 'date', 'tgl_akhir_kuliah' => 'date',
-    ];
+    public function tahun_ajaran(){
+        return $this->hasOne('App\Models\MasterData\Master_TahunAjaran', 'id','id_tahunajaran')->where('isactive','1');
+    }
+
+    // protected $casts = [
+    //     'is_active' => 'boolean',
+    //     'tgl_awal_kuliah' => 'date', 'tgl_akhir_kuliah' => 'date',
+    // ];
 
     // Accessor Format Tanggal (8 Mar 2031)
-    public function getTglAwalKuliahFormattedAttribute()
-    {
-        return $this->tgl_awal_kuliah ? Carbon::parse($this->tgl_awal_kuliah)->translatedFormat('d M Y') : '-';
-    }
+    // public function getTglAwalKuliahFormattedAttribute()
+    // {
+    //     return $this->tgl_awal_kuliah ? Carbon::parse($this->tgl_awal_kuliah)->translatedFormat('d M Y') : '-';
+    // }
 
-    public function getTglAkhirKuliahFormattedAttribute()
-    {
-        return $this->tgl_akhir_kuliah ? Carbon::parse($this->tgl_akhir_kuliah)->translatedFormat('d M Y') : '-';
-    }
+    // public function getTglAkhirKuliahFormattedAttribute()
+    // {
+    //     return $this->tgl_akhir_kuliah ? Carbon::parse($this->tgl_akhir_kuliah)->translatedFormat('d M Y') : '-';
+    // }
 }

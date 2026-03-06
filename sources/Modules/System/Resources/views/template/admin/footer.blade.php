@@ -76,6 +76,20 @@
             showConfirmButton: false
         });
     }
+    function tglIndonesia(tanggal) {
+        const bulanIndo = [
+            "Januari", "Februari", "Maret", "April",
+            "Mei", "Juni", "Juli", "Agustus",
+            "September", "Oktober", "November", "Desember"
+        ];
+
+        let pecah = tanggal.split('-'); // format YYYY-MM-DD
+        let tahun = pecah[0];
+        let bulan = parseInt(pecah[1]) - 1;
+        let hari  = pecah[2];
+
+        return hari + " " + bulanIndo[bulan] + " " + tahun;
+    }
 </script>
 @yield('script')
 @include('system::components.alert')

@@ -136,7 +136,7 @@
 
                 $.ajax({
                     type: 'POST',
-                    url: "{{ route('setting.prodi.update') }}", // Pastikan route ini ada
+                    url: "{{ route('setting.setting_prodi.update') }}", // Pastikan route ini ada
                     data: {
                         id_periode: periode_id,
                         id_prodi: prodi_id,

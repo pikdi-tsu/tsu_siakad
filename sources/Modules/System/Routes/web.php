@@ -69,7 +69,8 @@ use Modules\System\Http\Controllers\masterdata\{
     StatusKeaktifanController,
     LembagaNaunganController,
     PeringkatAkreditasiController,
-    JenisPerguruanTinggiController
+    JenisPerguruanTinggiController,
+    TahunAjaranController
 };
 
 /*
@@ -142,7 +143,7 @@ Route::prefix('')->group(function () {
 
                 // Program Studi
                 Route::prefix('ProgramStudi')->middleware(['permission:system:master_programstudi:view'])->group(function () {
-                    Route::get('/', [ProgramStudiController::class, 'index'])->name('program_studi.index');
+                    Route::get('/', [ProgramStudiController::class, 'index'])->name('perguruan_tinggi.program_studi.index');
                     Route::post('/store', [ProgramStudiController::class, 'store'])->name('program_studi.store');
                     Route::get('/edit/{id}', [ProgramStudiController::class, 'edit'])->name('program_studi.edit');
                     Route::delete('/delete/{id}', [ProgramStudiController::class, 'destroy'])->name('program_studi.delete');
@@ -586,12 +587,22 @@ Route::prefix('')->group(function () {
                 // Periode Akademik
                 Route::prefix('PeriodeAkademik')->middleware(['permission:system:master_periodeakademik:view'])->group(function () {
                     Route::get('/', [PeriodeAkademikController::class, 'index'])->name('periode_akademik.index');
+                    Route::get('/periode-akademik-tabel', [PeriodeAkademikController::class, 'tabel'])->name('periode_akademik.tabel');
                     Route::post('/periode-akademik/store', [PeriodeAkademikController::class, 'store'])->name('periode_akademik.store');
-                    Route::get('/periode-akademik/edit/{id}', [PeriodeAkademikController::class, 'edit'])->name('periode_akademik.edit');
-                    Route::delete('/periode-akademik/delete/{id}', [PeriodeAkademikController::class, 'destroy'])->name('periode_akademik.delete');
+                    Route::get('/searchketuaujian', [PeriodeAkademikController::class, 'search'])->name('periode_akademik.cariketua');
+                    Route::get('/edit/{params}/{status}', [PeriodeAkademikController::class, 'edit'])->name('periode_akademik.edit');
+                    Route::get('/delete/{params}', [PeriodeAkademikController::class, 'destroy'])->name('periode_akademik.delete');
 
                     // Route Khusus Set Aktif
-                    Route::post('/periode-akademik/set-active/{id}', [PeriodeAkademikController::class, 'setActive'])->name('periode_akademik.active');
+                    Route::get('/set-active/{params}/{status}', [PeriodeAkademikController::class, 'setActive'])->name('periode_akademik.active');
+                });
+                Route::prefix('TahunAjaran')->middleware(['permission:system:master_tahunajaran:view'])->group(function () {
+                    Route::get('/', [TahunAjaranController::class, 'index'])->name('tahun_ajaran.index');
+                    Route::get('/tabel-tahunajaran', [TahunAjaranController::class, 'tabel'])->name('tahun_ajaran.tabel');
+                    Route::post('/save-tahunajaran', [TahunAjaranController::class, 'create'])->name('tahun_ajaran.save');
+                    Route::get('/edit-tahunajaran/{params}', [TahunAjaranController::class, 'show'])->name('tahun_ajaran.edit');
+                    Route::get('/aktif-tahunajaran/{params1}/{params2}', [TahunAjaranController::class, 'aktifnonaktif'])->name('tahun_ajaran.aktif');
+                    Route::get('/hapus-tahunajaran/{params1}', [TahunAjaranController::class, 'delete'])->name('tahun_ajaran.hapus');
                 });
             });
         });

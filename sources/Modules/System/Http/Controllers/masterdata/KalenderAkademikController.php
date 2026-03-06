@@ -27,7 +27,7 @@ class KalenderAkademikController extends Controller
 
         if ($request->ajax()) {
             // Eager Load 'kegiatan' biar query ringan
-            $query = Master_KalenderAkademik::with('kegiatan')->select('siakad_kalender_akademik.*');
+            $query = Master_KalenderAkademik::with('kegiatan')->select('siakad_master_kalender_akademik.*');
 
             // --- LOGIC FILTER ---
             if ($request->periode) {

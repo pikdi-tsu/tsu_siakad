@@ -45,8 +45,7 @@
 
                             {{-- TABLE --}}
                             <div class="table-responsive">
-                                <form action="{{ route('perguruan_tinggi.perguruan_tinggi.save') }}" id="form-edit-pt"
-                                    method="POST" enctype="multipart/form-data">
+                                <form action="{{ route('perguruan_tinggi.perguruan_tinggi.save') }}" id="form-edit-pt" method="POST" enctype="multipart/form-data">
                                     @csrf
                                     <input type="hidden" name="idpt" id="idpt" value="{{ $pt ? $pt->id : null }}">
                                     <table class="table">
