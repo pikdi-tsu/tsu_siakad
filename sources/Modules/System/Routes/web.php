@@ -169,6 +169,8 @@ Route::prefix('')->group(function () {
                 // Program Studi
                 Route::prefix('ProgramStudi')->middleware(['permission:system:master_programstudi:view'])->group(function () {
                     Route::get('/', [ProgramStudiController::class, 'index'])->name('program_studi.index');
+                    Route::post('/sync-feeder', [ProgramStudiController::class, 'syncFeeder'])->name('program_studi.sync_feeder');
+                    Route::get('/json-feeder', [ProgramStudiController::class, 'tableFeeder'])->name('program_studi.json_feeder');
                     Route::post('/store', [ProgramStudiController::class, 'store'])->name('program_studi.store');
                     Route::get('/edit/{id}', [ProgramStudiController::class, 'edit'])->name('program_studi.edit');
                     Route::delete('/delete/{id}', [ProgramStudiController::class, 'destroy'])->name('program_studi.delete');
@@ -272,11 +274,14 @@ Route::prefix('')->group(function () {
 
                 // Fakultas
                 Route::prefix('Fakultas')->middleware(['permission:system:master_fakultas:view'])->group(function () {
-                    Route::get('/', [FakultasController::class, 'index'])->name('admin.fakultas.show');
-                    Route::get('/TabelFakultas', [FakultasController::class, 'table_fakultas'])->name('admin.fakultas.Tabel');
-                    Route::post('/Store', [FakultasController::class, 'StoreFakultas'])->name('admin.fakultas.Store');
-                    Route::get('/EditFakultas/{params}', [FakultasController::class, 'ShowFakultas'])->name('admin.fakultas.Edit');
-                    Route::get('/Status/{params1}/{params2}', [FakultasController::class, 'delete'])->name('admin.fakultas.delete');
+                    Route::get('/', [FakultasController::class, 'index'])->name('fakultas.index');
+                    Route::get('/TabelFakultas', [FakultasController::class, 'table_fakultas'])->name('fakultas.tabel');
+                    Route::post('/sync-feeder', [FakultasController::class, 'syncFeeder'])->name('fakultas.sync_feeder');
+                    Route::get('/json-feeder', [FakultasController::class, 'table_feeder'])->name('fakultas.json_feeder');
+                    Route::get('/tabel-lokal', [FakultasController::class, 'table_fakultas'])->name('fakultas.table_lokal');
+                    Route::post('/Store', [FakultasController::class, 'StoreFakultas'])->name('fakultas.store');
+                    Route::get('/EditFakultas/{params}', [FakultasController::class, 'ShowFakultas'])->name('fakultas.edit');
+                    Route::get('/Status/{params1}/{params2}', [FakultasController::class, 'delete'])->name('fakultas.delete');
                 });
 
                 // Program Studi (PMB)

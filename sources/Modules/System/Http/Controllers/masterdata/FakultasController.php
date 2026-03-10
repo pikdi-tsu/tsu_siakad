@@ -2,216 +2,193 @@
 
 namespace Modules\System\Http\Controllers\masterdata;
 
+use App\Http\Controllers\MiddlewareController;
 use App\Models\MasterData\Master_Fakultas;
 use App\Models\MasterData\Master_JurusanKuliah;
-
+use App\Models\NeoFeederFakultas;
+use App\Services\NeoFeederService;
 use Illuminate\Routing\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\ValidationException;
-use Illuminate\Support\Facades\Password;
-use Session, Crypt, DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use Yajra\DataTables\DataTables;
 use Symfony\Component\HttpFoundation\Response;
+use DB;
 
-class FakultasController extends Controller
+class FakultasController extends MiddlewareController
 {
+    protected $feeder;
+
+    public function __construct(NeoFeederService $feederService)
+    {
+        $this->registerPermissions('system:master_fakultas');
+        $this->feeder = $feederService;
+    }
+
     public function index()
     {
         $last = Master_Fakultas::where('isactive',1)->orderBy('IdFakultas','desc')->select('KodeFakultas')->first();
-        if ($last) {
-            $lastNumber = (int) substr($last->KodeFakultas, 1); // ambil angka setelah F
-            $newCode = 'F' . str_pad($lastNumber + 1, 3, '0', STR_PAD_LEFT);
-        } else {
-            $newCode = 'F001';
+        $newCode = 'F001';
+        if ($last && preg_match('/F(\d+)/', $last->KodeFakultas, $matches)) {
+            $newCode = 'F' . str_pad((int)$matches[1] + 1, 3, '0', STR_PAD_LEFT);
         }
-        $data = array(
+
+        return view('system::masterdata.fakultas.index', [
             'title' => 'Master Data Fakultas',
             'menu'  => 'Fakultas',
             'kdfakultas' => $newCode
-        );
-        return view('system::masterdata.fakultas.index', $data);
+        ]);
     }
 
     public function table_fakultas()
     {
-        $data = Master_Fakultas::where('isactive',1)->get();
+        $data = Master_Fakultas::get();
         return DataTables::of($data)
             ->addIndexColumn()
-            ->addColumn('kode', function ($d) {
-                return $d->KodeFakultas;
-            })
-            ->addColumn('nama', function ($d) {
-                $nama = $d->namafakultas;
-                return $nama;
-            })
-            ->addColumn('singkatan', function ($d) {
-                return $d->singkatan;
-            })
+            ->addColumn('kode', function ($d) { return $d->KodeFakultas; })
+            ->addColumn('nama', function ($d) { return $d->namafakultas; })
+            ->addColumn('singkatan', function ($d) { return $d->singkatan; })
             ->addColumn('aktif', function ($d) {
-                $role = '-';
-                $warna = '';
-                if($d->isactive==1){
-                    $role = 'Aktif';
-                    $warna = 'success';
-                }else{
-                    $role = 'Tidak Aktif';
-                    $warna = 'danger';
-                }
-                $show = '<span class="badge bg-'.$warna.'">'.$role.'</span>';
-                return $show;
+                $warna = $d->isactive === 1 ? 'success' : 'danger';
+                $teks = $d->isactive === 1 ? 'Aktif' : 'Tidak Aktif';
+                return '<span class="badge bg-'.$warna.'">'.$teks.'</span>';
             })
             ->addColumn('action', function ($d) {
                 $id = encrypt($d->KodeFakultas);
+                $edit = '<a href="#" data-id="'.$id.'" class="btn_edit"><i title="Edit" class="fa fa-edit text-orange"></i></a>';
 
-                $url = '#';
-                $edit   = '<a href="#" data-id="'.$id.'" class="btn_edit"><i title="Edit" class="fa fa-edit text-orange"></i></a>';
-                $aktif = '';
-                if($d->isactive==1){
-                    $url = route('admin.fakultas.delete',[$id,encrypt('0')]);
-                    $aktif = '<a href="'.$url.'" class="btn_delete"><i title="Hapus" class="fa fa-trash text-red"></i></a>';
-                }else{
-                    $url = route('admin.fakultas.delete',[$id,encrypt('1')]);
-                    $aktif  = '<a href="'.$url.'" class="btn_delete"><i title="Aktifkan" class="fas fa-check-circle text-green"></i></a>';
-                }
-                return $edit.' '.$aktif;
+                $aktifBtn = $d->isactive === 1
+                    ? '<a href="'.route('perguruan_tinggi.fakultas.delete',[$id,encrypt('0')]).'" class="btn_delete"><i title="Nonaktifkan" class="fa fa-trash text-red"></i></a>'
+                    : '<a href="'.route('perguruan_tinggi.fakultas.delete',[$id,encrypt('1')]).'" class="btn_delete"><i title="Aktifkan" class="fas fa-check-circle text-green"></i></a>';
+
+                return $edit.' '.$aktifBtn;
             })
             ->rawColumns(['action','aktif'])
             ->make(true);
     }
 
-    public function StoreFakultas(Request $post)
+    public function syncFeeder()
     {
-        // dd($post,session()->all());
-        $cek = Master_Fakultas::where('isactive',1)
-        ->where('namafakultas',$post->namafakultas)
-        ->orwhere('singkatan',$post->singkatanfakultas)
-        ->first();
-        $alert = null;
-        if($cek){
-            $alert = array(
-                'title' => 'Gagal!',
-                'message' => 'Nama Fakultas atau Singkatan Sudah Ada !',
-                'status' => 'warning'
-            );
-        }else{
-            if($post->IdFakultas == null){
-                $alert = $this->Save($post);
-            }else{
-                $alert = $this->Update($post);
+        try {
+            // Tembak API GetFakultas
+            $response = $this->feeder->execute('GetFakultas');
+
+            if (($response['error_code'] ?? 1) !== 0 || empty($response['data'])) {
+                return response()->json(['status' => 'error', 'message' => 'Gagal menarik data atau data kosong dari Feeder.']);
             }
+
+            $countInserted = 0;
+            $countUpdated = 0;
+
+            foreach ($response['data'] as $row) {
+                // Cek apakah data feeder ini sudah ada di tabel cermin kita
+                $feederData = NeoFeederFakultas::where('id_fakultas', $row['id_fakultas'])->first();
+
+                if (!$feederData) {
+                    NeoFeederFakultas::create([
+                        'id' => Str::uuid(),
+                        'id_fakultas' => $row['id_fakultas'],
+                        'nama_fakultas' => $row['nama_fakultas'],
+                        'status' => $row['status'],
+                        'id_jenjang_pendidikan' => $row['id_jenjang_pendidikan'],
+                        'nama_jenjang_pendidikan' => $row['nama_jenjang_pendidikan'],
+                    ]);
+                    $countInserted++;
+                } else {
+                    $feederData->update([
+                        'nama_fakultas' => $row['nama_fakultas'],
+                        'status' => $row['status'],
+                        'id_jenjang_pendidikan' => $row['id_jenjang_pendidikan'],
+                        'nama_jenjang_pendidikan' => $row['nama_jenjang_pendidikan'],
+                    ]);
+                    $countUpdated++;
+                }
+            }
+
+            return response()->json([
+                'status' => 'success',
+                'message' => "Berhasil menarik data! ($countInserted Data Baru, $countUpdated Diperbarui)"
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
         }
-
-
-        return redirect()->back()->with('alert',$alert);
-
     }
 
-    public function Save($post)
+    // Datatable NEO FEEDER
+    public function table_feeder()
     {
-        $up = array(
-            'KodeFakultas' => $post->kdfakultas,
-            'namafakultas' => $post->namafakultas,
-            'singkatan'    => $post->singkatanfakultas,
-            'created_at'   => date('Y-m-d H:i:s'),
-            'created_by'   => session('session')->nip,
-        );
-        DB::beginTransaction();
-        $save = Master_Fakultas::insert($up);
-        if($save){
-            DB::commit();
-            $alert = array(
-                'title' => 'Berhasil!',
-                'message' => 'Data Fakultas Tersimpan !',
-                'status' => 'success'
-            );
-        }else{
-            DB::rollback();
-            $alert = array(
-                'title' => 'Gagal!',
-                'message' => 'Data Fakultas Gagal Disimpan !',
-                'status' => 'error'
-            );
+        $data = NeoFeederFakultas::latest()->get();
+        return DataTables::of($data)
+            ->addIndexColumn()
+            ->addColumn('id_fakultas', function ($d) { return $d->id_fakultas; })
+            ->addColumn('nama_fakultas', function ($d) { return $d->nama_fakultas; })
+            ->addColumn('jenjang', function ($d) { return $d->nama_jenjang_pendidikan; })
+            ->addColumn('status', function ($d) {
+                $warna = $d->status === 'A' ? 'success' : 'danger';
+                $teks = $d->status === 'A' ? 'Aktif' : 'Tidak Aktif';
+                return '<span class="badge bg-'.$warna.'">'.$teks.'</span>';
+            })
+            ->rawColumns(['status'])
+            ->make(true);
+    }
+
+    // ============================================================
+    // FUNGSI MANUAL (CREATE, UPDATE, DELETE)
+    // ============================================================
+    public function StoreFakultas(Request $post)
+    {
+        $cek = Master_Fakultas::where('namafakultas',$post->namafakultas)->orwhere('singkatan',$post->singkatanfakultas)->first();
+        if($cek && $post->IdFakultas == null){
+            return redirect()->back()->with('alert', ['title' => 'Gagal!','message' => 'Nama / Singkatan Sudah Ada !','status' => 'warning']);
         }
-        return $alert;
+
+        if($post->IdFakultas == null){
+            Master_Fakultas::insert([
+                'KodeFakultas' => $post->kdfakultas,
+                'namafakultas' => $post->namafakultas,
+                'singkatan'    => $post->singkatanfakultas,
+                'created_at'   => now(),
+                'created_by'   => session('session')->nip ?? 'Admin',
+            ]);
+            $msg = 'Disimpan';
+        } else {
+            $id = decrypt($post->IdFakultas);
+            Master_Fakultas::where('IdFakultas', $id)->update([
+                'namafakultas' => $post->namafakultas,
+                'singkatan'    => $post->singkatanfakultas,
+                'updated_at'   => now(),
+                'updated_by'   => session('session')->nip ?? 'Admin',
+            ]);
+            $msg = 'Diperbarui';
+        }
+
+        return redirect()->back()->with('alert', ['title' => 'Berhasil!','message' => "Data Fakultas $msg!",'status' => 'success']);
     }
 
     public function ShowFakultas($params)
     {
         $id = decrypt($params);
-        // dd($id);
         $check = Master_Fakultas::where('KodeFakultas',$id)->first();
-
-        if($check){
-            $data['hasil'] = 1;
-            $data['fakultas'] = $check;
-            $data['IdFakultas'] = $params;
-        }else{
-            $data['hasil'] = 0;
-            $data['fakultas'] = $check;
-            $data['IdFakultas'] = $params;
-        }
-        return response()->json($data, Response::HTTP_OK);
-    }
-
-    public function Update($post)
-    {
-        $id = decrypt($post->IdFakultas);
-
-        $up = array(
-            'namafakultas' => $post->namafakultas,
-            'singkatan'    => $post->singkatanfakultas,
-            'updated_at'   => date('Y-m-d H:i:s'),
-            'updated_by'   => session('session')->nip,
-        );
-        DB::beginTransaction();
-        $update = Master_Fakultas::where('isactive',1)->where('IdFakultas',$id)->where('KodeFakultas',$post->kdfakultas)->update($up);
-        if($update){
-            DB::commit();
-            $alert = array(
-                'title' => 'Berhasil!',
-                'message' => 'Data Fakultas Diperbarui !',
-                'status' => 'success'
-            );
-        }else{
-            DB::rollback();
-            $alert = array(
-                'title' => 'Gagal!',
-                'message' => 'Data Fakultas Gagal Diperbarui !',
-                'status' => 'error'
-            );
-        }
-        return $alert;
+        return response()->json(['hasil' => $check ? 1 : 0, 'fakultas' => $check, 'IdFakultas' => $params], Response::HTTP_OK);
     }
 
     public function delete($params1,$params2)
     {
         $id = decrypt($params1);
         $aktif = decrypt($params2);
-        $cek = Master_JurusanKuliah::where('fakultas',$id)->first();
-        // dd($cek);
-        if($cek){
-            $alert = ['title' => 'Gagal','message' => 'Menu Sudah Digunakan !','status' => 'error'];
-            return redirect()->back()->with('alert',$alert);
+
+        if ($aktif == 0 && Master_JurusanKuliah::where('fakultas',$id)->exists()) {
+            return redirect()->back()->with('alert', ['title' => 'Gagal','message' => 'Fakultas sedang digunakan di tabel Jurusan!','status' => 'error']);
         }
-        DB::beginTransaction();
-        $up = array(
+
+        Master_Fakultas::where('KodeFakultas',$id)->update([
             'isactive' => $aktif,
-            'updated_at' => date('Y-m-d H:i:s'),
-            'updated_by' => session('session')->nip
-        );
+            'updated_at' => now(),
+            'updated_by' => session('session')->nip ?? 'Admin'
+        ]);
 
-        $update = Master_Fakultas::where('KodeFakultas',$id)->update($up);
-
-        if($update){
-            DB::commit();
-            $alert = ['title' => 'Berhasil','message' => 'Fakultas Berhasil Diperbarui','status' => 'success'];
-        }else{
-            DB::rollback();
-            $alert = ['title' => 'Gagal','message' => 'Fakultas Gagal Diperbarui','status' => 'error'];
-        }
-        return redirect()->back()->with('alert',$alert);
+        return redirect()->back()->with('alert', ['title' => 'Berhasil','message' => 'Status Fakultas Diperbarui','status' => 'success']);
     }
-
-
 }
