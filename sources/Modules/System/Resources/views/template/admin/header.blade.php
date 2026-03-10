@@ -43,9 +43,18 @@
     <!-- SweetAlert 2 -->
     <link rel="stylesheet" href="{{ asset('public/assets/plugins/sweetalert2/sweetalert2.min.css') }}">
     <script src="{{ asset('public/assets/plugins/sweetalert2/sweetalert2.all.min.js') }}"></script>
+    <!-- Custom Style -->
+    <style>
+        /* Konten wrapper scroll independen */
+        .content-wrapper {
+            /* Tinggi maksimal viewport dikurangi navbar */
+            /*min-height: calc(100vh - calc(3.5rem + 1px)) !important;*/
+            min-height: calc(100vh - 114px) !important;
+        }
+    </style>
     @yield('link_href')
 </head>
-<body class="hold-transition sidebar-mini layout-navbar-fixed">
+<body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed">
     <div class="wrapper">
         @include('system::template/admin/sidebar')
         @include('system::template/admin/navbar')

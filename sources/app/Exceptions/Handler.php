@@ -3,6 +3,7 @@
 namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Session\TokenMismatchException;
 use Illuminate\Support\Facades\View;
 use Spatie\Permission\Exceptions\UnauthorizedException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
@@ -103,6 +104,20 @@ class Handler extends ExceptionHandler
             return $this->renderErrorView($e, 404, 'Halaman Tidak Ditemukan', 'Halaman yang Anda cari tidak ditemukan atau telah dipindahkan.');
         }
 
+        // Handle 419 (Token Mismatch)
+        if ($e instanceof TokenMismatchException) {
+
+            // Kalau request dari AJAX (misal Datatable), kasih JSON aja biar gak error parsing
+            if ($request->expectsJson()) {
+                return response()->json(['message' => 'Sesi kadaluarsa. Silakan refresh halaman.'], 419);
+            }
+
+            // Kalau request biasa (Submit Form), lempar ke login
+            return redirect()
+                ->route('login')
+                ->with('error', 'Form kadaluarsa (Session Timeout). Silakan login ulang untuk melanjutkan.');
+        }
+
         // Handle Lain-lain (Manual Abort 403, 503, dll)
         if ($e instanceof HttpException) {
             $statusCode = $e->getStatusCode();
@@ -112,7 +127,6 @@ class Handler extends ExceptionHandler
                 $title = match($statusCode) {
                     503 => 'Sedang Pemeliharaan',
                     500 => 'Terjadi Kesalahan Server',
-                    419 => 'Sesi Kadaluarsa',
                     429 => 'Terlalu Banyak Permintaan',
                     default => 'Terjadi Kesalahan',
                 };
@@ -123,6 +137,16 @@ class Handler extends ExceptionHandler
 
         // Sisanya biarkan Laravel (Termasuk Error 500 Crash Kodingan)
         return parent::render($request, $e);
+    }
+
+    // Handle Unauthenticated (User Logout Sendiri / Sesi Mati)
+    protected function unauthenticated($request, \Illuminate\Auth\AuthenticationException $exception)
+    {
+        if ($request->expectsJson()) {
+            return response()->json(['message' => 'Unauthenticated.'], 401);
+        }
+
+        return redirect()->guest(route('login'));
     }
 
     private function renderErrorView($e, $code, $title, $message = null): ?\Illuminate\Http\Response

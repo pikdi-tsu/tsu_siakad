@@ -36,7 +36,7 @@
 
                     <div class="card-body">
                         <div class="form-group">
-                            <label>Nama Permission <span class="text-danger">*</span></label>
+                            <label for="name">Nama Permission <span class="text-danger">*</span></label>
                             <input type="text" name="name" id="input-name" class="form-control" placeholder="contoh: siakad:krs:approve" required>
                             <small class="text-muted">
                                 Format saran: <code>modul:fitur:aksi</code> atau <code>aplikasi:fitur:aksi</code><br>
@@ -57,10 +57,10 @@
                                 <i class="fas fa-lock mr-1"></i> Simpan (No Access)
                             </span>
                         @endcan
-{{--                        @can('system:permission:edit')--}}
+                        @can('system:permission:edit')
                             <button type="button" class="btn btn-default btn-reset d-none">Batal Edit</button>
                             <button type="submit" class="btn btn-warning d-none" id="btn-edit">Update</button>
-{{--                        @endcan--}}
+                        @endcan
                     </div>
                 </form>
             </div>

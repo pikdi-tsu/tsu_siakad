@@ -25,6 +25,11 @@ return [
         'url' => env('HOMEBASE_URL'),
     ],
 
+    // NeoFeeder
+    'neo_feeder' => [
+        'url' => env('NEO_FEEDER_URL'),
+    ],
+
     // Urutan menentukan prioritas pengecekan.
     'active_guards' => ['web'],
 
@@ -59,6 +64,7 @@ return [
             'rescue' => env('PIKDI_RESCUE_SECRET')
         ],
     ],
+
     /*
     |--------------------------------------------------------------------------
     | Application Environment

@@ -18,6 +18,9 @@ return new class extends Migration
             $table->string('kode_prodi', 20)->unique();
             $table->string('nama_prodi', 200);
 
+            // Penghubung Neo Feeder
+            $table->uuid('id_prodi_feeder')->nullable()->comment('Kabel penghubung ke UUID Neo Feeder');
+
             // Pimpinan Prodi
             $table->string('ketua_prodi', 150)->nullable();
 

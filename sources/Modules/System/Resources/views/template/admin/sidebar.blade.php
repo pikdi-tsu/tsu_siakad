@@ -1,4 +1,19 @@
 <style>
+    /* KUSTOM SCROLLBAR SIDEBAR BIAR GANTENG */
+    .sidebar::-webkit-scrollbar {
+        width: 6px;
+    }
+    .sidebar::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    .sidebar::-webkit-scrollbar-thumb {
+        background: #555;
+        border-radius: 3px;
+    }
+    .sidebar::-webkit-scrollbar-thumb:hover {
+        background: #888;
+    }
+
     .nav-sidebar .nav-treeview {
         padding-left: 0; margin-left: 0;
     }
@@ -69,8 +84,50 @@
 
         <nav class="mt-2">
             <ul class="nav nav-pills nav-sidebar flex-column text-sm" data-widget="treeview" role="menu" data-accordion="false">
+                {{-- MENU UTAMA (DINAMIS) --}}
                 <li class="nav-header">Main Navigation</li>
-                <x-layouts.sidebar />
+                <x-layouts.sidebar mode="main" />
+
+                {{-- Pemisah Visual --}}
+                <div class="user-panel mt-2 pb-2 mb-2 d-flex border-bottom-0"></div>
+
+                {{-- INTEGRASI PDDIKTI (Area Bawah) --}}
+                <li class="nav-header mt-3 border-top pt-3">Integrasi PDDIKTI</li>
+
+                @if(!session()->has('neofeeder_token'))
+                    {{-- KONDISI: BELUM LOGIN (Tombol Kuning) --}}
+                    <li class="nav-item mb-5">
+                        <a href="{{ route('neo_feeder.login') }}" class="nav-link" style="background-color: #ffc107; color: #1f2d3d;">
+                            <i class="nav-icon fas fa-key"></i>
+                            <p><b>Buka Akses Feeder</b></p>
+                        </a>
+                    </li>
+                @else
+                    {{-- KONDISI: SUDAH LOGIN (Status Hijau) --}}
+                    {{-- A. RENDER MENU NEO FEEDER DISINI --}}
+                    {{-- PANGGILAN 2: Mode 'feeder' (Render cuma anak-anak Feeder) --}}
+                    <x-layouts.sidebar mode="feeder" />
+
+                    {{-- B. TOMBOL LOGOUT + INDIKATOR --}}
+                    <li class="nav-item mt-2">
+                        <form action="{{ route('neo_feeder.logout') }}" method="POST">
+                            @csrf
+                            <button type="submit" class="nav-link btn-block text-left" style="background-color: #e74c3c; color: white; border: none;">
+                                <i class="nav-icon fas fa-power-off"></i>
+                                <p>
+                                    Putus Koneksi
+                                </p>
+                            </button>
+                        </form>
+                    </li>
+
+                    {{-- Info user kecil di bawah tombol --}}
+                    <div class="text-center mt-2">
+                        <small class="text-muted" style="font-size: 0.7rem;">
+                            <i class="fas fa-user-circle mr-1"></i> {{ session('neofeeder_username') }}
+                        </small>
+                    </div>
+                @endif
             </ul>
         </nav>
     </div>

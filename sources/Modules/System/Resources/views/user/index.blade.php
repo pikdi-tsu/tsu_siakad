@@ -12,12 +12,12 @@
                     <form action="{{ route('system.user.sync') }}" method="POST" style="display:inline;">
                         @csrf
                         <button type="submit" class="btn btn-primary btn-sm btn-sync" title="Tarik data terbaru">
-                            <i class="fas fa-sync-alt"></i> Sync Users dari Homebase
+                            <i class="fas fa-sync-alt"></i> Update Users Lokal
                         </button>
                     </form>
                 @else
                     <span class="badge badge-secondary p-2 shadow-sm" style="cursor: not-allowed; opacity: 0.7;" title="Anda tidak memiliki akses ke action ini">
-                        <i class="fas fa-lock mr-1"></i> Sync User (No Access)
+                        <i class="fas fa-lock mr-1"></i> Update Users Lokal (No Access)
                     </span>
                 @endcan
             </div>
@@ -41,6 +41,21 @@
                 </thead>
                 <tbody></tbody>
             </table>
+        </div>
+    </div>
+
+    {{-- ================= MODAL EDIT (AJAX CONTAINER) ================= --}}
+    <div class="modal fade" id="modal-edit">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content" id="modal-edit-content">
+                {{-- Loading State --}}
+                <div class="text-center p-5">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                    <p class="mt-2">Sedang mengambil data...</p>
+                </div>
+            </div>
         </div>
     </div>
 @endsection
@@ -96,8 +111,34 @@
                 });
             });
 
+            // Event Listener Tombol Edit
+            $('body').on('click', '.btn-edit', function(e) {
+                e.preventDefault();
+                var url = $(this).attr('href') || $(this).data('url');
+
+                if (!url) {
+                    console.error('URL Edit tidak ditemukan!');
+                    return;
+                }
+
+                $('#modal-edit').modal('show')
+                // Reset konten modal ke loading state setiap kali dibuka
+                $('#modal-edit-content').html('<div class="text-center p-5"><div class="spinner-border text-primary" role="status"></div><p>Loading...</p></div>');
+
+                $.ajax({
+                    url: url,
+                    type: 'GET',
+                    success: function(response) {
+                        $('#modal-edit-content').html(response);
+                    },
+                    error: function() {
+                        $('#modal-edit-content').html('<div class="alert alert-danger m-3">Gagal mengambil data menu.</div>');
+                    }
+                });
+            });
+
             // Modal Delete/Kick
-            $('body').on('click', '.btn-kick', function(e) {
+            $('body').on('click', '.btn-delete', function(e) {
                 e.preventDefault();
                 var form = $(this).closest('form');
 
