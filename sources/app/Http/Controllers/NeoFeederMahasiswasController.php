@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\DataMahasiswa;
+use App\Models\MasterData\Master_PeriodeAkademik;
 use App\Models\NeoFeederMahasiswas;
 use App\Services\NeoFeederService;
 use Carbon\Carbon;
@@ -34,45 +35,62 @@ class NeoFeederMahasiswasController extends MiddlewareController
     /**
      * TAB 1: DATA MAHASISWA TSU SIAKAD
      */
-    public function jsonLokal()
+    public function jsonLokal(Request $request)
     {
-        $data = DataMahasiswa::with('user')->latest();
+        if ($request->ajax()) {
+            $data = DataMahasiswa::with('user')->latest();
 
-        return DataTables::of($data)
-            ->addIndexColumn()
-            ->addColumn('nama_mahasiswa', function($row){
-                return $row->user ? $row->user->name : 'Belum Ada Akun/Nama';
-            })
-            ->addColumn('status_sync', function($row){
-                // Cek apakah NIM ini sudah ada di tabel cermin Feeder
-                $isSynced = NeoFeederMahasiswas::where('nim', $row->nim)->exists();
+            return DataTables::of($data)
+                ->addIndexColumn()
+                ->addColumn('nama_mahasiswa', function($row){
+                    return $row->user ? $row->user->name : 'Belum Ada Akun/Nama';
+                })
+                ->addColumn('prodi', function ($row) {
+                    if ($row->nama_prodi_lengkap) {
+                        return '<span class="badge badge-info">' . $row->nama_prodi_lengkap . '</span>';
+                    }
+                    return '<span class="badge badge-danger"><i class="fas fa-exclamation-triangle"></i> Belum Set Prodi</span>';
+                })
+                ->addColumn('status_sync', function($row){
+                    $isSynced = NeoFeederMahasiswas::where('nim', $row->nim)->exists();
 
-                if($isSynced) {
-                    return '<span class="badge badge-success"><i class="fas fa-check"></i> Tersinkron</span>';
-                }
-                return '<span class="badge badge-warning"><i class="fas fa-exclamation-circle"></i> Belum Sync</span>';
-            })
-            ->rawColumns(['status_sync'])
-            ->make(true);
+                    if($isSynced) {
+                        return '<span class="badge badge-success"><i class="fas fa-check"></i> Tersinkron</span>';
+                    }
+                    return '<span class="badge badge-warning"><i class="fas fa-exclamation-circle"></i> Belum Sync</span>';
+                })
+                ->rawColumns(['prodi', 'status_sync'])
+                ->make(true);
+        }
     }
 
     /**
      * TAB 2: BELUM SINKRON (Data Lokal yang belum ada di Feeder)
      */
-    public function jsonSync()
+    public function jsonSync(Request $request)
     {
-        // Ambil daftar NIM yang SUDAH ada di cermin Feeder
-        $syncedNims = NeoFeederMahasiswas::whereNotNull('nim')->pluck('nim')->toArray();
+        if ($request->ajax()) {
+            $syncedNims = NeoFeederMahasiswas::whereNotNull('nim')->pluck('nim')->toArray();
 
-        // Tarik data mahasiswa lokal yang NIM-nya TIDAK ADA di daftar Feeder tadi
-        $data = DataMahasiswa::with('user')->whereNotIn('nim', $syncedNims)->latest();
+            $query = DataMahasiswa::with(['user', 'prodi'])
+                ->whereNotIn('nim', $syncedNims)
+                ->latest();
 
-        return DataTables::of($data)
-            ->addIndexColumn()
-            ->addColumn('nama_mahasiswa', function($row){
-                return $row->user ? $row->user->name : 'Belum Ada Akun/Nama';
-            })
-            ->make(true);
+            return DataTables::of($query)
+                ->addIndexColumn()
+                ->addColumn('nama_mahasiswa', function($row){
+                    return $row->user ? $row->user->name : 'Belum Ada Akun/Nama';
+
+                })
+                ->addColumn('prodi', function ($row) {
+                    if ($row->prodi) {
+                        return '<span class="badge badge-info">' . $row->prodi->jenjang . ' ' . $row->prodi->nama_prodi . '</span>';
+                    }
+                    return '<span class="badge badge-danger">Belum Set Prodi</span>';
+                })
+                ->rawColumns(['nama_mahasiswa', 'prodi'])
+                ->make(true);
+        }
     }
 
     /**
@@ -217,72 +235,167 @@ class NeoFeederMahasiswasController extends MiddlewareController
     /**
      * Eksekusi Per Batch ke Neo Feeder
      */
-    public function pushExec()
+    use Carbon\Carbon;
+    use Illuminate\Http\Request;
+    use Illuminate\Support\Facades\DB;
+    use Illuminate\Support\Facades\Log;
+
+// ...
+
+    public function pushExec(Request $request)
     {
-        $limit = 5;
+        $limit = 2;
+        $sukses = 0;
+        $gagal = 0;
 
         try {
+            // Data lokal Feeder
             $syncedNims = NeoFeederMahasiswas::whereNotNull('nim')->pluck('nim')->toArray();
 
-            $mahasiswas = DataMahasiswa::with('user')
-                ->whereNotIn('nim', $syncedNims)
+            // Not yet sync data mahasiswa
+            $mahasiswas = DataMahasiswa::whereNotIn('nim', $syncedNims)
                 ->take($limit)
                 ->get();
 
-            $processed = 0;
-
             foreach ($mahasiswas as $mhs) {
-                // Dictionary Feeder InsertBiodataMahasiswa
-                $record = [
-                    'nama_mahasiswa' => $mhs->user ? $mhs->user->name : 'TANPA NAMA',
+                // Data Mahasiswa Array
+                $recordBiodata = [
+                    'nama_mahasiswa' => $mhs->nama_mahasiswa ?? 'TANPA NAMA',
                     'jenis_kelamin'  => $mhs->jenis_kelamin ?? 'L',
                     'tempat_lahir'   => $mhs->tempat_lahir ?? 'Tidak Diketahui',
                     'tanggal_lahir'  => $mhs->tgl_lahir ? Carbon::parse($mhs->tgl_lahir)->format('Y-m-d') : '2000-01-01',
-                    'id_agama'       => $mhs->id_agama ?? 1, // 1=Islam, sesuaikan kamus Feeder
-                    'nik'            => $mhs->nik_ktp ?? '0000000000000000',
-                    'kewarganegaraan'=> 'ID',
-                    'kelurahan'      => $mhs->alamat_lengkap ?? 'Tidak Diketahui',
-                    'id_wilayah'     => '000000', // WAJIB DIGANTI NANTI: ID Wilayah Kecamatan dari Feeder
-                    'penerima_kps'   => 0,
-                    'nama_ibu_kandung' => $mhs->nama_ibu ?? 'TIDAK DIKETAHUI',
+                    'id_agama'       => (int) ($mhs->id_agama ?? 1),
+                    'nik'            => $mhs->nik_ktp,
+                    'nisn'           => $mhs->nisn,
+                    'npwp'           => $mhs->npwp,
+                    'kewarganegaraan'=> $mhs->kewarganegaraan ?? 'ID',
+                    'jalan'          => $mhs->alamat_lengkap,
+                    'dusun'          => $mhs->dusun,
+                    'rt'             => $mhs->rt,
+                    'rw'             => $mhs->rw,
+                    'kelurahan'      => $mhs->kelurahan,
+                    'kode_pos'       => $mhs->kodepos,
+                    'id_wilayah'     => $mhs->id_wilayah ?? '999999', // 999999 = Default / Luar Negeri
+                    'id_jenis_tinggal' => null,
+                    'id_alat_transportasi' => null,
+                    'telepon'        => null,
+                    'handphone'      => $mhs->no_hp,
+                    'email'          => $mhs->email_pribadi,
+                    'penerima_kps'   => (int) ($mhs->penerima_kps ?? 0),
+                    'nomor_kps'      => null,
+
+                    // --- Data Ayah ---
+                    'nik_ayah'            => $mhs->nik_ayah,
+                    'nama_ayah'           => $mhs->nama_ayah,
+                    'tanggal_lahir_ayah'  => $mhs->tgl_lahir_ayah ? Carbon::parse($mhs->tgl_lahir_ayah)->format('Y-m-d') : null,
+                    'id_pendidikan_ayah'  => $mhs->id_pendidikan_ayah,
+                    'id_pekerjaan_ayah'   => $mhs->id_pekerjaan_ayah,
+                    'id_penghasilan_ayah' => $mhs->id_penghasilan_ayah,
+
+                    // --- Data Ibu Kandung (Wajib Feeder) ---
+                    'nik_ibu'             => $mhs->nik_ibu,
+                    'nama_ibu_kandung'    => $mhs->nama_ibu ?? 'TIDAK DIKETAHUI',
+                    'tanggal_lahir_ibu'   => $mhs->tgl_lahir_ibu ? Carbon::parse($mhs->tgl_lahir_ibu)->format('Y-m-d') : null,
+                    'id_pendidikan_ibu'   => $mhs->id_pendidikan_ibu,
+                    'id_pekerjaan_ibu'    => $mhs->id_pekerjaan_ibu,
+                    'id_penghasilan_ibu'  => $mhs->id_penghasilan_ibu,
+
+                    // --- Data Wali ---
+                    'nama_wali'           => $mhs->nama_wali,
+                    'tanggal_lahir_wali'  => $mhs->tgl_lahir_wali ? Carbon::parse($mhs->tgl_lahir_wali)->format('Y-m-d') : null,
+                    'id_pendidikan_wali'  => $mhs->id_pendidikan_wali,
+                    'id_pekerjaan_wali'   => $mhs->id_pekerjaan_wali,
+                    'id_penghasilan_wali' => $mhs->id_penghasilan_wali,
+
+                    // --- Kebutuhan Khusus ---
+                    'id_kebutuhan_khusus_mahasiswa' => 0,
+                    'id_kebutuhan_khusus_ayah'      => 0,
+                    'id_kebutuhan_khusus_ibu'       => 0,
                 ];
 
-                $response = $this->feeder->execute('InsertBiodataMahasiswa', ['record' => $record]);
+                // API Biodata Mahasiswa
+                $resBiodata = $this->feeder->execute('InsertBiodataMahasiswa', ['record' => $recordBiodata]);
 
-                // Get Hasli
-                if (($response['error_code'] ?? 1) === 0) {
-                    NeoFeederMahasiswas::updateOrCreate(
-                        ['nim' => $mhs->nim],
-                        [
-                            'id_mahasiswa_feeder' => $response['data']['id_mahasiswa'] ?? null,
-                            'nama_mahasiswa'      => $record['nama_mahasiswa'],
-                            'jenis_kelamin'       => $record['jenis_kelamin'],
-                            'tanggal_lahir'       => $record['tanggal_lahir'],
-                            'last_synced_at'      => now(),
-                        ]
-                    );
+                // Cek Status API
+                if (($resBiodata['error_code'] ?? 1) === 0) {
+                    // TANGKAP ID MAHASISWA DARI FEEDER
+                    $idMahasiswaFeeder = $resBiodata['data']['id_mahasiswa'];
+
+                    // Riwayat Pendidikan Array
+                    $periode = Master_PeriodeAkademik::find($mhs->id_periode_masuk);
+                    $kodePeriode = $periode ? preg_replace('/[^0-9]/', '', $periode->kode_periode) : date('Y').'1';
+
+                    $recordRiwayat = [
+                        'id_mahasiswa'             => $idMahasiswaFeeder,
+                        'nim'                      => $mhs->nim,
+                        'id_jenis_daftar'          => 1,
+                        'id_jalur_daftar'          => null,
+                        'id_periode_masuk'         => $kodePeriode,
+                        'tanggal_daftar'           => $mhs->created_at ? $mhs->created_at->format('Y-m-d') : date('Y-m-d'),
+
+                        // ⚠️ VITAL: GANTI DENGAN UUID KAMPUS KOMANDAN (Bisa pakai env('FEEDER_ID_PT'))
+                        'id_perguruan_tinggi'      => env('FEEDER_ID_PT', 'MASUKKAN_UUID_KAMPUS_DISINI'),
+
+                        'id_prodi'                 => $mhs->id_prodi,
+                        'id_bidang_minat'          => null,
+                        'sks_diakui'               => null,
+                        'id_perguruan_tinggi_asal' => null,
+                        'id_prodi_asal'            => null,
+                        'id_pembiayaan'            => 1, // 1 = Mandiri
+                        'biaya_masuk'              => 0,
+                    ];
+
+                    // 🔥 TEMBAKKAN PELURU 2 (RIWAYAT)
+                    $resRiwayat = $this->feeder->execute('InsertRiwayatPendidikanMahasiswa', ['record' => $recordRiwayat]);
+
+                    // Cek Status Tembakan 2
+                    if (($resRiwayat['error_code'] ?? 1) === 0) {
+                        // 🎉 SUKSES COMBO 2 HIT!
+                        \App\Models\NeoFeederMahasiswas::updateOrCreate(
+                            ['nim' => $mhs->nim],
+                            [
+                                'id_mahasiswa_feeder'     => $idMahasiswaFeeder,
+                                'id_registrasi_mahasiswa' => $resRiwayat['data']['id_registrasi_mahasiswa'] ?? null,
+                                'nama_mahasiswa'          => $recordBiodata['nama_mahasiswa'],
+                                'status_sync'             => 'sudah sync',
+                                'last_synced_at'          => now(),
+                            ]
+                        );
+                        $sukses++;
+                    } else {
+                        // ❌ GAGAL DI HIT 2 (Riwayat Pendidikan ditolak)
+                        Log::error("GAGAL RIWAYAT NIM {$mhs->nim}: " . ($resRiwayat['error_desc'] ?? 'Unknown'));
+                        \App\Models\NeoFeederMahasiswas::updateOrCreate(
+                            ['nim' => $mhs->nim],
+                            [
+                                'id_mahasiswa_feeder' => $idMahasiswaFeeder, // Simpan ID manusianya agar tidak hilang
+                                'nama_mahasiswa'      => 'Gagal Riwayat: ' . ($resRiwayat['error_desc'] ?? ''),
+                                'status_sync'         => 'error_push',
+                            ]
+                        );
+                        $gagal++;
+                    }
                 } else {
-                    // GAGAL KARENA VALIDASI FEEDER (Misal: NIK sudah dipakai kampus lain)
-                    \Log::error("GAGAL PUSH NIM {$mhs->nim}: " . ($response['error_desc'] ?? 'Unknown Error'));
-
-                    // Tabel cermin dengan tanda error
-                    NeoFeederMahasiswas::updateOrCreate(
+                    // ❌ GAGAL DI HIT 1 (Biodata Ditolak)
+                    Log::error("GAGAL BIODATA NIM {$mhs->nim}: " . ($resBiodata['error_desc'] ?? 'Unknown'));
+                    \App\Models\NeoFeederMahasiswas::updateOrCreate(
                         ['nim' => $mhs->nim],
                         [
-                            'status_sync' => 'error_push', // Menandakan ditolak feeder
-                            'nama_mahasiswa' => $response['error_desc'] // Simpan pesan error sementara
+                            'nama_mahasiswa' => 'Gagal Biodata: ' . ($resBiodata['error_desc'] ?? ''),
+                            'status_sync'    => 'error_push',
                         ]
                     );
+                    $gagal++;
                 }
-                $processed++;
             }
 
             return response()->json([
                 'status' => 'success',
-                'processed' => $processed
+                'message' => "Proses Push Selesai! Berhasil: $sukses | Gagal: $gagal"
             ]);
 
         } catch (\Exception $e) {
+            Log::error("CRITICAL ERROR PUSH MAHASISWA: " . $e->getMessage());
             return response()->json(['status' => 'error', 'error' => $e->getMessage()]);
         }
     }
