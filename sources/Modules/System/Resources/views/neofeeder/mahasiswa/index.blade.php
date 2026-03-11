@@ -129,7 +129,7 @@
                     { data: 'DT_RowIndex', searchable: false, orderable: false },
                     { data: 'nim', name: 'nim' },
                     { data: 'nama_mahasiswa', name: 'nama_mahasiswa' },
-                    { data: 'id_prodi', name: 'id_prodi' },
+                    { data: 'prodi', name: 'prodi.nama_prodi' },
                     { data: 'status_sync', name: 'status_sync', orderable: false, searchable: false, className: 'text-center' }
                 ]
             });
@@ -144,9 +144,9 @@
                         ajax: "{{ route('neo_feeder.mahasiswa.json.sync') }}",
                         columns: [
                             { data: 'DT_RowIndex', searchable: false, orderable: false },
-                            { data: 'nama_mahasiswa', name: 'nama_mahasiswa' },
-                            { data: 'nim', name: 'nim' },
-                            { data: 'id_prodi', name: 'id_prodi' }
+                            { data: 'nim', name: 'siakad_data_mahasiswas.nim' },
+                            { data: 'nama_mahasiswa', name: 'nama_mahasiswa', searchable: false },
+                            { data: 'prodi', name: 'prodi.nama_prodi' },
                         ]
                     });
                     tableBelumSinkronInit = true;

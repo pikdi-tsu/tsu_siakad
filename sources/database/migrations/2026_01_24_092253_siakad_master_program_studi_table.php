@@ -17,6 +17,7 @@ return new class extends Migration
             // Identitas Prodi (sesuai feeder)
             $table->string('kode_prodi', 20)->unique();
             $table->string('nama_prodi', 200);
+            $table->string('jenjang', 5);
 
             // Penghubung Neo Feeder
             $table->uuid('id_prodi_feeder')->nullable()->comment('Kabel penghubung ke UUID Neo Feeder');
@@ -25,7 +26,7 @@ return new class extends Migration
             $table->string('ketua_prodi', 150)->nullable();
 
             // Relasi Fakultas
-            $table->uuid('fakultas_id');
+            $table->uuid('fakultas_id')->nullable();
 
             // Status Prodi (nilai baku PDDIKTI)
             $table->enum('status_prodi', ['Aktif', 'Tidak Aktif', 'Tutup']);
