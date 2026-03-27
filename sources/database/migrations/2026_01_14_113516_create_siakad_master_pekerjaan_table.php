@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('siakad_master_pekerjaan', function (Blueprint $table) {
             $table->uuid('id')->primary();
+            $table->integer('id_neofeeder')->nullable()->comment('ID Mapping ke Dictionary Pekerjaan Feeder');
             $table->string('kode_pekerjaan', 5)->unique(); // Contoh: 1, 99
             $table->string('nama_pekerjaan'); // Contoh: PNS, WIRASWASTA
             $table->timestamps();

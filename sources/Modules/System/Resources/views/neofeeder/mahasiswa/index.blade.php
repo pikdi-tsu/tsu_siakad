@@ -41,6 +41,11 @@
                         <h5><i class="fas fa-info"></i> Master Data TSU</h5>
                         Ini adalah murni seluruh data mahasiswa yang tercatat di database lokal TSU Siakad.
                     </div>
+                    <div class="d-flex justify-content-end mb-3">
+                        <button class="btn btn-primary" id="btn-pull-batch-bio">
+                            <i class="fas fa-magic"></i> Lengkapi Biodata (Batch)
+                        </button>
+                    </div>
                     <table class="table table-bordered table-striped" id="table-lokal" style="width:100%">
                         <thead>
                         <tr>
@@ -49,6 +54,7 @@
                             <th>Nama Mahasiswa</th>
                             <th>Prodi</th>
                             <th>Status Sync</th>
+                            <th>Actions</th>
                         </tr>
                         </thead>
                     </table>
@@ -130,7 +136,8 @@
                     { data: 'nim', name: 'nim' },
                     { data: 'nama_mahasiswa', name: 'nama_mahasiswa' },
                     { data: 'prodi', name: 'prodi.nama_prodi' },
-                    { data: 'status_sync', name: 'status_sync', orderable: false, searchable: false, className: 'text-center' }
+                    { data: 'status_sync', name: 'status_sync', orderable: false, searchable: false },
+                    { data: 'action', name: 'actions', searchable: false, orderable: false, className: 'text-center align-middle' },
                 ]
             });
 
@@ -174,7 +181,201 @@
                 }
             });
 
+            // Fungsi tarik biodata per data dan batch
+            let totalLokal = 0; // Total data mahasiswa lokal
+            let processedLokal = 0;
+            let stats = {
+                totalDicek: 0,
+                totalSukses: 0,
+                totalNoId: 0
+            };
+
+            $('.btn-pull-single-bio').on('click', function() {
+                let idLokal = $(this).data('id');
+
+                Swal.fire({
+                    title: 'Tarik Biodata Feeder',
+                    html: `
+                            <div class="text-left mt-2" style="font-size: 0.9em;">
+                                <p class="mb-3 text-bold">Pilih metode sinkronisasi data untuk mahasiswa ini:</p>
+
+                                <div class="custom-control custom-radio mb-3">
+                                    <input type="radio" id="modeFill" name="syncMode" class="custom-control-input" value="fill" checked>
+                                    <label class="custom-control-label" for="modeFill" style="cursor: pointer;">
+                                        <strong class="text-success"><i class="fas fa-shield-alt"></i> Lengkapi Data Kosong (Aman)</strong><br>
+                                        <span class="text-muted small">Hanya mengisi kolom lokal yang belum ada datanya.</span>
+                                    </label>
+                                </div>
+
+                                <div class="custom-control custom-radio">
+                                    <input type="radio" id="modeOverwrite" name="syncMode" class="custom-control-input" value="overwrite">
+                                    <label class="custom-control-label" for="modeOverwrite" style="cursor: pointer;">
+                                        <strong class="text-danger"><i class="fas fa-exclamation-triangle"></i> Timpa Data Feeder (Force Update)</strong><br>
+                                        <span class="text-muted small">Awas! Menghapus data lokal & menggantinya dengan data pusat.</span>
+                                    </label>
+                                </div>
+                            </div>
+                        `,
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#17a2b8',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: '<i class="fas fa-cloud-download-alt"></i> Eksekusi!',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Get pull mode
+                        let selectedMode = document.querySelector('input[name="syncMode"]:checked').value;
+
+                        Swal.fire({
+                            title: 'Menarik Data...',
+                            html: 'Mengkoneksikan ke Neo Feeder',
+                            allowOutsideClick: false,
+                            didOpen: () => { Swal.showLoading() }
+                        });
+
+                        $.post('{{ route("neo_feeder.mahasiswa.pull-biodata.single") }}', {
+                            _token: '{{ csrf_token() }}',
+                            id: idLokal,
+                            mode: selectedMode
+                        })
+                            .done(function(res) {
+                                if (res.status === 'success') {
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: 'Berhasil!',
+                                        html: res.message
+                                    }).then(() => {
+                                        // Refresh Datatable
+                                        $('#table-lokal').DataTable().ajax.reload(null, false);
+                                    });
+                                } else if (res.status === 'warning') {
+                                    Swal.fire({ icon: 'warning', title: 'Perhatian', text: res.message });
+                                }
+                            })
+                            .fail(function(xhr) {
+                                let res = xhr.responseJSON;
+                                if (res && res.html_error) {
+                                    Swal.fire({ icon: 'error', title: 'Sistem Terhenti', html: res.html_error });
+                                } else {
+                                    Swal.fire({ icon: 'error', title: 'Koneksi Terputus', text: 'Gagal menghubungi server TSU.' });
+                                }
+                            });
+                    }
+                });
+            });
+
+            $('#btn-pull-batch-bio').on('click', function(e) {
+                e.preventDefault();
+
+                Swal.fire({
+                    title: 'Mulai Eksekusi Batch Fill?',
+                    html: `
+                            <div class="text-left mt-2">
+                                <p>Sistem akan melengkapi biodata <b>seluruh mahasiswa lokal</b> yang masih kosong secara otomatis dari data Neo Feeder Lokal.</p>
+                                <div class="alert alert-success mt-3 mb-0" style="font-size: 0.9em;">
+                                    <i class="fas fa-note-sticky"></i> <b>Catatan:</b><br>
+                                    Data lokal TSU yang sudah ada isinya <b>TIDAK AKAN</b> ditimpa!
+                                </div>
+                            </div>
+                        `,
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#28a745',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: '<i class="fas fa-check-circle"></i> Ya, Saya Mengerti!',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        processedLokal = 0;
+                        loopBatchPullBiodata(0);
+                    }
+                });
+            });
+
+            function loopBatchPullBiodata(offset) {
+                Swal.fire({
+                    title: 'Checking Data...',
+                    showConfirmButton: false,
+                    allowOutsideClick: false,
+                    html: `
+                                <div class="mt-3 mb-4">
+                                    <i class="fas fa-cog fa-spin fa-3x text-info"></i>
+                                </div>
+                                <p class="text-bold" style="font-size: 1.1em;">Memproses <span class="text-primary">${stats.totalDicek}</span> data lokal...</p>
+                                <p class="small text-muted">Sedang Mengisi biodata yang kosong.</p>
+                                <p class="small text-danger mt-2"><i class="fas fa-exclamation-triangle"></i> Mohon tunggu dan jangan tutup halaman ini!</p>
+                            `
+                });
+
+                $.post('{{ route("neo_feeder.mahasiswa.pull-biodata.batch") }}', {
+                    _token: '{{ csrf_token() }}',
+                    offset: offset
+                }).done(function(res) {
+                        if (res.status === 'success') {
+                            if (!res.finished) {
+                                processedLokal += res.fetched;
+                                stats.totalDicek += res.fetched;
+                                stats.totalSukses += res.updated;
+                                stats.totalNoId += res.no_id;
+
+                                loopBatchPullBiodata(res.next_offset);
+                            } else {
+                                $('#table-lokal').DataTable().ajax.reload(null, false);
+
+                                // Hitung sisa yang tidak berubah
+                                let sisaAman = stats.totalDicek - stats.totalSukses - stats.totalNoId;
+
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Laporan Pengisian Biodata Lokal',
+                                    width: 500,
+                                    html: `
+                                            <div class="text-left mt-3" style="font-size: 0.95em;">
+                                                <p>Proses sinkronisasi massal telah selesai dengan rincian:</p>
+                                                <ul class="list-group list-group-flush mb-3">
+                                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                        <span><i class="fas fa-users text-primary"></i> Total Diperiksa</span>
+                                                        <span class="badge badge-primary badge-pill" style="font-size:1em;">${stats.totalDicek}</span>
+                                                    </li>
+                                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                        <span><i class="fas fa-check-circle text-success"></i> Berhasil Dilengkapi</span>
+                                                        <span class="badge badge-success badge-pill" style="font-size:1em;">${stats.totalSukses}</span>
+                                                    </li>
+                                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                        <span><i class="fas fa-shield-alt text-info"></i> Aman / Sudah Lengkap</span>
+                                                        <span class="badge badge-info badge-pill" style="font-size:1em;">${sisaAman}</span>
+                                                    </li>
+                                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                        <span><i class="fas fa-exclamation-circle text-warning"></i> Dilewati (Belum ada di Neo Feeder lokal)</span>
+                                                        <span class="badge badge-warning badge-pill" style="font-size:1em;">${stats.totalNoId}</span>
+                                                    </li>
+                                                </ul>
+                                                <div class="alert alert-warning p-2 small text-center mb-0">
+                                                    <b>Tips:</b> Tarik List Mahasiswa dari Feeder terlebih dahulu untuk menekan angka data yang dilewati.
+                                                </div>
+                                            </div>
+                                        `,
+                                    confirmButtonColor: '#28a745',
+                                    confirmButtonText: 'Selesai & Tutup'
+                                });
+                            }
+                        }
+                    })
+                    .fail(function(xhr) {
+                        let res = xhr.responseJSON;
+                        if (res && res.html_error) {
+                            Swal.fire({ icon: 'error', title: 'Mesin Berhenti!', html: res.html_error });
+                        } else {
+                            Swal.fire({ icon: 'error', title: 'Koneksi Terputus!', text: 'Gagal menghubungi server TSU.' });
+                        }
+                    });
+            }
+
             // Sync Config
+            let totalData = 0;
+            let processedData = 0;
+
             const SyncConfig = {
                 url: {
                     init: "{{ route('neo_feeder.mahasiswa.sync.init') }}",
@@ -184,10 +385,6 @@
                 btn: '#btn-pull-feeder',
                 table: '#table-feeder'
             };
-
-            // State Global
-            let totalData = 0;
-            let processedData = 0;
 
             // Sync Event Listener
             $(SyncConfig.btn).click(function() {
@@ -228,7 +425,6 @@
                             if (totalData > 0) {
                                 loopSync(0);
                             } else {
-                                // Kalau kosong, pakai notifalert (Toast) aja cukup
                                 if(typeof notifalert === 'function') {
                                     notifalert('Info', 'Data Feeder Kosong', 'info');
                                 } else {
@@ -297,7 +493,10 @@
                 });
             }
 
-            // Tombol Push Neo Feeder
+            // Push data mahasiswa ke Neo Feeder
+            let pushTotalData = 0;
+            let pushProcessedData = 0;
+
             const PushConfig = {
                 url: {
                     init: "{{ route('neo_feeder.mahasiswa.push.init') }}",
@@ -307,10 +506,6 @@
                 btn: '#btn-push-massal'
             };
 
-            let pushTotalData = 0;
-            let pushProcessedData = 0;
-
-            // 1. Klik Tombol Nuklir
             $(PushConfig.btn).click(function() {
                 Swal.fire({
                     title: 'Kirim Pasukan ke PDDIKTI?',
@@ -328,10 +523,9 @@
                 });
             });
 
-            // 2. Hitung Jumlah Pasukan
             function startPush() {
                 Swal.fire({
-                    title: 'Radar Aktif...',
+                    title: 'Inisiasi Aktif...',
                     html: 'Menghitung total mahasiswa yang akan dikirim...',
                     allowOutsideClick: false,
                     showConfirmButton: false,
@@ -356,7 +550,6 @@
                     .fail(function() { Swal.fire('Error', 'Gagal menghubungi server.', 'error'); });
             }
 
-            // 3. Eksekusi Tembakan Beruntun (Batch)
             function loopPush() {
                 let percent = Math.floor((pushProcessedData / pushTotalData) * 100);
 
@@ -392,7 +585,6 @@
                     .fail(function() { Swal.fire('Error', 'Koneksi terputus saat Push data.', 'error'); });
             }
 
-            // 4. Selebrasi
             function finishPush() {
                 // Refresh semua tabel agar statusnya berubah jadi hijau
                 $('#table-lokal').DataTable().ajax.reload(null, false);

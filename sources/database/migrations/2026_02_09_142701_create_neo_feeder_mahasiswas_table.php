@@ -24,7 +24,6 @@ return new class extends Migration
             $table->string('nama_mahasiswa');
             $table->enum('jenis_kelamin', ['L', 'P']);
             $table->date('tanggal_lahir'); // Perlu parsing dari dd-mm-yyyy
-            $table->string('tempat_lahir')->nullable();
 
             // Data Akademik
             $table->string('id_prodi_feeder')->nullable(); // id_sms / id_prodi di JSON
