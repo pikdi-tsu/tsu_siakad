@@ -11,9 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        $tableName = config('app.module.name', 'siakad');
+        $tableName = config('app.table.menu_sidebars');
 
-        Schema::create($tableName . '_menu_sidebars', static function (Blueprint $table) use ($tableName) {
+        Schema::create($tableName, static function (Blueprint $table) use ($tableName) {
             $table->id();
             $table->string('name');
             $table->string('icon')->nullable();
@@ -34,6 +34,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('system_menu_sidebars');
+        $tableName = config('app.table.menu_sidebars');
+
+        Schema::dropIfExists($tableName);
     }
 };

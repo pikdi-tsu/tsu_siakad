@@ -23,7 +23,7 @@ class DataMahasiswa extends Model
 
     public function getTable()
     {
-        return config('app.module.name') . '_data_mahasiswas';
+        return config('app.table.data_mahasiswas');
     }
 
     // Ke User (Induk)
