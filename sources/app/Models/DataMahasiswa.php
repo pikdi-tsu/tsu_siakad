@@ -23,7 +23,7 @@ class DataMahasiswa extends Model
 
     public function getTable()
     {
-        return config('app.module.name') . '_data_mahasiswas';
+        return config('app.table.data_mahasiswas');
     }
 
     // Ke User (Induk)
@@ -34,8 +34,7 @@ class DataMahasiswa extends Model
 
     public function prodi()
     {
-        // Pastikan 'id_prodi' adalah foreign key di tabel mahasiswa, dan 'id' adalah primary key di master prodi
-        return $this->belongsTo(Master_ProgramStudi::class, 'id_prodi', 'id');
+        return $this->belongsTo(Master_ProgramStudi::class, 'id_prodi');
     }
 
     public static function getFormConfig()

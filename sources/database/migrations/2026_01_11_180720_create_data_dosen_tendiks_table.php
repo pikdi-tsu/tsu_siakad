@@ -11,8 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        $tableUsers = config('auth.providers.users.table');
-        $tableName = config('app.module.name');
+        $tableUsers = config('app.table.users');
+        $tableName = config('app.table.data_dosen_tendiks');
 
         Schema::create($tableName . '_data_dosen_tendiks', function (Blueprint $table) use ($tableUsers) {
             $table->uuid('id')->primary();
@@ -57,6 +57,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists(config('app.module.name') . '_data_dosen_tendiks');
+        $tableName = config('app.table.data_dosen_tendiks');
+
+        Schema::dropIfExists($tableName);
     }
 };

@@ -36,7 +36,9 @@ class PermissionController extends MiddlewareController
                 return '<span class="badge badge-secondary">'.$row->guard_name.'</span>';
             })
             ->addColumn('action', function ($row) {
-                return $this->getActionButtons($row, 'system:permission');
+                return $this->getActionButtons($row, 'system:permission', [
+                    'delete_url' => route('system.permission.destroy', $row->id),
+                ]);
             })
             ->rawColumns(['guard_name', 'action'])
             ->make(true);
@@ -46,10 +48,8 @@ class PermissionController extends MiddlewareController
     {
         $this->guardStore($request->id, 'system:permission:create');
 
-        $tablePermission = config('auth.providers.users.table');
-
         $request->validate([
-            'name' => ['required', Rule::unique($tablePermission . '_permissions', 'name')->where('guard_name', 'web')]
+            'name' => ['required', Rule::unique(config('app.table.permissions'), 'name')->where('guard_name', 'web')]
         ]);
 
         Permission::create(['name' => $request->name, 'guard_name' => 'web']);
@@ -84,7 +84,7 @@ class PermissionController extends MiddlewareController
         $tablePermission = config('auth.providers.users.table');
 
         $request->validate([
-            'name' => ['required', Rule::unique($tablePermission . '_permissions', 'name')->ignore($id)->where('guard_name', 'web')]
+            'name' => ['required', Rule::unique(config('app.table.permissions'), 'name')->ignore($id)->where('guard_name', 'web')]
         ]);
 
         $permission->update(['name' => $request->name]);

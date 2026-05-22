@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        $tableUsers = config('auth.providers.users.table', 'users');
-        $tableName = config('app.module.name', 'siakad');
+        $tableUsers = config('app.table.users');
+        $tableName = config('app.table.data_mahasiswas');
 
-        Schema::create($tableName . '_data_mahasiswas', static function (Blueprint $table) use ($tableUsers) {
+        Schema::create($tableName, static function (Blueprint $table) use ($tableUsers) {
             $table->uuid('id')->primary();
             $table->foreignUuid('user_id')->nullable()->constrained($tableUsers)->onDelete('cascade');
 
@@ -38,7 +38,6 @@ return new class extends Migration
             $table->integer('sks_diakui')->nullable();
 
             // --- DATA STATUS KELUAR ---
-            $table->integer('id_jenis_keluar')->nullable(); // Relasi ke siakad_master_jenis_keluar (Lulus/DO)
             $table->date('tanggal_keluar')->nullable();
             $table->text('keterangan_keluar')->nullable();
 
@@ -50,7 +49,7 @@ return new class extends Migration
             $table->date('tgl_lahir')->nullable();
             $table->enum('jenis_kelamin', ['L', 'P'])->nullable();
             $table->uuid('id_agama')->nullable();
-            $table->char('kewarganegaraan', 2)->default('ID');
+            $table->string('kewarganegaraan', 100)->default('Indonesia')->nullable();
             $table->string('no_hp', 25)->nullable();
             $table->string('email_pribadi')->nullable();
 
@@ -91,7 +90,7 @@ return new class extends Migration
 
             $table->timestamps();
 
-            // --- DEFINISI FOREIGN KEY (GEMBOK) ---
+            // --- DEFINISI FOREIGN KEY ---
 
             if (Schema::hasTable('siakad_master_program_studi')) {
                 $table->foreign('id_prodi')->references('id')->on('siakad_master_program_studi')->onDelete('restrict');
@@ -111,9 +110,7 @@ return new class extends Migration
             if (Schema::hasTable('siakad_master_pekerjaan')) {
                 $table->foreign('id_pekerjaan_ayah')->references('id')->on('siakad_master_pekerjaan')->onDelete('set null');
                 $table->foreign('id_pekerjaan_ibu')->references('id')->on('siakad_master_pekerjaan')->onDelete('set null');
-            }
-            if (Schema::hasTable('siakad_master_jenis_keluar')) {
-                $table->foreign('id_jenis_keluar')->references('id')->on('siakad_master_jenis_keluar')->onDelete('set null');
+                $table->foreign('id_pekerjaan_wali')->references('id')->on('siakad_master_pekerjaan')->onDelete('set null');
             }
             if (Schema::hasTable('siakad_master_tingkat_pendidikan_universitas')) {
                 $table->foreign('id_jenjang')->references('id')->on('siakad_master_tingkat_pendidikan_universitas')->onDelete('restrict');
@@ -121,7 +118,6 @@ return new class extends Migration
             if (Schema::hasTable('pmb_master_provinsi')) {
                 $table->foreign('id_provinsi')->references('idprov')->on('pmb_master_provinsi')->onDelete('set null');
             }
-
             if (Schema::hasTable('pmb_master_kabupaten')) {
                 $table->foreign('id_kabupaten')->references('id')->on('pmb_master_kabupaten')->onDelete('set null');
             }
@@ -141,6 +137,8 @@ return new class extends Migration
      * Reverse the migrations.
      */
     public function down(): void {
-        Schema::dropIfExists(config('app.module.name', 'siakad') . '_data_mahasiswas');
+        $tableName = config('app.table.data_mahasiswas');
+
+        Schema::dropIfExists($tableName);
     }
 };

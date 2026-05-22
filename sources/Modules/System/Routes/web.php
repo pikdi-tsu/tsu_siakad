@@ -649,6 +649,14 @@ Route::prefix('')->group(function () {
             // Neo Feeder Mahasiswa
             Route::prefix('mahasiswa')->name('mahasiswa.')->group(function () {
                 Route::get('/', [NeoFeederMahasiswasController::class, 'index'])->name('index');
+
+                // Pull Biodata Mahasiswa
+                Route::prefix('pull-biodata')->name('pull-biodata.')->group(function () {
+                    Route::post('/', [NeoFeederMahasiswasController::class, 'pullBiodata'])->name('single');
+                    Route::post('/batch', [NeoFeederMahasiswasController::class, 'pullBiodataBatch'])->name('batch');
+                });
+
+                // Pull Data Mahasiswa lokal & Neo Feeder
                 Route::prefix('json')->name('json.')->group(function () {
                     Route::get('/lokal', [NeoFeederMahasiswasController::class, 'jsonLokal'])->name('lokal');
                     Route::get('/sync', [NeoFeederMahasiswasController::class, 'jsonSync'])->name('sync');

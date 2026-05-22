@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('siakad_master_status_mahasiswa', function (Blueprint $table) {
             $table->uuid('id')->primary();
+            $table->integer('id_neofeeder')->nullable()->comment('ID Mapping ke Dictionary Jenis Keluar Feeder')->after('is_system');
             $table->string('kode_status', 10)->unique(); // A, C, D, L
             $table->string('nama_status'); // Aktif, Cuti, Lulus
 
